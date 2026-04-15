@@ -34,8 +34,10 @@ class FingerprintAppWindow:
         self.cell_render_cache: dict[str, dict[str, object]] = {}
         self.model_selector: ttk.Combobox | None = None
         self.train_button: ttk.Button | None = None
+        self.apply_button: ttk.Button | None = None
         self.comm_log_listbox: tk.Listbox | None = None
         self.refresh_job: str | None = None
+        self.settings_inputs: tuple[tk.Widget, ...] = ()
 
         self._build_layout()
         self._rebuild_grid(self.engine.grid_cols, self.engine.grid_rows)
@@ -57,52 +59,77 @@ class FingerprintAppWindow:
             controls.columnconfigure(column, weight=1)
 
         ttk.Label(controls, text="Grid X").grid(row=0, column=0, sticky="w")
-        ttk.Spinbox(controls, from_=1, to=20, textvariable=self.cols_var, width=6).grid(
-            row=0, column=1, sticky="w"
+        cols_spinbox = ttk.Spinbox(
+            controls,
+            from_=1,
+            to=20,
+            textvariable=self.cols_var,
+            width=6,
         )
+        cols_spinbox.grid(row=0, column=1, sticky="w")
         ttk.Label(controls, text="Grid Y").grid(row=0, column=2, sticky="w")
-        ttk.Spinbox(controls, from_=1, to=20, textvariable=self.rows_var, width=6).grid(
-            row=0, column=3, sticky="w"
+        rows_spinbox = ttk.Spinbox(
+            controls,
+            from_=1,
+            to=20,
+            textvariable=self.rows_var,
+            width=6,
         )
+        rows_spinbox.grid(row=0, column=3, sticky="w")
         ttk.Label(controls, text="Capture (sec)").grid(row=0, column=4, sticky="w")
-        ttk.Spinbox(
+        capture_spinbox = ttk.Spinbox(
             controls,
             from_=1,
             to=20,
             increment=0.5,
             textvariable=self.capture_var,
             width=8,
-        ).grid(row=0, column=5, sticky="w")
+        )
+        capture_spinbox.grid(row=0, column=5, sticky="w")
         ttk.Label(controls, text="Window (sec)").grid(row=0, column=6, sticky="w")
-        ttk.Spinbox(
+        window_spinbox = ttk.Spinbox(
             controls,
             from_=0.25,
             to=20,
             increment=0.25,
             textvariable=self.window_var,
             width=8,
-        ).grid(row=0, column=7, sticky="w")
+        )
+        window_spinbox.grid(row=0, column=7, sticky="w")
         ttk.Label(controls, text="Window Step (sec)").grid(row=0, column=8, sticky="w")
-        ttk.Spinbox(
+        window_step_spinbox = ttk.Spinbox(
             controls,
             from_=0.05,
             to=20,
             increment=0.05,
             textvariable=self.window_step_var,
             width=8,
-        ).grid(row=0, column=9, sticky="w")
+        )
+        window_step_spinbox.grid(row=0, column=9, sticky="w")
         ttk.Label(controls, text="Ping/s").grid(row=0, column=10, sticky="w")
-        ttk.Spinbox(
+        keepalive_spinbox = ttk.Spinbox(
             controls,
             from_=0,
             to=20,
             increment=0.5,
             textvariable=self.keepalive_var,
             width=8,
-        ).grid(row=0, column=11, sticky="w")
-        ttk.Button(controls, text="Apply To Config", command=self.on_apply_grid).grid(
-            row=0, column=12, padx=(8, 0), sticky="ew"
         )
+        keepalive_spinbox.grid(row=0, column=11, sticky="w")
+        self.settings_inputs = (
+            cols_spinbox,
+            rows_spinbox,
+            capture_spinbox,
+            window_spinbox,
+            window_step_spinbox,
+            keepalive_spinbox,
+        )
+        self.apply_button = ttk.Button(
+            controls,
+            text="Apply To Config",
+            command=self.on_apply_grid,
+        )
+        self.apply_button.grid(row=0, column=12, padx=(8, 0), sticky="ew")
         ttk.Button(controls, text="Clear All", command=self.on_clear_all).grid(
             row=0, column=13, padx=(8, 0), sticky="ew"
         )
@@ -285,17 +312,27 @@ class FingerprintAppWindow:
                 }
 
     def on_apply_grid(self) -> None:
+        try:
+            cols = self.cols_var.get()
+            rows = self.rows_var.get()
+            capture = self.capture_var.get()
+            window = self.window_var.get()
+            window_step = self.window_step_var.get()
+            keepalive = self.keepalive_var.get()
+        except tk.TclError:
+            messagebox.showwarning(
+                "Invalid input",
+                "Please enter valid numeric values before applying config.",
+            )
+            return
+
         snapshot = self.engine.snapshot()
         grid_changed = (
-            self.cols_var.get() != snapshot["grid"]["cols"]
-            or self.rows_var.get() != snapshot["grid"]["rows"]
+            cols != snapshot["grid"]["cols"]
+            or rows != snapshot["grid"]["rows"]
         )
-        window_changed = abs(
-            self.window_var.get() - snapshot["grid"]["window_seconds"]
-        ) > 1e-9
-        window_step_changed = abs(
-            self.window_step_var.get() - snapshot["grid"]["window_step_seconds"]
-        ) > 1e-9
+        window_changed = abs(window - snapshot["grid"]["window_seconds"]) > 1e-9
+        window_step_changed = abs(window_step - snapshot["grid"]["window_step_seconds"]) > 1e-9
         if snapshot["training"]["trained_cells"] > 0 and (
             grid_changed or window_changed or window_step_changed
         ):
@@ -306,12 +343,12 @@ class FingerprintAppWindow:
             if not okay:
                 return
         self.engine.apply_grid_settings(
-            self.cols_var.get(),
-            self.rows_var.get(),
-            self.capture_var.get(),
-            self.window_var.get(),
-            self.window_step_var.get(),
-            self.keepalive_var.get(),
+            cols,
+            rows,
+            capture,
+            window,
+            window_step,
+            keepalive,
         )
         self._rebuild_grid(self.engine.grid_cols, self.engine.grid_rows)
 
@@ -352,12 +389,16 @@ class FingerprintAppWindow:
 
     def _refresh(self) -> None:
         snapshot = self.engine.snapshot()
-        self.cols_var.set(snapshot["grid"]["cols"])
-        self.rows_var.set(snapshot["grid"]["rows"])
-        self.capture_var.set(snapshot["grid"]["capture_seconds"])
-        self.window_var.set(snapshot["grid"]["window_seconds"])
-        self.window_step_var.set(snapshot["grid"]["window_step_seconds"])
-        self.keepalive_var.set(snapshot["host"]["keepalive_pings_per_second"])
+        if (
+            not self._settings_edit_in_progress()
+            and not self._settings_have_pending_edits(snapshot)
+        ):
+            self.cols_var.set(snapshot["grid"]["cols"])
+            self.rows_var.set(snapshot["grid"]["rows"])
+            self.capture_var.set(snapshot["grid"]["capture_seconds"])
+            self.window_var.set(snapshot["grid"]["window_seconds"])
+            self.window_step_var.set(snapshot["grid"]["window_step_seconds"])
+            self.keepalive_var.set(snapshot["host"]["keepalive_pings_per_second"])
         self.model_var.set(snapshot["training"]["active_model"] or "")
 
         self.summary_var.set(
@@ -549,6 +590,37 @@ class FingerprintAppWindow:
             foreground = "#201400" if probability >= 0.35 else "#16283a"
             return f"#{red:02x}{green:02x}{blue:02x}", foreground
         return "#cae7cf", "#16311d"
+
+    def _settings_edit_in_progress(self) -> bool:
+        focused_widget = self.root.focus_get()
+        if focused_widget is None:
+            return False
+        focused_path = str(focused_widget)
+        for widget in self.settings_inputs:
+            widget_path = str(widget)
+            if focused_path == widget_path or focused_path.startswith(widget_path + "."):
+                return True
+        return False
+
+    def _settings_have_pending_edits(self, snapshot: dict[str, object]) -> bool:
+        try:
+            cols = self.cols_var.get()
+            rows = self.rows_var.get()
+            capture = self.capture_var.get()
+            window = self.window_var.get()
+            window_step = self.window_step_var.get()
+            keepalive = self.keepalive_var.get()
+        except tk.TclError:
+            return True
+
+        return (
+            cols != snapshot["grid"]["cols"]
+            or rows != snapshot["grid"]["rows"]
+            or abs(capture - snapshot["grid"]["capture_seconds"]) > 1e-9
+            or abs(window - snapshot["grid"]["window_seconds"]) > 1e-9
+            or abs(window_step - snapshot["grid"]["window_step_seconds"]) > 1e-9
+            or abs(keepalive - snapshot["host"]["keepalive_pings_per_second"]) > 1e-9
+        )
 
     def on_close(self) -> None:
         if self.refresh_job is not None:
