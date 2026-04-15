@@ -9,6 +9,13 @@ from typing import Sequence
 
 ADR018_MAGIC = 0xC5110001
 HEADER_SIZE = 20
+PILOT_SUBCARRIER_INDEXES = {-21, -7, 7, 21}
+ACTIVE_SUBCARRIER_INDEXES = tuple(
+    index
+    for index in range(-25, 26)
+    if index != 0 and index not in PILOT_SUBCARRIER_INDEXES
+)
+ACTIVE_SUBCARRIER_COUNT = len(ACTIVE_SUBCARRIER_INDEXES)
 
 
 @dataclass
@@ -99,6 +106,31 @@ def _pool_vector(values: Sequence[float], bins: int) -> list[float]:
     return result
 
 
+def _fft_shift(values: Sequence[float]) -> list[float]:
+    if not values:
+        return []
+    middle = len(values) // 2
+    return list(values[middle:]) + list(values[:middle])
+
+
+def _select_active_subcarriers(shifted_values: Sequence[float]) -> list[float]:
+    if not shifted_values:
+        return []
+    size = len(shifted_values)
+    if size == 64:
+        center = size // 2
+        return [
+            float(shifted_values[center + subcarrier_index])
+            for subcarrier_index in ACTIVE_SUBCARRIER_INDEXES
+        ]
+    without_dc = [
+        float(value)
+        for index, value in enumerate(shifted_values)
+        if index != size // 2
+    ]
+    return _pool_vector(without_dc, ACTIVE_SUBCARRIER_COUNT)
+
+
 def parse_adr018_frame(payload: bytes) -> ParsedFrame | None:
     if len(payload) < HEADER_SIZE:
         return None
@@ -144,10 +176,16 @@ def build_feature_frame(
     frame: ParsedFrame,
     source: str,
     captured_at: float,
-    feature_bin_count: int,
+    _feature_bin_count: int,
 ) -> FeatureFrame:
-    amplitudes = frame.amplitudes
-    phases = frame.phases
+    shifted_amplitudes = _fft_shift(frame.amplitudes)
+    shifted_phases = _fft_shift(frame.phases)
+    amplitudes = _select_active_subcarriers(shifted_amplitudes)
+    phases = _select_active_subcarriers(shifted_phases)
+    if not amplitudes:
+        amplitudes = [float(value) for value in frame.amplitudes]
+    if not phases:
+        phases = [float(value) for value in frame.phases]
     amplitude_mean = _mean(amplitudes)
     amplitude_std = _std(amplitudes)
     amplitude_rms = _rms(amplitudes)
@@ -158,27 +196,13 @@ def build_feature_frame(
     phase_step_std = _std(phase_steps)
     snr_db = frame.rssi_dbm - frame.noise_floor_dbm
 
-    pooled = _pool_vector(amplitudes, feature_bin_count)
-    norm_floor = max(1.0, amplitude_mean)
-    shape_features = [value / norm_floor for value in pooled]
-    feature_vector = [
-        frame.rssi_dbm / 100.0,
-        frame.noise_floor_dbm / 100.0,
-        snr_db / 100.0,
-        amplitude_mean / 64.0,
-        amplitude_std / 32.0,
-        amplitude_rms / 64.0,
-        amplitude_p90 / 64.0,
-        gradient_mean / 32.0,
-        phase_step_std / math.pi,
-        *shape_features,
-    ]
+    feature_vector = [float(value) for value in amplitudes]
     return FeatureFrame(
         node_id=frame.node_id,
         source=source,
         captured_at=captured_at,
         sequence=frame.sequence,
-        n_subcarriers=frame.n_subcarriers,
+        n_subcarriers=len(feature_vector),
         rssi_dbm=frame.rssi_dbm,
         noise_floor_dbm=frame.noise_floor_dbm,
         snr_db=snr_db,

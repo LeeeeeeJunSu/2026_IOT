@@ -5,6 +5,6 @@ __pycache__/
 venv/
 
 app/data/communication.log
-app/data/mlp_model.pkl
+app/data/model_bundle.pkl
 
 firmware/esp32-csi-fingerprint-node/build/

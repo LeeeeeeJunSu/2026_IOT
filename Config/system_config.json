@@ -11,8 +11,8 @@
   },
   "fingerprinting": {
     "capture_seconds": 10.0,
-    "window_seconds": 1.0,
-    "window_step_seconds": 0.1,
+    "window_seconds": 0.5,
+    "window_step_seconds": 0.05,
     "minimum_samples_per_node": 6,
     "feature_bin_count": 12
   },

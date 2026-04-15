@@ -7,16 +7,14 @@ from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Evaluate saved fingerprint datasets with the same sklearn MLP used by the app."
+        description="Evaluate saved fingerprint datasets with RandomForest classifiers."
     )
     parser.add_argument(
         "--store",
@@ -32,24 +30,15 @@ def display_cell(cell_key: str) -> str:
     return f"({grid_x + 1},{grid_y + 1})"
 
 
-def make_pipeline(input_size: int) -> Pipeline:
-    hidden_1 = max(32, min(128, input_size))
-    hidden_2 = max(16, hidden_1 // 2)
-    return Pipeline(
-        [
-            ("scaler", StandardScaler()),
-            (
-                "mlp",
-                MLPClassifier(
-                    hidden_layer_sizes=(hidden_1, hidden_2),
-                    activation="relu",
-                    solver="lbfgs",
-                    alpha=1e-3,
-                    max_iter=800,
-                    random_state=42,
-                ),
-            ),
-        ]
+def make_model(_input_size: int) -> RandomForestClassifier:
+    return RandomForestClassifier(
+        n_estimators=320,
+        random_state=200,
+        max_depth=None,
+        min_samples_leaf=1,
+        min_samples_split=2,
+        max_features="sqrt",
+        n_jobs=-1,
     )
 
 
@@ -87,12 +76,12 @@ def main() -> None:
     ordered_labels = list(cells.keys())
     target_names = [display_cell(cell_key) for cell_key in ordered_labels]
 
-    train_pipeline = make_pipeline(input_size)
-    train_pipeline.fit(X, y)
-    train_pred = train_pipeline.predict(X)
+    train_model = make_model(input_size)
+    train_model.fit(X, y)
+    train_pred = train_model.predict(X)
 
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    cv_pred = cross_val_predict(make_pipeline(input_size), X, y, cv=cv)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=200)
+    cv_pred = cross_val_predict(make_model(input_size), X, y, cv=cv)
 
     gap = max(1, int(math.ceil(window_seconds / max(window_step_seconds, 1e-9))))
     train_indices: list[int] = []
@@ -121,9 +110,9 @@ def main() -> None:
         "available": False,
     }
     if train_indices and test_indices and len(set(y[train_indices])) == len(ordered_labels):
-        purged_pipeline = make_pipeline(input_size)
-        purged_pipeline.fit(X[train_indices], y[train_indices])
-        purged_pred = purged_pipeline.predict(X[test_indices])
+        purged_model = make_model(input_size)
+        purged_model.fit(X[train_indices], y[train_indices])
+        purged_pred = purged_model.predict(X[test_indices])
         purged_results = {
             "gap": gap,
             "summary": purged_summary,

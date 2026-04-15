@@ -23,8 +23,8 @@ class GridConfig:
 @dataclass
 class FingerprintingConfig:
     capture_seconds: float = 4.0
-    window_seconds: float = 1.0
-    window_step_seconds: float = 1.0
+    window_seconds: float = 0.5
+    window_step_seconds: float = 0.05
     minimum_samples_per_node: int = 6
     feature_bin_count: int = 12
 
@@ -101,7 +101,7 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
     window_seconds = max(
         0.25,
         min(
-            float(fingerprinting_raw.get("window_seconds", 1.0)),
+            float(fingerprinting_raw.get("window_seconds", 0.5)),
             capture_seconds,
         ),
     )
@@ -111,7 +111,7 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             float(
                 fingerprinting_raw.get(
                     "window_step_seconds",
-                    fingerprinting_raw.get("window_seconds", 1.0),
+                    fingerprinting_raw.get("window_seconds", 0.5),
                 )
             ),
             window_seconds,

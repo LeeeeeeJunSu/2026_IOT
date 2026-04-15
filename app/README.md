@@ -42,7 +42,7 @@ python main.py
 3. Stand in a cell and press `Learn`.
 4. Repeat `Learn` as many times as needed per cell to accumulate more data.
 5. After every cell has saved data, click `Train Models`.
-6. The app trains `MLP`, `LogisticRegression`, and `SVM`.
+6. The app trains `RandomForestDualStage` and `RandomForestUnified`.
 7. Choose the active inference model from the dropdown and watch the live probability heatmap.
 
 ## Stored Data
@@ -52,8 +52,8 @@ During `Learn`, the app creates overlapping training samples with the
 configured window size and window step, and repeated Learn captures append more
 samples to the same cell.
 
-The trained model bundle for `MLP`, `LogisticRegression`, and `SVM` is stored
-in `app/data/mlp_model.pkl`.
+The trained model bundle for `RandomForestDualStage` and
+`RandomForestUnified` is stored in `app/data/model_bundle.pkl`.
 
 Communication logs are written to `app/data/communication.log` and are also
 shown in the app UI.

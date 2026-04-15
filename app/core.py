@@ -3,20 +3,20 @@ from __future__ import annotations
 import math
 import threading
 import time
-import warnings
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from Config.config_loader import load_system_config, save_system_config
 
-from .protocol import FeatureFrame, build_feature_frame, parse_adr018_frame
-from sklearn.exceptions import ConvergenceWarning
-from sklearn.linear_model import LogisticRegression
-from sklearn.neural_network import MLPClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
+from .protocol import (
+    ACTIVE_SUBCARRIER_COUNT,
+    FeatureFrame,
+    build_feature_frame,
+    parse_adr018_frame,
+)
+from sklearn.ensemble import RandomForestClassifier
 
 from .storage import (
     load_fingerprint_store,
@@ -78,19 +78,123 @@ class ModelMetadata:
     summary: str
 
 
+class DualStageRandomForestClassifier:
+    def __init__(
+        self,
+        *,
+        n_estimators: int = 280,
+        random_state: int = 200,
+        max_depth: int | None = None,
+        min_samples_leaf: int = 1,
+        min_samples_split: int = 2,
+        max_features: str | int | float | None = "sqrt",
+    ) -> None:
+        self.n_estimators = int(n_estimators)
+        self.random_state = int(random_state)
+        self.max_depth = max_depth
+        self.min_samples_leaf = int(min_samples_leaf)
+        self.min_samples_split = int(min_samples_split)
+        self.max_features = max_features
+        self.column_classifier = RandomForestClassifier(
+            n_estimators=self.n_estimators,
+            random_state=self.random_state,
+            max_depth=self.max_depth,
+            min_samples_leaf=self.min_samples_leaf,
+            min_samples_split=self.min_samples_split,
+            max_features=self.max_features,
+            n_jobs=-1,
+        )
+        self.row_classifier = RandomForestClassifier(
+            n_estimators=self.n_estimators,
+            random_state=self.random_state,
+            max_depth=self.max_depth,
+            min_samples_leaf=self.min_samples_leaf,
+            min_samples_split=self.min_samples_split,
+            max_features=self.max_features,
+            n_jobs=-1,
+        )
+        self.classes_: list[str] = []
+        self._class_pairs: list[tuple[str, str]] = []
+        self._column_prob_index: dict[str, int] = {}
+        self._row_prob_index: dict[str, int] = {}
+
+    @staticmethod
+    def _split_cell_label(label: str) -> tuple[str, str]:
+        grid_x_text, grid_y_text = str(label).split(",", 1)
+        return grid_x_text, grid_y_text
+
+    def fit(self, features: list[list[float]], labels: list[str]) -> DualStageRandomForestClassifier:
+        if not features or not labels:
+            raise RuntimeError("Training samples are required for dual-stage RandomForest.")
+        column_labels: list[str] = []
+        row_labels: list[str] = []
+        for label in labels:
+            grid_x_text, grid_y_text = self._split_cell_label(label)
+            column_labels.append(grid_x_text)
+            row_labels.append(grid_y_text)
+
+        self.column_classifier.fit(features, column_labels)
+        self.row_classifier.fit(features, row_labels)
+        self._column_prob_index = {
+            str(value): index for index, value in enumerate(self.column_classifier.classes_)
+        }
+        self._row_prob_index = {
+            str(value): index for index, value in enumerate(self.row_classifier.classes_)
+        }
+
+        ordered_labels: list[str] = []
+        seen: set[str] = set()
+        for label in labels:
+            normalized = str(label)
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            ordered_labels.append(normalized)
+        self.classes_ = ordered_labels
+        self._class_pairs = [self._split_cell_label(label) for label in self.classes_]
+        return self
+
+    def predict_proba(self, features: list[list[float]]) -> list[list[float]]:
+        if not self.classes_:
+            raise RuntimeError("Dual-stage RandomForest model is not fitted.")
+        column_probabilities = self.column_classifier.predict_proba(features)
+        row_probabilities = self.row_classifier.predict_proba(features)
+
+        merged_probabilities: list[list[float]] = []
+        for sample_index in range(len(features)):
+            row_distribution: list[float] = []
+            for grid_x_text, grid_y_text in self._class_pairs:
+                column_index = self._column_prob_index.get(grid_x_text)
+                row_index = self._row_prob_index.get(grid_y_text)
+                if column_index is None or row_index is None:
+                    row_distribution.append(0.0)
+                    continue
+                row_distribution.append(
+                    float(column_probabilities[sample_index][column_index])
+                    * float(row_probabilities[sample_index][row_index])
+                )
+            total = sum(row_distribution)
+            if total > 0.0:
+                row_distribution = [value / total for value in row_distribution]
+            merged_probabilities.append(row_distribution)
+        return merged_probabilities
+
+
 class FingerprintEngine:
-    STORE_VERSION = 3
+    STORE_VERSION = 4
     PROBABILITY_SMOOTHING_SECONDS = 0.8
     BEST_CELL_SWITCH_MARGIN = 0.08
     BEST_CELL_SWITCH_DELAY_SECONDS = 0.9
     PREDICTION_STALE_GRACE_SECONDS = 1.25
-    MODEL_ORDER = ("MLP", "LogisticRegression", "SVM")
+    MODEL_ORDER = ("RandomForestDualStage", "RandomForestUnified")
+    CSI_SMOOTHING_HALF_WINDOW = 20
+    LIVE_PREPROCESS_HORIZON_WINDOWS = 6
 
     def __init__(self, workspace_root: str | Path) -> None:
         self.workspace_root = Path(workspace_root)
         self.config_path = self.workspace_root.parent / "Config" / "system_config.json"
         self.fingerprint_path = self.workspace_root / "data" / "fingerprints.json"
-        self.model_path = self.workspace_root / "data" / "mlp_model.pkl"
+        self.model_path = self.workspace_root / "data" / "model_bundle.pkl"
         self.comm_log_path = self.workspace_root / "data" / "communication.log"
         self.lock = threading.RLock()
         self.system_config = load_system_config(self.config_path)
@@ -106,9 +210,11 @@ class FingerprintEngine:
         self.last_best_probability = 0.0
         self.pending_best_cell: str | None = None
         self.pending_best_since: float | None = None
-        self.model_pipelines: dict[str, Pipeline] = {}
+        self.model_pipelines: dict[str, Any] = {}
         self.model_metadata_by_name: dict[str, ModelMetadata] = {}
         self.active_model_name: str | None = None
+        self.empty_room_baseline_by_node: dict[int, list[float]] = {}
+        self.empty_room_baseline_counts: dict[int, int] = {}
         self.status_message = (
             "Press Learn on each cell to collect data, then click Train Models."
         )
@@ -131,8 +237,8 @@ class FingerprintEngine:
             )
         elif any(dataset.window_sample_count > 0 for dataset in self.cell_datasets.values()):
             self.status_message = (
-                "Saved Learn data loaded. Click Train Models to fit MLP / "
-                "LogisticRegression / SVM."
+                "Saved Learn data loaded. Click Train Models to fit "
+                "RandomForestDualStage / RandomForestUnified."
             )
         self._log_event_locked(
             "INFO",
@@ -185,7 +291,7 @@ class FingerprintEngine:
 
     @property
     def per_node_feature_size(self) -> int:
-        return 9 + self.feature_bin_count
+        return ACTIVE_SUBCARRIER_COUNT * 2
 
     @property
     def expected_input_size(self) -> int:
@@ -358,6 +464,7 @@ class FingerprintEngine:
             node_window = self.node_windows.setdefault(feature.node_id, deque())
             node_window.append(feature)
             self._prune_node_window_locked(feature.node_id, now)
+            self._update_empty_room_baseline_locked(feature)
 
             node_state = self.live_nodes.get(feature.node_id)
             if node_state is None:
@@ -616,15 +723,16 @@ class FingerprintEngine:
 
         total_frames = 0
         observed_node_ids: set[int] = set()
-        means_by_node: dict[int, list[list[float] | None]] = {}
+        features_by_node: dict[int, list[list[float] | None]] = {}
 
         for node_id in required_node_ids:
             frames = session.frames_by_node.get(node_id, [])
             total_frames += len(frames)
             if frames:
                 observed_node_ids.add(node_id)
-            means_by_node[node_id] = self._build_window_feature_means(
+            features_by_node[node_id] = self._build_window_feature_vectors(
                 frames,
+                node_id,
                 session.started_at,
                 window_starts,
             )
@@ -635,11 +743,11 @@ class FingerprintEngine:
             sample: list[float] = []
             complete = True
             for node_id in required_node_ids:
-                mean_vector = means_by_node[node_id][index]
-                if mean_vector is None:
+                feature_vector = features_by_node[node_id][index]
+                if feature_vector is None:
                     complete = False
                     break
-                sample.extend(mean_vector)
+                sample.extend(feature_vector)
             if complete:
                 samples.append(sample)
                 valid_window_count += 1
@@ -667,9 +775,10 @@ class FingerprintEngine:
             index * self.window_step_seconds for index in range(max(0, slot_count))
         ]
 
-    def _build_window_feature_means(
+    def _build_window_feature_vectors(
         self,
         frames: list[FeatureFrame],
+        node_id: int,
         session_started_at: float,
         window_starts: list[float],
     ) -> list[list[float] | None]:
@@ -682,24 +791,19 @@ class FingerprintEngine:
             offset = frame.captured_at - session_started_at
             if offset < 0.0 or offset >= max_window_end:
                 continue
+            if len(frame.feature_vector) != ACTIVE_SUBCARRIER_COUNT:
+                continue
             usable_frames.append((offset, frame.feature_vector))
 
         if not usable_frames:
             return [None for _ in window_starts]
 
         usable_frames.sort(key=lambda item: item[0])
-        feature_size = min(len(vector) for _, vector in usable_frames)
-        running_totals = [0.0 for _ in range(feature_size)]
-        prefix_sums: list[list[float]] = [running_totals.copy()]
-        timestamps: list[float] = []
+        timestamps = [offset for offset, _ in usable_frames]
+        raw_vectors = [vector for _, vector in usable_frames]
+        preprocessed = self._preprocess_node_vectors_locked(node_id, raw_vectors)
 
-        for offset, vector in usable_frames:
-            timestamps.append(offset)
-            for index in range(feature_size):
-                running_totals[index] += vector[index]
-            prefix_sums.append(running_totals.copy())
-
-        means: list[list[float] | None] = []
+        features: list[list[float] | None] = []
         left = 0
         right = 0
         for window_start in window_starts:
@@ -711,16 +815,110 @@ class FingerprintEngine:
             while right < len(timestamps) and timestamps[right] < window_end:
                 right += 1
             if right <= left:
-                means.append(None)
+                features.append(None)
                 continue
-            count = right - left
-            means.append(
-                [
-                    (prefix_sums[right][index] - prefix_sums[left][index]) / count
-                    for index in range(feature_size)
-                ]
+            window_vectors = preprocessed[left:right]
+            means = self._vector_mean(window_vectors)
+            stds = self._vector_std(window_vectors, means)
+            features.append([*means, *stds])
+        return features
+
+    def _preprocess_node_vectors_locked(
+        self,
+        node_id: int,
+        vectors: list[list[float]],
+    ) -> list[list[float]]:
+        if not vectors:
+            return []
+        feature_size = min(len(vector) for vector in vectors)
+        if feature_size <= 0:
+            return [[] for _ in vectors]
+        clipped_vectors = [vector[:feature_size] for vector in vectors]
+        baseline = self._baseline_vector_for_node_locked(node_id, clipped_vectors)
+
+        centered: list[list[float]] = []
+        for vector in clipped_vectors:
+            centered.append(
+                [vector[index] - baseline[index] for index in range(feature_size)]
             )
-        return means
+
+        scales: list[float] = []
+        for index in range(feature_size):
+            max_abs = max(abs(vector[index]) for vector in centered)
+            scales.append(max(max_abs, 1e-9))
+
+        normalized = [
+            [vector[index] / scales[index] for index in range(feature_size)]
+            for vector in centered
+        ]
+        return self._smooth_vectors(normalized, self.CSI_SMOOTHING_HALF_WINDOW)
+
+    def _baseline_vector_for_node_locked(
+        self,
+        node_id: int,
+        vectors: list[list[float]],
+    ) -> list[float]:
+        cached = self.empty_room_baseline_by_node.get(node_id)
+        if cached is not None and len(cached) == len(vectors[0]):
+            return cached
+        return self._vector_mean(vectors)
+
+    def _update_empty_room_baseline_locked(self, frame: FeatureFrame) -> None:
+        if self.capture_session is not None:
+            return
+        if self.cell_datasets:
+            return
+        vector = frame.feature_vector
+        if len(vector) != ACTIVE_SUBCARRIER_COUNT:
+            return
+        baseline = self.empty_room_baseline_by_node.get(frame.node_id)
+        count = self.empty_room_baseline_counts.get(frame.node_id, 0)
+        if baseline is None or len(baseline) != len(vector):
+            self.empty_room_baseline_by_node[frame.node_id] = list(vector)
+            self.empty_room_baseline_counts[frame.node_id] = 1
+            return
+
+        new_count = min(5000, count + 1)
+        weight = 1.0 / float(new_count)
+        for index, value in enumerate(vector):
+            baseline[index] += (value - baseline[index]) * weight
+        self.empty_room_baseline_counts[frame.node_id] = new_count
+
+    @classmethod
+    def _smooth_vectors(
+        cls,
+        vectors: list[list[float]],
+        half_window: int,
+    ) -> list[list[float]]:
+        if not vectors:
+            return []
+        if half_window <= 0 or len(vectors) == 1:
+            return [vector.copy() for vector in vectors]
+
+        frame_count = len(vectors)
+        feature_size = min(len(vector) for vector in vectors)
+        denominator = float(half_window * 2 + 1)
+        smoothed = [[0.0 for _ in range(feature_size)] for _ in range(frame_count)]
+        for frame_index in range(frame_count):
+            for offset in range(-half_window, half_window + 1):
+                mirrored_index = cls._mirrored_index(frame_index + offset, frame_count)
+                source = vectors[mirrored_index]
+                for feature_index in range(feature_size):
+                    smoothed[frame_index][feature_index] += source[feature_index]
+            for feature_index in range(feature_size):
+                smoothed[frame_index][feature_index] /= denominator
+        return smoothed
+
+    @staticmethod
+    def _mirrored_index(index: int, size: int) -> int:
+        if size <= 1:
+            return 0
+        while index < 0 or index >= size:
+            if index < 0:
+                index = -index
+                continue
+            index = 2 * size - index - 2
+        return index
 
     def _recompute_probabilities_locked(self, now: float) -> None:
         active_pipeline = self._active_model_pipeline_locked()
@@ -766,7 +964,7 @@ class FingerprintEngine:
         )
         self.last_prediction_ts = now
 
-    def _active_model_pipeline_locked(self) -> Pipeline | None:
+    def _active_model_pipeline_locked(self) -> Any | None:
         if self.active_model_name is None:
             return None
         return self.model_pipelines.get(self.active_model_name)
@@ -858,20 +1056,34 @@ class FingerprintEngine:
         if not required_node_ids:
             return None
 
-        window_start = now - self.window_seconds
+        live_horizon_seconds = max(
+            self.window_seconds * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
+            self.window_seconds + self.window_step_seconds * 2.0,
+            2.0,
+        )
+        live_start = now - live_horizon_seconds
+        target_window_start = live_horizon_seconds - self.window_seconds
         sample: list[float] = []
         for node_id in required_node_ids:
             node_window = self.node_windows.get(node_id)
             if not node_window:
                 return None
-            recent_vectors = [
-                frame.feature_vector
+            recent_frames = [
+                frame
                 for frame in node_window
-                if frame.captured_at >= window_start
+                if frame.captured_at >= live_start
             ]
-            if not recent_vectors:
+            if not recent_frames:
                 return None
-            sample.extend(self._vector_mean(recent_vectors))
+            per_node_features = self._build_window_feature_vectors(
+                recent_frames,
+                node_id,
+                live_start,
+                [target_window_start],
+            )
+            if not per_node_features or per_node_features[0] is None:
+                return None
+            sample.extend(per_node_features[0])
 
         if len(sample) != self.expected_input_size:
             return None
@@ -914,64 +1126,33 @@ class FingerprintEngine:
 
     def _build_model_pipeline_locked(
         self, model_name: str
-    ) -> tuple[Pipeline, str]:
-        if model_name == "MLP":
-            hidden_1 = max(32, min(128, self.expected_input_size))
-            hidden_2 = max(16, hidden_1 // 2)
-            return (
-                Pipeline(
-                    [
-                        ("scaler", StandardScaler()),
-                        (
-                            "mlp",
-                            MLPClassifier(
-                                hidden_layer_sizes=(hidden_1, hidden_2),
-                                activation="relu",
-                                solver="lbfgs",
-                                alpha=1e-3,
-                                max_iter=800,
-                                random_state=42,
-                            ),
-                        ),
-                    ]
-                ),
-                f"hidden_layers=({hidden_1}, {hidden_2})",
+    ) -> tuple[Any, str]:
+        if model_name == "RandomForestDualStage":
+            model = DualStageRandomForestClassifier(
+                n_estimators=280,
+                random_state=200,
+                max_depth=None,
+                min_samples_leaf=1,
+                min_samples_split=2,
+                max_features="sqrt",
             )
-        if model_name == "LogisticRegression":
             return (
-                Pipeline(
-                    [
-                        ("scaler", StandardScaler()),
-                        (
-                            "logreg",
-                            LogisticRegression(
-                                max_iter=2000,
-                                C=1.0,
-                                solver="lbfgs",
-                            ),
-                        ),
-                    ]
-                ),
-                "solver=lbfgs, max_iter=2000",
+                model,
+                "hierarchical RF (column + row), n_estimators=280, random_state=200",
             )
-        if model_name == "SVM":
+        if model_name == "RandomForestUnified":
+            model = RandomForestClassifier(
+                n_estimators=320,
+                random_state=200,
+                max_depth=None,
+                min_samples_leaf=1,
+                min_samples_split=2,
+                max_features="sqrt",
+                n_jobs=-1,
+            )
             return (
-                Pipeline(
-                    [
-                        ("scaler", StandardScaler()),
-                        (
-                            "svm",
-                            SVC(
-                                kernel="rbf",
-                                C=2.0,
-                                gamma="scale",
-                                probability=True,
-                                random_state=42,
-                            ),
-                        ),
-                    ]
-                ),
-                "kernel=rbf, C=2.0",
+                model,
+                "unified RF, n_estimators=320, random_state=200",
             )
         raise RuntimeError(f"Unsupported model '{model_name}'.")
 
@@ -988,9 +1169,7 @@ class FingerprintEngine:
         class_labels = self._ordered_cell_keys()
         for model_name in self.MODEL_ORDER:
             pipeline, summary = self._build_model_pipeline_locked(model_name)
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", ConvergenceWarning)
-                pipeline.fit(features, labels)
+            pipeline.fit(features, labels)
             self.model_pipelines[model_name] = pipeline
             self.model_metadata_by_name[model_name] = ModelMetadata(
                 model_key=model_name,
@@ -1089,7 +1268,7 @@ class FingerprintEngine:
         payload = load_pickle_store(self.model_path)
         if not isinstance(payload, dict):
             return
-        loaded_models: dict[str, Pipeline] = {}
+        loaded_models: dict[str, Any] = {}
         loaded_metadata: dict[str, ModelMetadata] = {}
 
         if "models" in payload:
@@ -1099,6 +1278,8 @@ class FingerprintEngine:
                 return
             for model_name, model_payload in models_raw.items():
                 if not isinstance(model_payload, dict):
+                    continue
+                if model_name not in self.MODEL_ORDER:
                     continue
                 pipeline = model_payload.get("pipeline")
                 metadata_raw = model_payload.get("metadata")
@@ -1116,11 +1297,17 @@ class FingerprintEngine:
             if pipeline is None or not isinstance(metadata_raw, dict):
                 remove_store(self.model_path)
                 return
-            metadata = self._metadata_from_payload("MLP", metadata_raw)
+            fallback_model_name = str(
+                metadata_raw.get("model_key", "RandomForestUnified")
+            )
+            if fallback_model_name not in self.MODEL_ORDER:
+                remove_store(self.model_path)
+                return
+            metadata = self._metadata_from_payload(fallback_model_name, metadata_raw)
             if self._model_metadata_matches_config(metadata):
-                loaded_models["MLP"] = pipeline
-                loaded_metadata["MLP"] = metadata
-            active_model_name = "MLP"
+                loaded_models[fallback_model_name] = pipeline
+                loaded_metadata[fallback_model_name] = metadata
+            active_model_name = fallback_model_name
 
         if not loaded_models:
             remove_store(self.model_path)
@@ -1289,6 +1476,18 @@ class FingerprintEngine:
         return [
             sum(vector[index] for vector in vectors) / len(vectors)
             for index in range(usable)
+        ]
+
+    @staticmethod
+    def _vector_std(vectors: list[list[float]], means: list[float]) -> list[float]:
+        if not vectors or not means:
+            return []
+        count = len(vectors)
+        return [
+            math.sqrt(
+                sum((vector[index] - means[index]) ** 2 for vector in vectors) / count
+            )
+            for index in range(len(means))
         ]
 
     def _ordered_cell_keys(self) -> list[str]:
