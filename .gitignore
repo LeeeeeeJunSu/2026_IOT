@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+
+.venv/
+venv/
+
+app/data/communication.log
+app/data/mlp_model.pkl
+
+firmware/esp32-csi-fingerprint-node/build/

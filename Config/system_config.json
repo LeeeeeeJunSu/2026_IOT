@@ -1,0 +1,63 @@
+{
+  "host": {
+    "listen_host": "0.0.0.0",
+    "target_ip": "172.20.10.2",
+    "udp_port": 5005,
+    "keepalive_pings_per_second": 10.0
+  },
+  "grid": {
+    "cols": 2,
+    "rows": 2
+  },
+  "fingerprinting": {
+    "capture_seconds": 10.0,
+    "window_seconds": 1.0,
+    "window_step_seconds": 0.1,
+    "minimum_samples_per_node": 6,
+    "feature_bin_count": 12
+  },
+  "simulation": {
+    "tick_hz": 12.0,
+    "frame_burst_size": 1,
+    "movement_interval_seconds": 5.0,
+    "path_mode": "snake",
+    "amplitude_noise": 0.18,
+    "phase_jitter": 0.05,
+    "start_cell": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "nodes": [
+    {
+      "node_id": 1,
+      "label": "ESP 1",
+      "enabled": true,
+      "com_port": "",
+      "wifi_ssid": "Phoneeeee",
+      "wifi_password": ".KMN1204",
+      "wifi_channel": 6,
+      "source_kind": "firmware_or_simulator"
+    },
+    {
+      "node_id": 2,
+      "label": "ESP 2",
+      "enabled": true,
+      "com_port": "",
+      "wifi_ssid": "Phoneeeee",
+      "wifi_password": ".KMN1204",
+      "wifi_channel": 6,
+      "source_kind": "firmware_or_simulator"
+    },
+    {
+      "node_id": 3,
+      "label": "ESP 3",
+      "enabled": true,
+      "com_port": "COM4",
+      "wifi_ssid": "Phoneeeee",
+      "wifi_password": ".KMN1204",
+      "wifi_channel": 6,
+      "source_kind": "firmware_or_simulator"
+    }
+  ]
+}

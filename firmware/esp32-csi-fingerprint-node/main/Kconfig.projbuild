@@ -1,0 +1,43 @@
+menu "CSI Fingerprinting Node Configuration"
+
+    config CSI_DEFAULT_WIFI_SSID
+        string "Default WiFi SSID"
+        default ""
+        help
+            Fallback SSID used when NVS does not contain provisioning data.
+
+    config CSI_DEFAULT_WIFI_PASSWORD
+        string "Default WiFi password"
+        default ""
+        help
+            Fallback password used when NVS does not contain provisioning data.
+
+    config CSI_DEFAULT_TARGET_IP
+        string "Default UDP target IP"
+        default "192.168.1.100"
+        help
+            Desktop app or collector IP address for the UDP CSI stream.
+
+    config CSI_DEFAULT_TARGET_PORT
+        int "Default UDP target port"
+        default 5005
+        range 1024 65535
+        help
+            UDP port used by the desktop fingerprinting app.
+
+    config CSI_DEFAULT_NODE_ID
+        int "Default node ID"
+        default 1
+        range 0 255
+        help
+            Unique node identifier encoded into ADR-018 frames.
+
+    config CSI_DEFAULT_WIFI_CHANNEL
+        int "Default WiFi channel"
+        default 6
+        range 1 13
+        help
+            Expected WiFi channel for the access point.
+
+endmenu
+
