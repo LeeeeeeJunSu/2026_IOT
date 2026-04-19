@@ -11,7 +11,6 @@ class HostConfig:
     listen_host: str = "0.0.0.0"
     target_ip: str = "127.0.0.1"
     udp_port: int = 5005
-    keepalive_pings_per_second: float = 0.0
 
 
 @dataclass
@@ -25,8 +24,19 @@ class FingerprintingConfig:
     capture_seconds: float = 4.0
     window_seconds: float = 0.5
     window_step_seconds: float = 0.05
+    effective_packets_per_second: float = 20.0
+    window_sample_count: int = 10
+    window_step_samples: int = 1
     minimum_samples_per_node: int = 6
     feature_bin_count: int = 12
+    baseline_capture_seconds: float = 5.0
+    baseline_start_delay_seconds: float = 8.0
+    baseline_required_for_training: bool = True
+    smoothing_half_window: int = 20
+    live_probability_smoothing_seconds: float = 0.0
+    best_cell_switch_margin: float = 0.0
+    best_cell_switch_delay_seconds: float = 0.0
+    prediction_stale_grace_seconds: float = 1.25
 
 
 @dataclass
@@ -37,7 +47,7 @@ class StartCellConfig:
 
 @dataclass
 class SimulationConfig:
-    tick_hz: float = 12.0
+    tick_hz: float = 20.0
     frame_burst_size: int = 1
     movement_interval_seconds: float = 5.0
     path_mode: str = "snake"
@@ -84,10 +94,6 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
         listen_host=str(host_raw.get("listen_host", "0.0.0.0")),
         target_ip=str(host_raw.get("target_ip", "127.0.0.1")),
         udp_port=int(host_raw.get("udp_port", 5005)),
-        keepalive_pings_per_second=max(
-            0.0,
-            float(host_raw.get("keepalive_pings_per_second", 0.0)),
-        ),
     )
     grid = GridConfig(
         cols=max(1, int(raw.get("grid", {}).get("cols", 3))),
@@ -97,6 +103,10 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
     capture_seconds = max(
         1.0,
         float(fingerprinting_raw.get("capture_seconds", 4.0)),
+    )
+    effective_packets_per_second = max(
+        1.0,
+        float(fingerprinting_raw.get("effective_packets_per_second", 20.0)),
     )
     window_seconds = max(
         0.25,
@@ -117,10 +127,42 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             window_seconds,
         ),
     )
+    window_sample_count = max(
+        1,
+        int(
+            fingerprinting_raw.get(
+                "window_sample_count",
+                max(1, int(round(window_seconds * effective_packets_per_second))),
+            )
+        ),
+    )
+    window_step_samples = max(
+        1,
+        min(
+            int(
+                fingerprinting_raw.get(
+                    "window_step_samples",
+                    max(1, int(round(window_step_seconds * effective_packets_per_second))),
+                )
+            ),
+            window_sample_count,
+        ),
+    )
+    window_seconds = min(
+        capture_seconds,
+        float(window_sample_count) / effective_packets_per_second,
+    )
+    window_step_seconds = min(
+        window_seconds,
+        float(window_step_samples) / effective_packets_per_second,
+    )
     fingerprinting = FingerprintingConfig(
         capture_seconds=capture_seconds,
         window_seconds=window_seconds,
         window_step_seconds=window_step_seconds,
+        effective_packets_per_second=effective_packets_per_second,
+        window_sample_count=window_sample_count,
+        window_step_samples=window_step_samples,
         minimum_samples_per_node=max(
             1,
             int(fingerprinting_raw.get("minimum_samples_per_node", 6)),
@@ -129,10 +171,46 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             4,
             int(fingerprinting_raw.get("feature_bin_count", 12)),
         ),
+        baseline_capture_seconds=max(
+            1.0,
+            float(fingerprinting_raw.get("baseline_capture_seconds", 5.0)),
+        ),
+        baseline_start_delay_seconds=max(
+            0.0,
+            float(fingerprinting_raw.get("baseline_start_delay_seconds", 8.0)),
+        ),
+        baseline_required_for_training=bool(
+            fingerprinting_raw.get("baseline_required_for_training", True)
+        ),
+        smoothing_half_window=max(
+            0,
+            int(fingerprinting_raw.get("smoothing_half_window", 20)),
+        ),
+        live_probability_smoothing_seconds=max(
+            0.0,
+            float(
+                fingerprinting_raw.get(
+                    "live_probability_smoothing_seconds",
+                    0.0,
+                )
+            ),
+        ),
+        best_cell_switch_margin=max(
+            0.0,
+            float(fingerprinting_raw.get("best_cell_switch_margin", 0.0)),
+        ),
+        best_cell_switch_delay_seconds=max(
+            0.0,
+            float(fingerprinting_raw.get("best_cell_switch_delay_seconds", 0.0)),
+        ),
+        prediction_stale_grace_seconds=max(
+            0.0,
+            float(fingerprinting_raw.get("prediction_stale_grace_seconds", 1.25)),
+        ),
     )
     simulation_raw = raw.get("simulation", {})
     simulation = SimulationConfig(
-        tick_hz=max(1.0, float(simulation_raw.get("tick_hz", 12.0))),
+        tick_hz=max(1.0, float(simulation_raw.get("tick_hz", 20.0))),
         frame_burst_size=max(1, int(simulation_raw.get("frame_burst_size", 1))),
         movement_interval_seconds=max(
             0.5,
@@ -171,7 +249,6 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
             "listen_host": config.host.listen_host,
             "target_ip": config.host.target_ip,
             "udp_port": config.host.udp_port,
-            "keepalive_pings_per_second": config.host.keepalive_pings_per_second,
         },
         "grid": {
             "cols": config.grid.cols,
@@ -181,8 +258,31 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
             "capture_seconds": config.fingerprinting.capture_seconds,
             "window_seconds": config.fingerprinting.window_seconds,
             "window_step_seconds": config.fingerprinting.window_step_seconds,
+            "effective_packets_per_second": (
+                config.fingerprinting.effective_packets_per_second
+            ),
+            "window_sample_count": config.fingerprinting.window_sample_count,
+            "window_step_samples": config.fingerprinting.window_step_samples,
             "minimum_samples_per_node": config.fingerprinting.minimum_samples_per_node,
             "feature_bin_count": config.fingerprinting.feature_bin_count,
+            "baseline_capture_seconds": config.fingerprinting.baseline_capture_seconds,
+            "baseline_start_delay_seconds": (
+                config.fingerprinting.baseline_start_delay_seconds
+            ),
+            "baseline_required_for_training": (
+                config.fingerprinting.baseline_required_for_training
+            ),
+            "smoothing_half_window": config.fingerprinting.smoothing_half_window,
+            "live_probability_smoothing_seconds": (
+                config.fingerprinting.live_probability_smoothing_seconds
+            ),
+            "best_cell_switch_margin": config.fingerprinting.best_cell_switch_margin,
+            "best_cell_switch_delay_seconds": (
+                config.fingerprinting.best_cell_switch_delay_seconds
+            ),
+            "prediction_stale_grace_seconds": (
+                config.fingerprinting.prediction_stale_grace_seconds
+            ),
         },
         "simulation": {
             "tick_hz": config.simulation.tick_hz,

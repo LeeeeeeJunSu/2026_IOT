@@ -23,7 +23,7 @@ class FingerprintAppWindow:
         self.capture_var = tk.DoubleVar(value=self.engine.capture_seconds)
         self.window_var = tk.DoubleVar(value=self.engine.window_seconds)
         self.window_step_var = tk.DoubleVar(value=self.engine.window_step_seconds)
-        self.keepalive_var = tk.DoubleVar(value=self.engine.keepalive_pings_per_second)
+        self.baseline_delay_var = tk.DoubleVar(value=self.engine.baseline_start_delay_seconds)
         self.model_var = tk.StringVar(value=self.engine.active_model_name or "")
         self.summary_var = tk.StringVar()
         self.capture_status_var = tk.StringVar()
@@ -35,6 +35,8 @@ class FingerprintAppWindow:
         self.model_selector: ttk.Combobox | None = None
         self.train_button: ttk.Button | None = None
         self.apply_button: ttk.Button | None = None
+        self.baseline_button: ttk.Button | None = None
+        self.clear_baseline_button: ttk.Button | None = None
         self.comm_log_listbox: tk.Listbox | None = None
         self.refresh_job: str | None = None
         self.settings_inputs: tuple[tk.Widget, ...] = ()
@@ -55,7 +57,7 @@ class FingerprintAppWindow:
 
         controls = ttk.LabelFrame(outer, text="Shared Config Driven Controls", padding=12)
         controls.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 12))
-        for column in range(18):
+        for column in range(20):
             controls.columnconfigure(column, weight=1)
 
         ttk.Label(controls, text="Grid X").grid(row=0, column=0, sticky="w")
@@ -106,23 +108,23 @@ class FingerprintAppWindow:
             width=8,
         )
         window_step_spinbox.grid(row=0, column=9, sticky="w")
-        ttk.Label(controls, text="Ping/s").grid(row=0, column=10, sticky="w")
-        keepalive_spinbox = ttk.Spinbox(
+        ttk.Label(controls, text="Baseline Delay (sec)").grid(row=0, column=10, sticky="w")
+        baseline_delay_spinbox = ttk.Spinbox(
             controls,
             from_=0,
-            to=20,
+            to=60,
             increment=0.5,
-            textvariable=self.keepalive_var,
+            textvariable=self.baseline_delay_var,
             width=8,
         )
-        keepalive_spinbox.grid(row=0, column=11, sticky="w")
+        baseline_delay_spinbox.grid(row=0, column=11, sticky="w")
         self.settings_inputs = (
             cols_spinbox,
             rows_spinbox,
             capture_spinbox,
             window_spinbox,
             window_step_spinbox,
-            keepalive_spinbox,
+            baseline_delay_spinbox,
         )
         self.apply_button = ttk.Button(
             controls,
@@ -130,14 +132,26 @@ class FingerprintAppWindow:
             command=self.on_apply_grid,
         )
         self.apply_button.grid(row=0, column=12, padx=(8, 0), sticky="ew")
+        self.baseline_button = ttk.Button(
+            controls,
+            text="Capture Baseline",
+            command=self.on_capture_baseline,
+        )
+        self.baseline_button.grid(row=0, column=13, padx=(8, 0), sticky="ew")
+        self.clear_baseline_button = ttk.Button(
+            controls,
+            text="Clear Baseline",
+            command=self.on_clear_baseline,
+        )
+        self.clear_baseline_button.grid(row=0, column=14, padx=(8, 0), sticky="ew")
         ttk.Button(controls, text="Clear All", command=self.on_clear_all).grid(
-            row=0, column=13, padx=(8, 0), sticky="ew"
+            row=0, column=15, padx=(8, 0), sticky="ew"
         )
         self.train_button = ttk.Button(
             controls, text="Train Models", command=self.on_train_models
         )
-        self.train_button.grid(row=0, column=14, padx=(8, 0), sticky="ew")
-        ttk.Label(controls, text="Inference Model").grid(row=0, column=15, sticky="w")
+        self.train_button.grid(row=0, column=16, padx=(8, 0), sticky="ew")
+        ttk.Label(controls, text="Inference Model").grid(row=0, column=17, sticky="w")
         self.model_selector = ttk.Combobox(
             controls,
             textvariable=self.model_var,
@@ -145,25 +159,25 @@ class FingerprintAppWindow:
             values=(),
             width=18,
         )
-        self.model_selector.grid(row=0, column=16, columnspan=2, sticky="ew")
+        self.model_selector.grid(row=0, column=18, columnspan=2, sticky="ew")
         self.model_selector.bind("<<ComboboxSelected>>", self.on_select_model)
         ttk.Label(controls, textvariable=self.summary_var).grid(
-            row=1, column=0, columnspan=8, sticky="w", pady=(10, 0)
+            row=1, column=0, columnspan=9, sticky="w", pady=(10, 0)
         )
         ttk.Label(controls, textvariable=self.capture_status_var).grid(
-            row=1, column=8, columnspan=4, sticky="w", pady=(10, 0)
+            row=1, column=9, columnspan=5, sticky="w", pady=(10, 0)
         )
         ttk.Label(controls, textvariable=self.prediction_var).grid(
-            row=1, column=12, columnspan=6, sticky="w", pady=(10, 0)
+            row=1, column=14, columnspan=6, sticky="w", pady=(10, 0)
         )
         ttk.Label(controls, textvariable=self.udp_var).grid(
-            row=2, column=0, columnspan=18, sticky="w", pady=(8, 0)
+            row=2, column=0, columnspan=20, sticky="w", pady=(8, 0)
         )
         ttk.Label(
             controls,
             textvariable=self.message_var,
             foreground="#23435f",
-        ).grid(row=3, column=0, columnspan=18, sticky="w", pady=(8, 0))
+        ).grid(row=3, column=0, columnspan=20, sticky="w", pady=(8, 0))
 
         grid_panel = ttk.LabelFrame(outer, text="Grid Heatmap", padding=8)
         grid_panel.grid(row=1, column=0, sticky="nsew", padx=(0, 12))
@@ -318,7 +332,7 @@ class FingerprintAppWindow:
             capture = self.capture_var.get()
             window = self.window_var.get()
             window_step = self.window_step_var.get()
-            keepalive = self.keepalive_var.get()
+            baseline_delay = self.baseline_delay_var.get()
         except tk.TclError:
             messagebox.showwarning(
                 "Invalid input",
@@ -348,16 +362,44 @@ class FingerprintAppWindow:
             capture,
             window,
             window_step,
-            keepalive,
+            baseline_delay,
         )
         self._rebuild_grid(self.engine.grid_cols, self.engine.grid_rows)
 
     def on_clear_all(self) -> None:
         if messagebox.askyesno(
             "Clear all?",
-            "Clear every learned cell dataset and all trained models?",
+            "Clear every learned cell dataset and all trained models? The baseline will be kept.",
         ):
             self.engine.clear_all()
+
+    def on_capture_baseline(self) -> None:
+        snapshot = self.engine.snapshot()
+        reset_training = False
+        if snapshot["training"]["trained_cells"] > 0:
+            reset_training = messagebox.askyesno(
+                "Re-capture baseline?",
+                "Capturing a new baseline clears all learned cell datasets and trained models. Continue?",
+            )
+            if not reset_training:
+                return
+        try:
+            self.engine.start_baseline_capture(reset_training=reset_training)
+        except RuntimeError as exc:
+            messagebox.showwarning("Baseline unavailable", str(exc))
+
+    def on_clear_baseline(self) -> None:
+        snapshot = self.engine.snapshot()
+        if not snapshot["baseline"]["ready"]:
+            messagebox.showinfo("No baseline", "There is no saved baseline to clear.")
+            return
+        prompt = "Clear the empty-room baseline?"
+        if snapshot["training"]["trained_cells"] > 0:
+            prompt = (
+                "Clearing the empty-room baseline also clears learned cell datasets and trained models. Continue?"
+            )
+        if messagebox.askyesno("Clear baseline?", prompt):
+            self.engine.clear_baseline()
 
     def on_train_models(self) -> None:
         try:
@@ -398,27 +440,42 @@ class FingerprintAppWindow:
             self.capture_var.set(snapshot["grid"]["capture_seconds"])
             self.window_var.set(snapshot["grid"]["window_seconds"])
             self.window_step_var.set(snapshot["grid"]["window_step_seconds"])
-            self.keepalive_var.set(snapshot["host"]["keepalive_pings_per_second"])
+            self.baseline_delay_var.set(snapshot["baseline"]["start_delay_seconds"])
         self.model_var.set(snapshot["training"]["active_model"] or "")
 
         self.summary_var.set(
+            f"Baseline: {snapshot['baseline']['captured_nodes']} / {snapshot['baseline']['required_nodes']} nodes | "
+            f"Window: {snapshot['grid']['window_sample_count']} samp / stride {snapshot['grid']['window_step_samples']} | "
             f"Cells: {snapshot['training']['trained_cells']} / {snapshot['training']['total_cells']} | "
             f"Samples: {snapshot['training']['dataset_samples']} | "
-            f"Models: {snapshot['training']['trained_model_count']} / 3 | "
-            f"Nodes: {snapshot['training']['required_nodes']} | "
+            f"Models: {snapshot['training']['trained_model_count']} | "
             f"Packets: {snapshot['metrics']['packet_count']}"
         )
         capture = snapshot["capture"]
         if capture["active"]:
-            self.capture_status_var.set(
-                f"Capturing ({capture['grid_x'] + 1}, {capture['grid_y'] + 1}) - "
-                f"{capture['remaining_seconds']:.1f}s left"
-            )
+            if capture["kind"] == "baseline":
+                if capture["started"]:
+                    self.capture_status_var.set(
+                        f"Capturing empty-room baseline - {capture['remaining_seconds']:.1f}s left"
+                    )
+                else:
+                    self.capture_status_var.set(
+                        f"Baseline starts in {capture['delay_remaining_seconds']:.1f}s"
+                    )
+            else:
+                self.capture_status_var.set(
+                    f"Capturing ({capture['grid_x'] + 1}, {capture['grid_y'] + 1}) - "
+                    f"{capture['remaining_seconds']:.1f}s left"
+                )
         else:
             self.capture_status_var.set("Capture idle")
 
         prediction = snapshot["prediction"]
-        if prediction["ready"] and prediction["best_cell_key"]:
+        if snapshot["baseline"]["required"] and not snapshot["baseline"]["ready"]:
+            self.prediction_var.set(
+                "Capture an empty-room baseline before collecting cell fingerprints."
+            )
+        elif prediction["ready"] and prediction["best_cell_key"]:
             best_x, best_y = [
                 int(value) for value in prediction["best_cell_key"].split(",")
             ]
@@ -440,7 +497,6 @@ class FingerprintAppWindow:
         self.udp_var.set(
             f"{snapshot['udp_status']} | target IP for firmware/simulator: "
             f"{snapshot['host']['target_ip']}:{snapshot['host']['udp_port']} | "
-            f"keepalive ping/s: {snapshot['host']['keepalive_pings_per_second']:.1f} | "
             f"config: {snapshot['host']['config_path']} | "
             f"log: {snapshot['comm_log_path']}"
         )
@@ -516,6 +572,18 @@ class FingerprintAppWindow:
             )
             if str(self.train_button.cget("state")) != train_state:
                 self.train_button.configure(state=train_state)
+        if self.baseline_button is not None:
+            baseline_state = "normal" if not capture_active else "disabled"
+            if str(self.baseline_button.cget("state")) != baseline_state:
+                self.baseline_button.configure(state=baseline_state)
+        if self.clear_baseline_button is not None:
+            clear_baseline_state = (
+                "normal"
+                if snapshot["baseline"]["ready"] and not capture_active
+                else "disabled"
+            )
+            if str(self.clear_baseline_button.cget("state")) != clear_baseline_state:
+                self.clear_baseline_button.configure(state=clear_baseline_state)
 
     def _refresh_nodes(self, nodes: list[dict[str, object]]) -> None:
         current = set(self.node_tree.get_children())
@@ -609,7 +677,7 @@ class FingerprintAppWindow:
             capture = self.capture_var.get()
             window = self.window_var.get()
             window_step = self.window_step_var.get()
-            keepalive = self.keepalive_var.get()
+            baseline_delay = self.baseline_delay_var.get()
         except tk.TclError:
             return True
 
@@ -619,7 +687,7 @@ class FingerprintAppWindow:
             or abs(capture - snapshot["grid"]["capture_seconds"]) > 1e-9
             or abs(window - snapshot["grid"]["window_seconds"]) > 1e-9
             or abs(window_step - snapshot["grid"]["window_step_seconds"]) > 1e-9
-            or abs(keepalive - snapshot["host"]["keepalive_pings_per_second"]) > 1e-9
+            or abs(baseline_delay - snapshot["baseline"]["start_delay_seconds"]) > 1e-9
         )
 
     def on_close(self) -> None:

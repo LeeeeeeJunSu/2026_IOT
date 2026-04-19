@@ -10,7 +10,6 @@ if str(REPO_ROOT) not in sys.path:
 
 from app.core import FingerprintEngine
 from app.gui import FingerprintAppWindow
-from app.keepalive import KeepalivePingThread
 from app.receiver import UdpReceiverThread
 
 
@@ -22,15 +21,11 @@ def main() -> int:
         engine.system_config.host.listen_host,
         engine.system_config.host.udp_port,
     )
-    keepalive = KeepalivePingThread(engine)
     receiver.start()
-    keepalive.start()
     window = FingerprintAppWindow(engine, receiver)
     try:
         window.run()
     finally:
-        keepalive.stop()
-        keepalive.join(timeout=1.5)
         receiver.stop()
         receiver.join(timeout=1.5)
     return 0

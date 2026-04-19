@@ -66,6 +66,14 @@ class CaptureSession:
 
 
 @dataclass
+class BaselineCaptureSession:
+    ready_at: float
+    started_at: float
+    ends_at: float
+    frames_by_node: dict[int, list[FeatureFrame]] = field(default_factory=dict)
+
+
+@dataclass
 class ModelMetadata:
     model_key: str
     trained_at: float
@@ -181,13 +189,8 @@ class DualStageRandomForestClassifier:
 
 
 class FingerprintEngine:
-    STORE_VERSION = 4
-    PROBABILITY_SMOOTHING_SECONDS = 0.8
-    BEST_CELL_SWITCH_MARGIN = 0.08
-    BEST_CELL_SWITCH_DELAY_SECONDS = 0.9
-    PREDICTION_STALE_GRACE_SECONDS = 1.25
+    STORE_VERSION = 5
     MODEL_ORDER = ("RandomForestDualStage", "RandomForestUnified")
-    CSI_SMOOTHING_HALF_WINDOW = 20
     LIVE_PREPROCESS_HORIZON_WINDOWS = 6
 
     def __init__(self, workspace_root: str | Path) -> None:
@@ -202,6 +205,7 @@ class FingerprintEngine:
         self.live_nodes: dict[int, LiveNodeState] = {}
         self.cell_datasets: dict[str, CellDataset] = {}
         self.capture_session: CaptureSession | None = None
+        self.baseline_capture_session: BaselineCaptureSession | None = None
         self.packet_count = 0
         self.last_packet_ts: float | None = None
         self.last_probabilities: dict[str, float] = {}
@@ -216,7 +220,7 @@ class FingerprintEngine:
         self.empty_room_baseline_by_node: dict[int, list[float]] = {}
         self.empty_room_baseline_counts: dict[int, int] = {}
         self.status_message = (
-            "Press Learn on each cell to collect data, then click Train Models."
+            "Capture an empty-room baseline, then press Learn on each cell and click Train Models."
         )
         self.udp_status = (
             f"Ready for UDP {self.system_config.host.listen_host}:{self.system_config.host.udp_port}"
@@ -234,6 +238,10 @@ class FingerprintEngine:
             self.status_message = (
                 f"Loaded {len(self.model_pipelines)} trained models. "
                 f"Active model: {self.active_model_name}."
+            )
+        elif self._baseline_ready_locked():
+            self.status_message = (
+                "Empty-room baseline loaded. Press Learn on each cell to collect data."
             )
         elif any(dataset.window_sample_count > 0 for dataset in self.cell_datasets.values()):
             self.status_message = (
@@ -272,15 +280,55 @@ class FingerprintEngine:
 
     @property
     def window_seconds(self) -> float:
-        return self.system_config.fingerprinting.window_seconds
+        return float(self.window_sample_count) / self.effective_packets_per_second
 
     @property
     def window_step_seconds(self) -> float:
-        return self.system_config.fingerprinting.window_step_seconds
+        return float(self.window_step_samples) / self.effective_packets_per_second
 
     @property
-    def keepalive_pings_per_second(self) -> float:
-        return self.system_config.host.keepalive_pings_per_second
+    def effective_packets_per_second(self) -> float:
+        return self.system_config.fingerprinting.effective_packets_per_second
+
+    @property
+    def window_sample_count(self) -> int:
+        return self.system_config.fingerprinting.window_sample_count
+
+    @property
+    def window_step_samples(self) -> int:
+        return self.system_config.fingerprinting.window_step_samples
+
+    @property
+    def baseline_capture_seconds(self) -> float:
+        return self.system_config.fingerprinting.baseline_capture_seconds
+
+    @property
+    def baseline_start_delay_seconds(self) -> float:
+        return self.system_config.fingerprinting.baseline_start_delay_seconds
+
+    @property
+    def baseline_required_for_training(self) -> bool:
+        return self.system_config.fingerprinting.baseline_required_for_training
+
+    @property
+    def smoothing_half_window(self) -> int:
+        return self.system_config.fingerprinting.smoothing_half_window
+
+    @property
+    def probability_smoothing_seconds(self) -> float:
+        return self.system_config.fingerprinting.live_probability_smoothing_seconds
+
+    @property
+    def best_cell_switch_margin(self) -> float:
+        return self.system_config.fingerprinting.best_cell_switch_margin
+
+    @property
+    def best_cell_switch_delay_seconds(self) -> float:
+        return self.system_config.fingerprinting.best_cell_switch_delay_seconds
+
+    @property
+    def prediction_stale_grace_seconds(self) -> float:
+        return self.system_config.fingerprinting.prediction_stale_grace_seconds
 
     @property
     def required_node_ids(self) -> list[int]:
@@ -304,8 +352,12 @@ class FingerprintEngine:
 
     def train_models(self) -> str:
         with self.lock:
-            if self.capture_session is not None:
-                raise RuntimeError("Wait for the current Learn capture to finish first.")
+            if self.capture_session is not None or self.baseline_capture_session is not None:
+                raise RuntimeError("Wait for the current capture to finish first.")
+            if self.baseline_required_for_training and not self._baseline_ready_locked():
+                raise RuntimeError(
+                    "Capture an empty-room baseline for every enabled ESP32 before training."
+                )
             if not self._can_train_locked():
                 raise RuntimeError(
                     "Every cell needs at least one Learn capture before training all models."
@@ -324,6 +376,59 @@ class FingerprintEngine:
             self._save_models()
             self._log_event_locked("TRAIN", f"Active inference model set to {model_name}")
 
+    def start_baseline_capture(self, *, reset_training: bool = False) -> None:
+        with self.lock:
+            now = time.time()
+            self._advance_capture_locked(now)
+            if self.capture_session is not None or self.baseline_capture_session is not None:
+                raise RuntimeError("Another capture is already running.")
+            if self.cell_datasets and not reset_training:
+                raise RuntimeError(
+                    "Re-capturing the baseline requires clearing the learned cell datasets first."
+                )
+            if reset_training:
+                self._reset_training_state_locked(clear_baseline=False)
+            ready_at = now + self.baseline_start_delay_seconds
+            self.baseline_capture_session = BaselineCaptureSession(
+                ready_at=ready_at,
+                started_at=ready_at,
+                ends_at=ready_at + self.baseline_capture_seconds,
+            )
+            if self.baseline_start_delay_seconds > 0.0:
+                self.status_message = (
+                    f"Baseline capture will start in {self.baseline_start_delay_seconds:.1f}s. "
+                    f"Leave the room, then keep it empty for {self.baseline_capture_seconds:.1f}s."
+                )
+            else:
+                self.status_message = (
+                    "Started empty-room baseline capture. Leave the room empty for "
+                    f"{self.baseline_capture_seconds:.1f}s."
+                )
+            self._log_event_locked(
+                "BASELINE",
+                f"Baseline capture armed with {self.baseline_start_delay_seconds:.1f}s delay "
+                f"and {self.baseline_capture_seconds:.1f}s capture",
+            )
+
+    def clear_baseline(self) -> None:
+        with self.lock:
+            self.baseline_capture_session = None
+            self.empty_room_baseline_by_node.clear()
+            self.empty_room_baseline_counts.clear()
+            self._save_datasets()
+            if self.cell_datasets:
+                self._reset_training_state_locked(clear_baseline=False)
+                self.status_message = (
+                    "Cleared the empty-room baseline and learned cell datasets. "
+                    "Capture a new baseline before learning again."
+                )
+            else:
+                self._clear_models_locked()
+                self.status_message = (
+                    "Cleared the empty-room baseline. Capture a new baseline before learning."
+                )
+            self._log_event_locked("BASELINE", "Cleared empty-room baseline")
+
     def apply_grid_settings(
         self,
         cols: int,
@@ -331,7 +436,7 @@ class FingerprintEngine:
         capture_seconds: float,
         window_seconds: float,
         window_step_seconds: float,
-        keepalive_pings_per_second: float | None = None,
+        baseline_start_delay_seconds: float | None = None,
     ) -> None:
         with self.lock:
             cols = max(1, int(cols))
@@ -342,9 +447,6 @@ class FingerprintEngine:
                 0.05,
                 min(float(window_step_seconds), window_seconds),
             )
-            if keepalive_pings_per_second is None:
-                keepalive_pings_per_second = self.keepalive_pings_per_second
-            keepalive_pings_per_second = max(0.0, float(keepalive_pings_per_second))
             grid_changed = cols != self.grid_cols or rows != self.grid_rows
             window_changed = not math.isclose(window_seconds, self.window_seconds, abs_tol=1e-6)
             window_step_changed = not math.isclose(
@@ -352,17 +454,39 @@ class FingerprintEngine:
                 self.window_step_seconds,
                 abs_tol=1e-6,
             )
+            window_sample_count = max(
+                1,
+                int(round(window_seconds * self.effective_packets_per_second)),
+            )
+            window_step_samples = max(
+                1,
+                min(
+                    int(round(window_step_seconds * self.effective_packets_per_second)),
+                    window_sample_count,
+                ),
+            )
+            if baseline_start_delay_seconds is None:
+                baseline_start_delay_seconds = self.baseline_start_delay_seconds
+            baseline_start_delay_seconds = max(0.0, float(baseline_start_delay_seconds))
 
             self.system_config.grid.cols = cols
             self.system_config.grid.rows = rows
             self.system_config.fingerprinting.capture_seconds = capture_seconds
-            self.system_config.fingerprinting.window_seconds = window_seconds
-            self.system_config.fingerprinting.window_step_seconds = window_step_seconds
-            self.system_config.host.keepalive_pings_per_second = keepalive_pings_per_second
+            self.system_config.fingerprinting.window_sample_count = window_sample_count
+            self.system_config.fingerprinting.window_step_samples = window_step_samples
+            self.system_config.fingerprinting.window_seconds = (
+                float(window_sample_count) / self.effective_packets_per_second
+            )
+            self.system_config.fingerprinting.window_step_seconds = (
+                float(window_step_samples) / self.effective_packets_per_second
+            )
+            self.system_config.fingerprinting.baseline_start_delay_seconds = (
+                baseline_start_delay_seconds
+            )
             save_system_config(self.config_path, self.system_config)
 
             if grid_changed or window_changed or window_step_changed:
-                self._reset_training_state_locked()
+                self._reset_training_state_locked(clear_baseline=False)
                 reason = []
                 if grid_changed:
                     reason.append(f"grid {cols}x{rows}")
@@ -384,15 +508,23 @@ class FingerprintEngine:
                 self._log_event_locked(
                     "CFG",
                     f"Updated capture_seconds to {capture_seconds:.2f}s, "
-                    f"window_seconds to {window_seconds:.2f}s, "
-                    f"window_step_seconds to {window_step_seconds:.2f}s, "
-                    f"and keepalive ping rate to {keepalive_pings_per_second:.1f}/s",
+                    f"window_seconds to {self.system_config.fingerprinting.window_seconds:.2f}s "
+                    f"({window_sample_count} samples), "
+                    f"window_step_seconds to {self.system_config.fingerprinting.window_step_seconds:.2f}s "
+                    f"(stride {window_step_samples}), "
+                    f"baseline_start_delay_seconds to {baseline_start_delay_seconds:.2f}s",
                 )
 
     def start_capture(self, grid_x: int, grid_y: int) -> None:
         with self.lock:
             now = time.time()
             self._advance_capture_locked(now)
+            if self.baseline_capture_session is not None:
+                raise RuntimeError("Wait for the current baseline capture to finish first.")
+            if self.baseline_required_for_training and not self._baseline_ready_locked():
+                raise RuntimeError(
+                    "Capture an empty-room baseline before collecting cell fingerprints."
+                )
             if self.capture_session is not None:
                 active = self.capture_session
                 raise RuntimeError(
@@ -408,14 +540,14 @@ class FingerprintEngine:
             self.status_message = (
                 f"Started capture for cell ({grid_x + 1}, {grid_y + 1}). "
                 f"Hold position for {self.capture_seconds:.1f}s. "
-                f"Window size: {self.window_seconds:.2f}s. "
-                f"Step: {self.window_step_seconds:.2f}s."
+                f"Window size: {self.window_sample_count} samples (~{self.window_seconds:.2f}s). "
+                f"Step: {self.window_step_samples} sample (~{self.window_step_seconds:.2f}s)."
             )
             self._log_event_locked(
                 "CAPTURE",
                 f"Capture started for cell ({grid_x + 1}, {grid_y + 1}) for "
-                f"{self.capture_seconds:.1f}s with {self.window_seconds:.2f}s windows "
-                f"and {self.window_step_seconds:.2f}s step",
+                f"{self.capture_seconds:.1f}s with {self.window_sample_count}-sample windows "
+                f"and stride {self.window_step_samples}",
             )
 
     def clear_cell(self, grid_x: int, grid_y: int) -> None:
@@ -435,9 +567,9 @@ class FingerprintEngine:
 
     def clear_all(self) -> None:
         with self.lock:
-            self._reset_training_state_locked()
+            self._reset_training_state_locked(clear_baseline=False)
             self.status_message = (
-                "Cleared all saved Learn data and all trained models."
+                "Cleared all saved Learn data and all trained models. The baseline was kept."
             )
             self._log_event_locked("CAPTURE", "Cleared all saved training data and models")
 
@@ -464,7 +596,6 @@ class FingerprintEngine:
             node_window = self.node_windows.setdefault(feature.node_id, deque())
             node_window.append(feature)
             self._prune_node_window_locked(feature.node_id, now)
-            self._update_empty_room_baseline_locked(feature)
 
             node_state = self.live_nodes.get(feature.node_id)
             if node_state is None:
@@ -496,6 +627,14 @@ class FingerprintEngine:
                     f"rssi={feature.rssi_dbm:.1f} snr={feature.snr_db:.1f} source={source}",
                 )
 
+            if (
+                self.baseline_capture_session is not None
+                and self.baseline_capture_session.started_at <= now <= self.baseline_capture_session.ends_at
+            ):
+                self.baseline_capture_session.frames_by_node.setdefault(feature.node_id, []).append(
+                    feature
+                )
+
             if self.capture_session is not None and now <= self.capture_session.ends_at:
                 self.capture_session.frames_by_node.setdefault(feature.node_id, []).append(
                     feature
@@ -514,17 +653,60 @@ class FingerprintEngine:
 
             capture_payload: dict[str, object] = {
                 "active": False,
+                "kind": None,
+                "label": "",
+                "started": False,
                 "grid_x": None,
                 "grid_y": None,
                 "remaining_seconds": 0.0,
+                "delay_remaining_seconds": 0.0,
                 "progress": [],
             }
-            if self.capture_session is not None:
+            if self.baseline_capture_session is not None:
+                baseline_started = now >= self.baseline_capture_session.started_at
                 capture_payload = {
                     "active": True,
+                    "kind": "baseline",
+                    "label": (
+                        "Empty-room baseline"
+                        if baseline_started
+                        else "Empty-room baseline (waiting)"
+                    ),
+                    "started": baseline_started,
+                    "grid_x": None,
+                    "grid_y": None,
+                    "remaining_seconds": max(
+                        0.0,
+                        (
+                            self.baseline_capture_session.ends_at - now
+                            if baseline_started
+                            else self.baseline_capture_seconds
+                        ),
+                    ),
+                    "delay_remaining_seconds": max(
+                        0.0,
+                        self.baseline_capture_session.started_at - now,
+                    ),
+                    "progress": [
+                        {
+                            "node_id": node_id,
+                            "sample_count": len(frames),
+                        }
+                        for node_id, frames in sorted(
+                            self.baseline_capture_session.frames_by_node.items()
+                        )
+                    ],
+                }
+            elif self.capture_session is not None:
+                capture_payload = {
+                    "active": True,
+                    "kind": "cell",
+                    "label": f"Cell ({self.capture_session.grid_x + 1}, {self.capture_session.grid_y + 1})",
+                    "started": True,
                     "grid_x": self.capture_session.grid_x,
                     "grid_y": self.capture_session.grid_y,
                     "remaining_seconds": max(0.0, self.capture_session.ends_at - now),
+                    "delay_remaining_seconds": 0.0,
                     "progress": [
                         {
                             "node_id": node_id,
@@ -587,13 +769,13 @@ class FingerprintEngine:
             available_models = self._available_model_names_locked()
             active_model_ready = self.active_model_name in self.model_pipelines
             live_prediction_ready = active_model_ready and bool(self.last_probabilities)
+            baseline_ready = self._baseline_ready_locked()
 
             return {
                 "host": {
                     "listen_host": self.system_config.host.listen_host,
                     "target_ip": self.system_config.host.target_ip,
                     "udp_port": self.system_config.host.udp_port,
-                    "keepalive_pings_per_second": self.system_config.host.keepalive_pings_per_second,
                     "config_path": str(self.config_path),
                 },
                 "grid": {
@@ -602,18 +784,36 @@ class FingerprintEngine:
                     "capture_seconds": self.capture_seconds,
                     "window_seconds": self.window_seconds,
                     "window_step_seconds": self.window_step_seconds,
+                    "effective_packets_per_second": self.effective_packets_per_second,
+                    "window_sample_count": self.window_sample_count,
+                    "window_step_samples": self.window_step_samples,
                 },
                 "training": {
                     "trained_cells": trained_cells,
                     "total_cells": self.total_cells,
                     "dataset_samples": dataset_samples,
                     "required_nodes": len(self.required_node_ids),
+                    "baseline_ready": baseline_ready,
                     "model_ready": active_model_ready,
                     "can_train": self._can_train_locked(),
                     "active_model": self.active_model_name,
                     "available_models": available_models,
                     "trained_model_count": len(available_models),
                     "ready_for_inference": live_prediction_ready,
+                },
+                "baseline": {
+                    "ready": baseline_ready,
+                    "required": self.baseline_required_for_training,
+                    "capture_seconds": self.baseline_capture_seconds,
+                    "start_delay_seconds": self.baseline_start_delay_seconds,
+                    "captured_nodes": len(
+                        [
+                            node_id
+                            for node_id in self.required_node_ids
+                            if node_id in self.empty_room_baseline_by_node
+                        ]
+                    ),
+                    "required_nodes": len(self.required_node_ids),
                 },
                 "metrics": {
                     "packet_count": self.packet_count,
@@ -644,6 +844,25 @@ class FingerprintEngine:
             }
 
     def _advance_capture_locked(self, now: float) -> None:
+        if self.baseline_capture_session is not None:
+            if (
+                self.baseline_capture_session.ready_at > 0.0
+                and now >= self.baseline_capture_session.ready_at
+            ):
+                self.baseline_capture_session.ready_at = 0.0
+                self.status_message = (
+                    "Baseline capture started. Keep the room empty for "
+                    f"{self.baseline_capture_seconds:.1f}s."
+                )
+                self._log_event_locked(
+                    "BASELINE",
+                    f"Baseline capture started for {self.baseline_capture_seconds:.1f}s",
+                )
+            if now >= self.baseline_capture_session.ends_at:
+                session = self.baseline_capture_session
+                self.baseline_capture_session = None
+                self._finalize_baseline_capture_locked(session, now)
+
         if self.capture_session is None or now < self.capture_session.ends_at:
             return
         session = self.capture_session
@@ -660,8 +879,8 @@ class FingerprintEngine:
         if not samples:
             self.status_message = (
                 f"Capture failed for cell ({session.grid_x + 1}, {session.grid_y + 1}): "
-                f"no complete {self.window_seconds:.2f}s windows at "
-                f"{self.window_step_seconds:.2f}s steps with all "
+                f"no complete {self.window_sample_count}-sample windows at "
+                f"stride {self.window_step_samples} with all "
                 f"{len(self.required_node_ids)} required nodes."
             )
             self._log_event_locked(
@@ -711,19 +930,66 @@ class FingerprintEngine:
             f"captures={merged_capture_count}",
         )
 
+    def _finalize_baseline_capture_locked(
+        self,
+        session: BaselineCaptureSession,
+        captured_at: float,
+    ) -> None:
+        required_node_ids = self.required_node_ids
+        captured_nodes = 0
+        total_frames = 0
+        updated_baselines: dict[int, list[float]] = {}
+        updated_counts: dict[int, int] = {}
+
+        for node_id in required_node_ids:
+            frames = session.frames_by_node.get(node_id, [])
+            total_frames += len(frames)
+            vectors = [
+                frame.feature_vector
+                for frame in frames
+                if len(frame.feature_vector) == ACTIVE_SUBCARRIER_COUNT
+            ]
+            if not vectors:
+                continue
+            captured_nodes += 1
+            updated_baselines[node_id] = self._vector_mean(vectors)
+            updated_counts[node_id] = len(vectors)
+
+        if captured_nodes < len(required_node_ids):
+            self.status_message = (
+                "Baseline capture failed: missing CSI frames from one or more enabled ESP32 nodes."
+            )
+            self._log_event_locked(
+                "BASELINE",
+                f"Baseline capture failed; captured_nodes={captured_nodes}/{len(required_node_ids)} "
+                f"frames={total_frames}",
+            )
+            return
+
+        self.empty_room_baseline_by_node.update(updated_baselines)
+        self.empty_room_baseline_counts.update(updated_counts)
+        self._save_datasets()
+        self.status_message = (
+            f"Baseline capture completed: {captured_nodes}/{len(required_node_ids)} nodes, "
+            f"{total_frames} total frames. Press Learn on each cell."
+        )
+        self._log_event_locked(
+            "BASELINE",
+            f"Baseline capture completed with {captured_nodes}/{len(required_node_ids)} nodes "
+            f"and {total_frames} total frames",
+        )
+
     def _build_dataset_samples_locked(
         self, session: CaptureSession
     ) -> tuple[list[list[float]], int, int, int, int]:
         required_node_ids = self.required_node_ids
-        duration = session.ends_at - session.started_at
-        window_starts = self._window_start_offsets(duration)
-        total_window_slots = len(window_starts)
-        if total_window_slots <= 0 or not required_node_ids:
-            return [], total_window_slots, 0, 0, 0
+        if not required_node_ids:
+            return [], 0, 0, 0, 0
 
         total_frames = 0
         observed_node_ids: set[int] = set()
-        features_by_node: dict[int, list[list[float] | None]] = {}
+        features_by_node: dict[int, list[list[float]]] = {}
+        window_counts: list[int] = []
 
         for node_id in required_node_ids:
             frames = session.frames_by_node.get(node_id, [])
@@ -733,24 +999,23 @@ class FingerprintEngine:
             features_by_node[node_id] = self._build_window_feature_vectors(
                 frames,
                 node_id,
-                session.started_at,
-                window_starts,
             )
+            window_counts.append(len(features_by_node[node_id]))
+
+        if not window_counts:
+            return [], 0, 0, total_frames, len(observed_node_ids)
+
+        total_window_slots = max(window_counts)
+        valid_window_count = min(window_counts)
+        if valid_window_count <= 0:
+            return [], total_window_slots, 0, total_frames, len(observed_node_ids)
 
         samples: list[list[float]] = []
-        valid_window_count = 0
-        for index, _window_start in enumerate(window_starts):
+        for index in range(valid_window_count):
             sample: list[float] = []
-            complete = True
             for node_id in required_node_ids:
-                feature_vector = features_by_node[node_id][index]
-                if feature_vector is None:
-                    complete = False
-                    break
-                sample.extend(feature_vector)
-            if complete:
-                samples.append(sample)
-                valid_window_count += 1
+                sample.extend(features_by_node[node_id][index])
+            samples.append(sample)
 
         return (
             samples,
@@ -760,64 +1025,28 @@ class FingerprintEngine:
             len(observed_node_ids),
         )
 
-    def _window_start_offsets(self, duration: float) -> list[float]:
-        if duration + 1e-9 < self.window_seconds:
-            return []
-        slot_count = (
-            int(
-                math.floor(
-                    (duration - self.window_seconds) / self.window_step_seconds + 1e-9
-                )
-            )
-            + 1
-        )
-        return [
-            index * self.window_step_seconds for index in range(max(0, slot_count))
-        ]
-
     def _build_window_feature_vectors(
         self,
         frames: list[FeatureFrame],
         node_id: int,
-        session_started_at: float,
-        window_starts: list[float],
-    ) -> list[list[float] | None]:
-        if not window_starts:
-            return []
-
-        usable_frames: list[tuple[float, list[float]]] = []
-        max_window_end = window_starts[-1] + self.window_seconds
-        for frame in frames:
-            offset = frame.captured_at - session_started_at
-            if offset < 0.0 or offset >= max_window_end:
-                continue
+    ) -> list[list[float]]:
+        usable_vectors: list[list[float]] = []
+        for frame in sorted(frames, key=lambda item: item.captured_at):
             if len(frame.feature_vector) != ACTIVE_SUBCARRIER_COUNT:
                 continue
-            usable_frames.append((offset, frame.feature_vector))
+            usable_vectors.append(frame.feature_vector)
 
-        if not usable_frames:
-            return [None for _ in window_starts]
+        if len(usable_vectors) < self.window_sample_count:
+            return []
 
-        usable_frames.sort(key=lambda item: item[0])
-        timestamps = [offset for offset, _ in usable_frames]
-        raw_vectors = [vector for _, vector in usable_frames]
-        preprocessed = self._preprocess_node_vectors_locked(node_id, raw_vectors)
-
-        features: list[list[float] | None] = []
-        left = 0
-        right = 0
-        for window_start in window_starts:
-            window_end = window_start + self.window_seconds
-            while left < len(timestamps) and timestamps[left] < window_start:
-                left += 1
-            if right < left:
-                right = left
-            while right < len(timestamps) and timestamps[right] < window_end:
-                right += 1
-            if right <= left:
-                features.append(None)
-                continue
-            window_vectors = preprocessed[left:right]
+        preprocessed = self._preprocess_node_vectors_locked(node_id, usable_vectors)
+        features: list[list[float]] = []
+        for start in range(
+            0,
+            len(preprocessed) - self.window_sample_count + 1,
+            self.window_step_samples,
+        ):
+            window_vectors = preprocessed[start : start + self.window_sample_count]
             means = self._vector_mean(window_vectors)
             stds = self._vector_std(window_vectors, means)
             features.append([*means, *stds])
@@ -851,7 +1080,7 @@ class FingerprintEngine:
             [vector[index] / scales[index] for index in range(feature_size)]
             for vector in centered
         ]
-        return self._smooth_vectors(normalized, self.CSI_SMOOTHING_HALF_WINDOW)
+        return self._smooth_vectors(normalized, self.smoothing_half_window)
 
     def _baseline_vector_for_node_locked(
         self,
@@ -862,27 +1091,6 @@ class FingerprintEngine:
         if cached is not None and len(cached) == len(vectors[0]):
             return cached
         return self._vector_mean(vectors)
-
-    def _update_empty_room_baseline_locked(self, frame: FeatureFrame) -> None:
-        if self.capture_session is not None:
-            return
-        if self.cell_datasets:
-            return
-        vector = frame.feature_vector
-        if len(vector) != ACTIVE_SUBCARRIER_COUNT:
-            return
-        baseline = self.empty_room_baseline_by_node.get(frame.node_id)
-        count = self.empty_room_baseline_counts.get(frame.node_id, 0)
-        if baseline is None or len(baseline) != len(vector):
-            self.empty_room_baseline_by_node[frame.node_id] = list(vector)
-            self.empty_room_baseline_counts[frame.node_id] = 1
-            return
-
-        new_count = min(5000, count + 1)
-        weight = 1.0 / float(new_count)
-        for index, value in enumerate(vector):
-            baseline[index] += (value - baseline[index]) * weight
-        self.empty_room_baseline_counts[frame.node_id] = new_count
 
     @classmethod
     def _smooth_vectors(
@@ -929,7 +1137,7 @@ class FingerprintEngine:
         sample = self._build_live_sample_locked(now)
         if sample is None:
             stale_after = max(
-                self.PREDICTION_STALE_GRACE_SECONDS,
+                self.prediction_stale_grace_seconds,
                 self.window_seconds * 1.5,
             )
             if (
@@ -977,8 +1185,11 @@ class FingerprintEngine:
         if not self.last_probabilities or self.last_prediction_ts is None:
             return dict(raw_probabilities)
 
+        if self.probability_smoothing_seconds <= 0.0:
+            return dict(raw_probabilities)
+
         smoothing_seconds = max(
-            self.PROBABILITY_SMOOTHING_SECONDS,
+            self.probability_smoothing_seconds,
             self.window_seconds * 0.75,
         )
         delta_seconds = max(0.0, now - self.last_prediction_ts)
@@ -1028,13 +1239,16 @@ class FingerprintEngine:
         pending_age = 0.0
         if self.pending_best_since is not None:
             pending_age = max(0.0, now - self.pending_best_since)
-        switch_delay = max(
-            self.BEST_CELL_SWITCH_DELAY_SECONDS,
-            self.window_seconds * 0.75,
-        )
+        if self.best_cell_switch_delay_seconds <= 0.0:
+            switch_delay = 0.0
+        else:
+            switch_delay = max(
+                self.best_cell_switch_delay_seconds,
+                self.window_seconds * 0.75,
+            )
         if (
             candidate_probability
-            >= current_probability + self.BEST_CELL_SWITCH_MARGIN
+            >= current_probability + self.best_cell_switch_margin
             or pending_age >= switch_delay
         ):
             self.last_best_cell = candidate_best
@@ -1055,42 +1269,50 @@ class FingerprintEngine:
         required_node_ids = self.required_node_ids
         if not required_node_ids:
             return None
+        if self.baseline_required_for_training and not self._baseline_ready_locked():
+            return None
 
-        live_horizon_seconds = max(
-            self.window_seconds * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
-            self.window_seconds + self.window_step_seconds * 2.0,
-            2.0,
+        required_recent_frames = max(
+            self.window_sample_count + self.smoothing_half_window * 2,
+            self.window_sample_count * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
         )
-        live_start = now - live_horizon_seconds
-        target_window_start = live_horizon_seconds - self.window_seconds
         sample: list[float] = []
         for node_id in required_node_ids:
             node_window = self.node_windows.get(node_id)
             if not node_window:
                 return None
-            recent_frames = [
-                frame
-                for frame in node_window
-                if frame.captured_at >= live_start
-            ]
-            if not recent_frames:
+            recent_frames = list(node_window)[-required_recent_frames:]
+            if len(recent_frames) < self.window_sample_count:
                 return None
             per_node_features = self._build_window_feature_vectors(
                 recent_frames,
                 node_id,
-                live_start,
-                [target_window_start],
             )
-            if not per_node_features or per_node_features[0] is None:
+            if not per_node_features:
                 return None
-            sample.extend(per_node_features[0])
+            sample.extend(per_node_features[-1])
 
         if len(sample) != self.expected_input_size:
             return None
         return sample
 
+    def _baseline_ready_locked(self) -> bool:
+        required_node_ids = self.required_node_ids
+        if not required_node_ids:
+            return False
+        return all(
+            node_id in self.empty_room_baseline_by_node
+            and len(self.empty_room_baseline_by_node[node_id]) == ACTIVE_SUBCARRIER_COUNT
+            for node_id in required_node_ids
+        )
+
     def _can_train_locked(self) -> bool:
         ordered_cell_keys = self._ordered_cell_keys()
+        if (
+            self.baseline_required_for_training
+            and not self._baseline_ready_locked()
+        ):
+            return False
         if len(self.cell_datasets) != self.total_cells or self.expected_input_size <= 0:
             return False
         return all(
@@ -1219,6 +1441,21 @@ class FingerprintEngine:
         self._loaded_store_input_size = (
             int(raw["input_size"]) if "input_size" in raw else None
         )
+        baseline_raw = raw.get("baseline", {})
+        if isinstance(baseline_raw, dict):
+            vectors_raw = baseline_raw.get("vectors", {})
+            counts_raw = baseline_raw.get("counts", {})
+            if isinstance(vectors_raw, dict):
+                self.empty_room_baseline_by_node = {
+                    int(node_id): [float(value) for value in vector]
+                    for node_id, vector in vectors_raw.items()
+                    if isinstance(vector, list)
+                }
+            if isinstance(counts_raw, dict):
+                self.empty_room_baseline_counts = {
+                    int(node_id): int(count)
+                    for node_id, count in counts_raw.items()
+                }
 
         for cell_key, payload in raw.get("cells", {}).items():
             samples_raw = payload.get("samples")
@@ -1248,6 +1485,16 @@ class FingerprintEngine:
             "window_step_seconds": self.window_step_seconds,
             "node_ids": self.required_node_ids,
             "input_size": self.expected_input_size,
+            "baseline": {
+                "vectors": {
+                    str(node_id): vector
+                    for node_id, vector in sorted(self.empty_room_baseline_by_node.items())
+                },
+                "counts": {
+                    str(node_id): count
+                    for node_id, count in sorted(self.empty_room_baseline_counts.items())
+                },
+            },
             "cells": {
                 cell_key: {
                     "grid_x": cell.grid_x,
@@ -1410,6 +1657,25 @@ class FingerprintEngine:
             self.cell_datasets = normalized
             self._save_datasets()
 
+        valid_node_ids = set(self.required_node_ids)
+        filtered_baselines = {
+            node_id: vector
+            for node_id, vector in self.empty_room_baseline_by_node.items()
+            if node_id in valid_node_ids and len(vector) == ACTIVE_SUBCARRIER_COUNT
+        }
+        filtered_counts = {
+            node_id: count
+            for node_id, count in self.empty_room_baseline_counts.items()
+            if node_id in filtered_baselines
+        }
+        if (
+            filtered_baselines != self.empty_room_baseline_by_node
+            or filtered_counts != self.empty_room_baseline_counts
+        ):
+            self.empty_room_baseline_by_node = filtered_baselines
+            self.empty_room_baseline_counts = filtered_counts
+            self._save_datasets()
+
     def _model_metadata_matches_config(self, metadata: ModelMetadata) -> bool:
         if not math.isclose(metadata.window_seconds, self.window_seconds, abs_tol=1e-6):
             return False
@@ -1427,10 +1693,14 @@ class FingerprintEngine:
             return False
         return True
 
-    def _reset_training_state_locked(self) -> None:
+    def _reset_training_state_locked(self, *, clear_baseline: bool) -> None:
+        self.baseline_capture_session = None
         self.capture_session = None
         self.cell_datasets.clear()
         self.node_windows.clear()
+        if clear_baseline:
+            self.empty_room_baseline_by_node.clear()
+            self.empty_room_baseline_counts.clear()
         self._save_datasets()
         self._clear_models_locked()
 

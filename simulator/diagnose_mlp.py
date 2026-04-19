@@ -66,6 +66,9 @@ def _ensure_workspace(root: Path, config_path: Path) -> Path:
 
     config = load_system_config(config_path)
     dumped = dump_system_config(config)
+    # The traffic simulator currently models occupied cells only, so the
+    # diagnostic keeps baseline capture optional inside its temporary workspace.
+    dumped.setdefault("fingerprinting", {})["baseline_required_for_training"] = False
     (config_dir / "system_config.json").write_text(
         json.dumps(dumped, indent=2),
         encoding="utf-8",

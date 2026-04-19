@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
-from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split
 
 
 def parse_args() -> argparse.Namespace:
@@ -80,6 +80,44 @@ def main() -> None:
     train_model.fit(X, y)
     train_pred = train_model.predict(X)
 
+    holdout_results: dict[str, object] = {
+        "available": False,
+    }
+    try:
+        X_train, X_test, y_train, y_test = train_test_split(
+            X,
+            y,
+            test_size=0.30,
+            random_state=200,
+            stratify=y,
+        )
+        holdout_model = make_model(input_size)
+        holdout_model.fit(X_train, y_train)
+        holdout_pred = holdout_model.predict(X_test)
+        holdout_results = {
+            "available": True,
+            "accuracy": accuracy_score(y_test, holdout_pred),
+            "macro_f1": f1_score(y_test, holdout_pred, average="macro"),
+            "report": classification_report(
+                y_test,
+                holdout_pred,
+                labels=ordered_labels,
+                target_names=target_names,
+                digits=4,
+                zero_division=0,
+            ),
+            "confusion_matrix": confusion_matrix(
+                y_test,
+                holdout_pred,
+                labels=ordered_labels,
+            ).tolist(),
+        }
+    except ValueError as exc:
+        holdout_results = {
+            "available": False,
+            "reason": str(exc),
+        }
+
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=200)
     cv_pred = cross_val_predict(make_model(input_size), X, y, cv=cv)
 
@@ -147,6 +185,20 @@ def main() -> None:
     print("=== TRAIN FIT ===")
     print(f"train_accuracy={accuracy_score(y, train_pred):.4f}")
     print(f"train_macro_f1={f1_score(y, train_pred, average='macro'):.4f}")
+    print()
+
+    print("=== PAPER-STYLE 70/30 SPLIT ===")
+    if not holdout_results["available"]:
+        print("holdout_split=unavailable")
+        if "reason" in holdout_results:
+            print(f"reason={holdout_results['reason']}")
+    else:
+        print(f"holdout_accuracy={holdout_results['accuracy']:.4f}")
+        print(f"holdout_macro_f1={holdout_results['macro_f1']:.4f}")
+        print("confusion_matrix_rows=true_cols=pred")
+        for row in holdout_results["confusion_matrix"]:
+            print(row)
+        print(holdout_results["report"])
     print()
 
     print("=== 5-FOLD STRATIFIED CV ===")
