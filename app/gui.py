@@ -39,6 +39,7 @@ class FingerprintAppWindow:
         self.clear_baseline_button: ttk.Button | None = None
         self.comm_log_listbox: tk.Listbox | None = None
         self.refresh_job: str | None = None
+        self.rendered_log_count = 0
         self.settings_inputs: tuple[tk.Widget, ...] = ()
 
         self._build_layout()
@@ -549,7 +550,7 @@ class FingerprintAppWindow:
 
         self._refresh_nodes(snapshot["nodes"])
         self._refresh_logs(snapshot["comm_logs"])
-        self.refresh_job = self.root.after(200, self._refresh)
+        self.refresh_job = self.root.after(250, self._refresh)
 
     def _refresh_model_controls(self, snapshot: dict[str, object]) -> None:
         training = snapshot["training"]
@@ -611,9 +612,13 @@ class FingerprintAppWindow:
         current_size = self.comm_log_listbox.size()
         if current_size == len(logs):
             return
-        self.comm_log_listbox.delete(0, tk.END)
-        for line in logs:
-            self.comm_log_listbox.insert(tk.END, line)
+        if current_size > len(logs):
+            self.comm_log_listbox.delete(0, tk.END)
+            for line in logs:
+                self.comm_log_listbox.insert(tk.END, line)
+        else:
+            for line in logs[current_size:]:
+                self.comm_log_listbox.insert(tk.END, line)
         if logs:
             self.comm_log_listbox.yview_moveto(1.0)
 

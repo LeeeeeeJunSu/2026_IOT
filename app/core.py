@@ -37,6 +37,9 @@ class CellDataset:
     capture_count: int = 1
     node_count: int = 0
     window_sample_count: int = 0
+    observed_window_count: int = 0
+    generated_window_count: int = 0
+    total_window_slots: int = 0
     samples: list[list[float]] = field(default_factory=list)
 
 
@@ -46,6 +49,7 @@ class LiveNodeState:
     label: str
     source: str = ""
     last_seen_ts: float = 0.0
+    last_status_log_ts: float = 0.0
     last_sequence: int = 0
     packets_received: int = 0
     window_samples: int = 0
@@ -62,6 +66,8 @@ class CaptureSession:
     grid_y: int
     started_at: float
     ends_at: float
+    max_ends_at: float = 0.0
+    extension_count: int = 0
     frames_by_node: dict[int, list[FeatureFrame]] = field(default_factory=dict)
 
 
@@ -71,6 +77,18 @@ class BaselineCaptureSession:
     started_at: float
     ends_at: float
     frames_by_node: dict[int, list[FeatureFrame]] = field(default_factory=dict)
+
+
+@dataclass
+class DatasetBuildResult:
+    samples: list[list[float]] = field(default_factory=list)
+    total_frames: int = 0
+    observed_node_count: int = 0
+    total_resampled_slots: int = 0
+    valid_resampled_slots: int = 0
+    total_window_slots: int = 0
+    observed_window_count: int = 0
+    generated_window_count: int = 0
 
 
 @dataclass
@@ -189,9 +207,13 @@ class DualStageRandomForestClassifier:
 
 
 class FingerprintEngine:
-    STORE_VERSION = 5
+    STORE_VERSION = 8
     MODEL_ORDER = ("RandomForestDualStage", "RandomForestUnified")
     LIVE_PREPROCESS_HORIZON_WINDOWS = 6
+    INFERENCE_MIN_INTERVAL_SECONDS = 0.10
+    RUNTIME_MAX_TICK_SECONDS = 0.05
+    NODE_TELEMETRY_REFRESH_SECONDS = 0.25
+    UDP_STATUS_LOG_INTERVAL_SECONDS = 2.0
 
     def __init__(self, workspace_root: str | Path) -> None:
         self.workspace_root = Path(workspace_root)
@@ -214,6 +236,9 @@ class FingerprintEngine:
         self.last_best_probability = 0.0
         self.pending_best_cell: str | None = None
         self.pending_best_since: float | None = None
+        self.last_inference_duration_ms = 0.0
+        self.last_inference_completed_ts: float | None = None
+        self.inference_cycle_count = 0
         self.model_pipelines: dict[str, Any] = {}
         self.model_metadata_by_name: dict[str, ModelMetadata] = {}
         self.active_model_name: str | None = None
@@ -227,10 +252,14 @@ class FingerprintEngine:
         )
         self.comm_logs: deque[str] = deque(maxlen=250)
         self.last_invalid_packet_log_ts = 0.0
+        self._loaded_store_version: int | None = None
         self._loaded_store_window_seconds: float | None = None
         self._loaded_store_window_step_seconds: float | None = None
         self._loaded_store_node_ids: list[int] | None = None
         self._loaded_store_input_size: int | None = None
+        self._inference_dirty = True
+        self._next_inference_ts = 0.0
+        self._last_node_telemetry_refresh_ts = 0.0
         self._load_datasets()
         self._normalize_training_state_for_config()
         self._load_models()
@@ -315,6 +344,22 @@ class FingerprintEngine:
         return self.system_config.fingerprinting.smoothing_half_window
 
     @property
+    def capture_auto_extend_seconds(self) -> float:
+        return self.system_config.fingerprinting.capture_auto_extend_seconds
+
+    @property
+    def capture_extend_step_seconds(self) -> float:
+        return self.system_config.fingerprinting.capture_extend_step_seconds
+
+    @property
+    def minimum_observed_windows(self) -> int:
+        return self.system_config.fingerprinting.minimum_observed_windows
+
+    @property
+    def minimum_observed_window_ratio(self) -> float:
+        return self.system_config.fingerprinting.minimum_observed_window_ratio
+
+    @property
     def probability_smoothing_seconds(self) -> float:
         return self.system_config.fingerprinting.live_probability_smoothing_seconds
 
@@ -329,6 +374,17 @@ class FingerprintEngine:
     @property
     def prediction_stale_grace_seconds(self) -> float:
         return self.system_config.fingerprinting.prediction_stale_grace_seconds
+
+    @property
+    def inference_interval_seconds(self) -> float:
+        return max(self.window_step_seconds, self.INFERENCE_MIN_INTERVAL_SECONDS)
+
+    @property
+    def runtime_tick_seconds(self) -> float:
+        return max(
+            0.02,
+            min(self.RUNTIME_MAX_TICK_SECONDS, self.inference_interval_seconds * 0.5),
+        )
 
     @property
     def required_node_ids(self) -> list[int]:
@@ -349,6 +405,10 @@ class FingerprintEngine:
         with self.lock:
             self.udp_status = message
             self._log_event_locked("UDP", message)
+
+    def run_runtime_tick(self) -> None:
+        with self.lock:
+            self._run_runtime_tick_locked(time.time())
 
     def train_models(self) -> str:
         with self.lock:
@@ -372,6 +432,7 @@ class FingerprintEngine:
                 return
             self.active_model_name = model_name
             self._clear_prediction_locked()
+            self._schedule_inference_now_locked()
             self.status_message = f"Active inference model set to {model_name}."
             self._save_models()
             self._log_event_locked("TRAIN", f"Active inference model set to {model_name}")
@@ -484,6 +545,7 @@ class FingerprintEngine:
                 baseline_start_delay_seconds
             )
             save_system_config(self.config_path, self.system_config)
+            self._schedule_inference_now_locked()
 
             if grid_changed or window_changed or window_step_changed:
                 self._reset_training_state_locked(clear_baseline=False)
@@ -536,6 +598,7 @@ class FingerprintEngine:
                 grid_y=grid_y,
                 started_at=now,
                 ends_at=now + self.capture_seconds,
+                max_ends_at=now + self.capture_seconds + self.capture_auto_extend_seconds,
             )
             self.status_message = (
                 f"Started capture for cell ({grid_x + 1}, {grid_y + 1}). "
@@ -591,7 +654,6 @@ class FingerprintEngine:
         with self.lock:
             self.packet_count += 1
             self.last_packet_ts = now
-            self._advance_capture_locked(now)
 
             node_window = self.node_windows.setdefault(feature.node_id, deque())
             node_window.append(feature)
@@ -614,12 +676,15 @@ class FingerprintEngine:
             node_state.last_seen_ts = now
             node_state.last_sequence = feature.sequence
             node_state.packets_received += 1
-            node_state.window_samples = self._count_recent_frames(node_window, now)
             node_state.rssi_dbm = feature.rssi_dbm
             node_state.noise_floor_dbm = feature.noise_floor_dbm
             node_state.snr_db = feature.snr_db
             node_state.subcarrier_count = feature.n_subcarriers
-            if node_state.packets_received == 1 or node_state.packets_received % 25 == 0:
+            if (
+                node_state.packets_received == 1
+                or now - node_state.last_status_log_ts >= self.UDP_STATUS_LOG_INTERVAL_SECONDS
+            ):
+                node_state.last_status_log_ts = now
                 self._log_event_locked(
                     "UDP",
                     f"Node {feature.node_id} seq={feature.sequence} "
@@ -640,8 +705,7 @@ class FingerprintEngine:
                     feature
                 )
 
-            self._advance_capture_locked(now)
-            self._recompute_probabilities_locked(now)
+            self._mark_inference_dirty_locked()
         return True
 
     def snapshot(self) -> dict[str, object]:
@@ -649,7 +713,7 @@ class FingerprintEngine:
             now = time.time()
             self._advance_capture_locked(now)
             self._prune_all_live_windows_locked(now)
-            self._recompute_probabilities_locked(now)
+            self._refresh_live_node_telemetry_locked(now)
 
             capture_payload: dict[str, object] = {
                 "active": False,
@@ -741,6 +805,18 @@ class FingerprintEngine:
                             "window_sample_count": dataset.window_sample_count
                             if dataset
                             else 0,
+                            "observed_window_count": dataset.observed_window_count
+                            if dataset
+                            else 0,
+                            "generated_window_count": dataset.generated_window_count
+                            if dataset
+                            else 0,
+                            "observed_window_ratio": (
+                                float(dataset.observed_window_count)
+                                / max(1, dataset.total_window_slots)
+                            )
+                            if dataset
+                            else 0.0,
                             "probability": self.last_probabilities.get(cell_key, 0.0),
                             "is_best": self.last_best_cell == cell_key,
                             "is_capturing": self.capture_session is not None
@@ -825,6 +901,12 @@ class FingerprintEngine:
                     "last_packet_age_ms": None
                     if self.last_packet_ts is None
                     else max(0.0, (now - self.last_packet_ts) * 1000.0),
+                    "inference_interval_seconds": self.inference_interval_seconds,
+                    "last_inference_duration_ms": self.last_inference_duration_ms,
+                    "last_inference_age_ms": None
+                    if self.last_inference_completed_ts is None
+                    else max(0.0, (now - self.last_inference_completed_ts) * 1000.0),
+                    "inference_cycle_count": self.inference_cycle_count,
                 },
                 "capture": capture_payload,
                 "prediction": {
@@ -842,6 +924,12 @@ class FingerprintEngine:
                 "comm_logs": list(self.comm_logs),
                 "comm_log_path": str(self.comm_log_path),
             }
+
+    def _run_runtime_tick_locked(self, now: float) -> None:
+        self._advance_capture_locked(now)
+        self._prune_all_live_windows_locked(now)
+        self._refresh_live_node_telemetry_locked(now)
+        self._maybe_recompute_probabilities_locked(now)
 
     def _advance_capture_locked(self, now: float) -> None:
         if self.baseline_capture_session is not None:
@@ -866,17 +954,13 @@ class FingerprintEngine:
         if self.capture_session is None or now < self.capture_session.ends_at:
             return
         session = self.capture_session
+        build_result = self._build_dataset_samples_locked(session)
+        if self._capture_should_extend_locked(session, build_result):
+            self._extend_capture_session_locked(session, build_result)
+            return
         self.capture_session = None
 
-        (
-            samples,
-            total_window_slots,
-            valid_window_count,
-            total_frames,
-            observed_node_count,
-        ) = self._build_dataset_samples_locked(session)
-
-        if not samples:
+        if not build_result.samples:
             self.status_message = (
                 f"Capture failed for cell ({session.grid_x + 1}, {session.grid_y + 1}): "
                 f"no complete {self.window_sample_count}-sample windows at "
@@ -886,19 +970,51 @@ class FingerprintEngine:
             self._log_event_locked(
                 "CAPTURE",
                 f"Capture failed for cell ({session.grid_x + 1}, {session.grid_y + 1}); "
-                f"valid windows=0/{total_window_slots} observed nodes={observed_node_count}/"
+                f"observed windows={build_result.observed_window_count}/"
+                f"{build_result.total_window_slots} observed nodes={build_result.observed_node_count}/"
                 f"{len(self.required_node_ids)}",
             )
             return
 
+        required_observed_windows = self._required_observed_window_count_locked(
+            build_result.total_window_slots
+        )
+        if self._capture_quality_is_insufficient_locked(build_result):
+            self.status_message = (
+                f"Capture failed for cell ({session.grid_x + 1}, {session.grid_y + 1}): "
+                f"only {build_result.observed_window_count}/{build_result.total_window_slots} "
+                f"fully observed windows; need at least {required_observed_windows}. "
+                "Try the cell again or improve signal coverage."
+            )
+            self._log_event_locked(
+                "CAPTURE",
+                f"Capture quality too low for cell ({session.grid_x + 1}, {session.grid_y + 1}); "
+                f"observed windows={build_result.observed_window_count}/"
+                f"{build_result.total_window_slots} required={required_observed_windows} "
+                f"generated={build_result.generated_window_count} frames={build_result.total_frames}",
+            )
+            return
+
         previous = self.cell_datasets.get(session.cell_key)
-        merged_samples = samples
-        merged_total_frames = total_frames
+        merged_samples = build_result.samples
+        merged_total_frames = build_result.total_frames
         merged_capture_count = 1
+        merged_observed_window_count = build_result.observed_window_count
+        merged_generated_window_count = build_result.generated_window_count
+        merged_total_window_slots = build_result.total_window_slots
         if previous is not None:
-            merged_samples = previous.samples + samples
-            merged_total_frames = previous.total_frames + total_frames
+            merged_samples = previous.samples + build_result.samples
+            merged_total_frames = previous.total_frames + build_result.total_frames
             merged_capture_count = previous.capture_count + 1
+            merged_observed_window_count = (
+                previous.observed_window_count + build_result.observed_window_count
+            )
+            merged_generated_window_count = (
+                previous.generated_window_count + build_result.generated_window_count
+            )
+            merged_total_window_slots = (
+                previous.total_window_slots + build_result.total_window_slots
+            )
         self.cell_datasets[session.cell_key] = CellDataset(
             cell_key=session.cell_key,
             grid_x=session.grid_x,
@@ -908,6 +1024,9 @@ class FingerprintEngine:
             capture_count=merged_capture_count,
             node_count=len(self.required_node_ids),
             window_sample_count=len(merged_samples),
+            observed_window_count=merged_observed_window_count,
+            generated_window_count=merged_generated_window_count,
+            total_window_slots=merged_total_window_slots,
             samples=merged_samples,
         )
         self._save_datasets()
@@ -915,8 +1034,9 @@ class FingerprintEngine:
 
         message = (
             f"Capture completed for cell ({session.grid_x + 1}, {session.grid_y + 1}): "
-            f"{valid_window_count}/{total_window_slots} windows kept, "
-            f"{total_frames} frames across {observed_node_count}/"
+            f"{build_result.observed_window_count}/{build_result.total_window_slots} observed "
+            f"windows, {build_result.generated_window_count} generated windows kept, "
+            f"{build_result.total_frames} frames across {build_result.observed_node_count}/"
             f"{len(self.required_node_ids)} required nodes. "
             f"Cell now has {len(merged_samples)} total windows across "
             f"{merged_capture_count} captures. Click Train Models when ready."
@@ -925,8 +1045,9 @@ class FingerprintEngine:
         self._log_event_locked(
             "CAPTURE",
             f"Capture completed for cell ({session.grid_x + 1}, {session.grid_y + 1}) "
-            f"with {valid_window_count}/{total_window_slots} valid windows and "
-            f"{total_frames} frames; accumulated windows={len(merged_samples)} "
+            f"with {build_result.observed_window_count}/{build_result.total_window_slots} "
+            f"observed windows, generated={build_result.generated_window_count} "
+            f"frames={build_result.total_frames}; accumulated windows={len(merged_samples)} "
             f"captures={merged_capture_count}",
         )
 
@@ -944,11 +1065,11 @@ class FingerprintEngine:
         for node_id in required_node_ids:
             frames = session.frames_by_node.get(node_id, [])
             total_frames += len(frames)
-            vectors = [
-                frame.feature_vector
-                for frame in frames
-                if len(frame.feature_vector) == ACTIVE_SUBCARRIER_COUNT
-            ]
+            vectors = self._resample_node_vectors_locked(
+                frames,
+                start_time=session.started_at,
+                end_time=session.ends_at,
+            )
             if not vectors:
                 continue
             captured_nodes += 1
@@ -981,65 +1102,146 @@ class FingerprintEngine:
 
     def _build_dataset_samples_locked(
         self, session: CaptureSession
-    ) -> tuple[list[list[float]], int, int, int, int]:
+    ) -> DatasetBuildResult:
         required_node_ids = self.required_node_ids
         if not required_node_ids:
-            return [], 0, 0, 0, 0
+            return DatasetBuildResult()
 
         total_frames = 0
         observed_node_ids: set[int] = set()
-        features_by_node: dict[int, list[list[float]]] = {}
-        window_counts: list[int] = []
-
         for node_id in required_node_ids:
             frames = session.frames_by_node.get(node_id, [])
             total_frames += len(frames)
             if frames:
                 observed_node_ids.add(node_id)
-            features_by_node[node_id] = self._build_window_feature_vectors(
-                frames,
+
+        result = DatasetBuildResult(
+            total_frames=total_frames,
+            observed_node_count=len(observed_node_ids),
+        )
+
+        (
+            aligned_vectors_by_node,
+            total_resampled_slots,
+            valid_resampled_slots,
+        ) = self._build_aligned_node_vectors_locked(
+            session.frames_by_node,
+            start_time=session.started_at,
+            end_time=session.ends_at,
+        )
+        result.total_resampled_slots = total_resampled_slots
+        result.valid_resampled_slots = valid_resampled_slots
+        if total_resampled_slots <= 0:
+            return result
+
+        features_by_node: dict[int, list[list[float]]] = {}
+        window_counts: list[int] = []
+        for node_id in required_node_ids:
+            features_by_node[node_id] = self._build_window_feature_vectors_from_vectors(
+                aligned_vectors_by_node.get(node_id, []),
                 node_id,
             )
             window_counts.append(len(features_by_node[node_id]))
 
-        if not window_counts:
-            return [], 0, 0, total_frames, len(observed_node_ids)
-
-        total_window_slots = max(window_counts)
-        valid_window_count = min(window_counts)
-        if valid_window_count <= 0:
-            return [], total_window_slots, 0, total_frames, len(observed_node_ids)
+        result.total_window_slots = self._count_window_slots(total_resampled_slots)
+        result.observed_window_count = self._count_window_slots(valid_resampled_slots)
+        result.generated_window_count = min(window_counts) if window_counts else 0
+        if result.generated_window_count <= 0:
+            return result
 
         samples: list[list[float]] = []
-        for index in range(valid_window_count):
+        for index in range(result.generated_window_count):
             sample: list[float] = []
             for node_id in required_node_ids:
                 sample.extend(features_by_node[node_id][index])
             samples.append(sample)
 
-        return (
-            samples,
+        result.samples = samples
+        return result
+
+    def _required_observed_window_count_locked(self, total_window_slots: int) -> int:
+        if total_window_slots <= 0:
+            return 0
+        ratio_target = int(
+            math.ceil(total_window_slots * self.minimum_observed_window_ratio)
+        )
+        return min(
             total_window_slots,
-            valid_window_count,
-            total_frames,
-            len(observed_node_ids),
+            max(self.minimum_observed_windows, ratio_target),
+        )
+
+    def _capture_quality_is_insufficient_locked(
+        self,
+        build_result: DatasetBuildResult,
+    ) -> bool:
+        if build_result.observed_node_count < len(self.required_node_ids):
+            return True
+        required_observed_windows = self._required_observed_window_count_locked(
+            build_result.total_window_slots
+        )
+        return build_result.observed_window_count < required_observed_windows
+
+    def _capture_should_extend_locked(
+        self,
+        session: CaptureSession,
+        build_result: DatasetBuildResult,
+    ) -> bool:
+        if not self._capture_quality_is_insufficient_locked(build_result):
+            return False
+        return session.max_ends_at > session.ends_at + 1e-6
+
+    def _extend_capture_session_locked(
+        self,
+        session: CaptureSession,
+        build_result: DatasetBuildResult,
+    ) -> None:
+        remaining_extension = max(0.0, session.max_ends_at - session.ends_at)
+        if remaining_extension <= 0.0:
+            return
+        extension_seconds = min(self.capture_extend_step_seconds, remaining_extension)
+        session.ends_at += extension_seconds
+        session.extension_count += 1
+        required_observed_windows = self._required_observed_window_count_locked(
+            build_result.total_window_slots
+        )
+        self.status_message = (
+            f"Extending capture for cell ({session.grid_x + 1}, {session.grid_y + 1}) by "
+            f"{extension_seconds:.1f}s because only "
+            f"{build_result.observed_window_count}/{build_result.total_window_slots} "
+            f"observed windows are available (need {required_observed_windows})."
+        )
+        self._log_event_locked(
+            "CAPTURE",
+            f"Extended capture for cell ({session.grid_x + 1}, {session.grid_y + 1}) by "
+            f"{extension_seconds:.1f}s; observed windows="
+            f"{build_result.observed_window_count}/{build_result.total_window_slots} "
+            f"required={required_observed_windows} extensions={session.extension_count}",
         )
 
     def _build_window_feature_vectors(
         self,
         frames: list[FeatureFrame],
         node_id: int,
+        *,
+        start_time: float | None = None,
+        end_time: float | None = None,
     ) -> list[list[float]]:
-        usable_vectors: list[list[float]] = []
-        for frame in sorted(frames, key=lambda item: item.captured_at):
-            if len(frame.feature_vector) != ACTIVE_SUBCARRIER_COUNT:
-                continue
-            usable_vectors.append(frame.feature_vector)
+        vectors = self._resample_node_vectors_locked(
+            frames,
+            start_time=start_time,
+            end_time=end_time,
+        )
+        return self._build_window_feature_vectors_from_vectors(vectors, node_id)
 
-        if len(usable_vectors) < self.window_sample_count:
+    def _build_window_feature_vectors_from_vectors(
+        self,
+        vectors: list[list[float]],
+        node_id: int,
+    ) -> list[list[float]]:
+        if len(vectors) < self.window_sample_count:
             return []
 
-        preprocessed = self._preprocess_node_vectors_locked(node_id, usable_vectors)
+        preprocessed = self._preprocess_node_vectors_locked(node_id, vectors)
         features: list[list[float]] = []
         for start in range(
             0,
@@ -1051,6 +1253,174 @@ class FingerprintEngine:
             stds = self._vector_std(window_vectors, means)
             features.append([*means, *stds])
         return features
+
+    def _resample_node_vectors_locked(
+        self,
+        frames: list[FeatureFrame],
+        *,
+        start_time: float | None = None,
+        end_time: float | None = None,
+    ) -> list[list[float]]:
+        if not frames:
+            return []
+        sorted_frames = sorted(frames, key=lambda item: item.captured_at)
+        if start_time is None:
+            start_time = sorted_frames[0].captured_at
+        if end_time is None:
+            end_time = sorted_frames[-1].captured_at
+        bucketed = self._bucketize_frames_locked(
+            sorted_frames,
+            start_time=start_time,
+            end_time=end_time,
+        )
+        return [vector for vector in bucketed if vector is not None]
+
+    def _build_aligned_node_vectors_locked(
+        self,
+        frames_by_node: dict[int, list[FeatureFrame]],
+        *,
+        start_time: float,
+        end_time: float,
+    ) -> tuple[dict[int, list[list[float]]], int, int]:
+        required_node_ids = self.required_node_ids
+        aligned_by_node = {
+            node_id: [] for node_id in required_node_ids
+        }
+        if not required_node_ids:
+            return aligned_by_node, 0, 0
+
+        bucketed_by_node: dict[int, list[list[float] | None]] = {}
+        total_slots = 0
+        for node_id in required_node_ids:
+            bucketed = self._bucketize_frames_locked(
+                frames_by_node.get(node_id, []),
+                start_time=start_time,
+                end_time=end_time,
+            )
+            bucketed_by_node[node_id] = bucketed
+            total_slots = max(total_slots, len(bucketed))
+
+        if total_slots <= 0:
+            return aligned_by_node, 0, 0
+
+        valid_slots = 0
+        for index in range(total_slots):
+            if any(
+                index >= len(bucketed_by_node[node_id])
+                or bucketed_by_node[node_id][index] is None
+                for node_id in required_node_ids
+            ):
+                continue
+            valid_slots += 1
+
+        filled_by_node: dict[int, list[list[float]]] = {}
+        for node_id in required_node_ids:
+            filled_by_node[node_id] = self._fill_bucket_gaps_locked(
+                node_id,
+                bucketed_by_node.get(node_id, []),
+                total_slots=total_slots,
+            )
+
+        for index in range(total_slots):
+            for node_id in required_node_ids:
+                aligned_by_node[node_id].append(filled_by_node[node_id][index])
+        return aligned_by_node, total_slots, valid_slots
+
+    def _fill_bucket_gaps_locked(
+        self,
+        node_id: int,
+        bucketed: list[list[float] | None],
+        *,
+        total_slots: int,
+    ) -> list[list[float]]:
+        normalized: list[list[float] | None] = list(bucketed[:total_slots])
+        if len(normalized) < total_slots:
+            normalized.extend([None] * (total_slots - len(normalized)))
+
+        observed = [vector for vector in normalized if vector is not None]
+        default_vector = self._default_imputation_vector_locked(node_id, observed)
+
+        last_seen: list[float] | None = None
+        for index, vector in enumerate(normalized):
+            if vector is not None:
+                last_seen = vector
+                continue
+            if last_seen is not None:
+                normalized[index] = list(last_seen)
+
+        next_seen: list[float] | None = None
+        for index in range(total_slots - 1, -1, -1):
+            vector = normalized[index]
+            if vector is not None:
+                next_seen = vector
+                continue
+            if next_seen is not None:
+                normalized[index] = list(next_seen)
+
+        filled: list[list[float]] = []
+        for vector in normalized:
+            filled.append(list(vector) if vector is not None else list(default_vector))
+        return filled
+
+    def _default_imputation_vector_locked(
+        self,
+        node_id: int,
+        observed_vectors: list[list[float]],
+    ) -> list[float]:
+        if observed_vectors:
+            return self._vector_mean(observed_vectors)
+
+        baseline = self.empty_room_baseline_by_node.get(node_id)
+        if baseline:
+            return list(baseline)
+
+        recent_window = self.node_windows.get(node_id)
+        if recent_window:
+            for frame in reversed(recent_window):
+                if len(frame.feature_vector) == ACTIVE_SUBCARRIER_COUNT:
+                    return list(frame.feature_vector)
+
+        return [0.0] * ACTIVE_SUBCARRIER_COUNT
+
+    def _bucketize_frames_locked(
+        self,
+        frames: list[FeatureFrame],
+        *,
+        start_time: float,
+        end_time: float,
+    ) -> list[list[float] | None]:
+        if end_time <= start_time:
+            return []
+        bucket_count = max(
+            1,
+            int(round((end_time - start_time) * self.effective_packets_per_second)),
+        )
+        buckets: list[list[list[float]]] = [[] for _ in range(bucket_count)]
+        for frame in frames:
+            if len(frame.feature_vector) != ACTIVE_SUBCARRIER_COUNT:
+                continue
+            if frame.captured_at < start_time or frame.captured_at > end_time:
+                continue
+            position = (frame.captured_at - start_time) * self.effective_packets_per_second
+            bucket_index = int(position)
+            if bucket_index < 0:
+                continue
+            if bucket_index >= bucket_count:
+                if math.isclose(frame.captured_at, end_time, abs_tol=1e-9):
+                    bucket_index = bucket_count - 1
+                else:
+                    continue
+            buckets[bucket_index].append(frame.feature_vector)
+
+        aggregated: list[list[float] | None] = []
+        for bucket in buckets:
+            aggregated.append(self._vector_mean(bucket) if bucket else None)
+        return aggregated
+
+    def _count_window_slots(self, sample_count: int) -> int:
+        if sample_count < self.window_sample_count:
+            return 0
+        return 1 + (sample_count - self.window_sample_count) // self.window_step_samples
 
     def _preprocess_node_vectors_locked(
         self,
@@ -1265,6 +1635,27 @@ class FingerprintEngine:
 
         self.last_best_probability = current_probability
 
+    def _mark_inference_dirty_locked(self) -> None:
+        self._inference_dirty = True
+
+    def _schedule_inference_now_locked(self) -> None:
+        self._inference_dirty = True
+        self._next_inference_ts = 0.0
+
+    def _maybe_recompute_probabilities_locked(self, now: float) -> None:
+        if now < self._next_inference_ts:
+            return
+        if not self._inference_dirty and not self.last_probabilities:
+            self._next_inference_ts = now + self.inference_interval_seconds
+            return
+        started_at = time.perf_counter()
+        self._recompute_probabilities_locked(now)
+        self.last_inference_duration_ms = (time.perf_counter() - started_at) * 1000.0
+        self.last_inference_completed_ts = now
+        self.inference_cycle_count += 1
+        self._inference_dirty = False
+        self._next_inference_ts = now + self.inference_interval_seconds
+
     def _build_live_sample_locked(self, now: float) -> list[float] | None:
         required_node_ids = self.required_node_ids
         if not required_node_ids:
@@ -1272,20 +1663,36 @@ class FingerprintEngine:
         if self.baseline_required_for_training and not self._baseline_ready_locked():
             return None
 
-        required_recent_frames = max(
+        required_recent_samples = self.window_sample_count + self.smoothing_half_window * 2
+        horizon_sample_count = max(
             self.window_sample_count + self.smoothing_half_window * 2,
             self.window_sample_count * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
         )
+        horizon_seconds = (
+            float(horizon_sample_count) / self.effective_packets_per_second
+        )
+        start_time = now - horizon_seconds
+        aligned_frames_by_node = {
+            node_id: list(self.node_windows.get(node_id, []))
+            for node_id in required_node_ids
+        }
+        (
+            aligned_vectors_by_node,
+            _total_resampled_slots,
+            valid_resampled_slots,
+        ) = self._build_aligned_node_vectors_locked(
+            aligned_frames_by_node,
+            start_time=start_time,
+            end_time=now,
+        )
+        if valid_resampled_slots < required_recent_samples:
+            return None
+
         sample: list[float] = []
         for node_id in required_node_ids:
-            node_window = self.node_windows.get(node_id)
-            if not node_window:
-                return None
-            recent_frames = list(node_window)[-required_recent_frames:]
-            if len(recent_frames) < self.window_sample_count:
-                return None
-            per_node_features = self._build_window_feature_vectors(
-                recent_frames,
+            aligned_vectors = aligned_vectors_by_node.get(node_id, [])
+            per_node_features = self._build_window_feature_vectors_from_vectors(
+                aligned_vectors,
                 node_id,
             )
             if not per_node_features:
@@ -1416,6 +1823,7 @@ class FingerprintEngine:
             if self.active_model_name in self.model_pipelines
             else trained_models[0]
         )
+        self._schedule_inference_now_locked()
         self._save_models()
         self.status_message = (
             f"Trained {len(trained_models)} models on {sample_count} samples. "
@@ -1425,6 +1833,9 @@ class FingerprintEngine:
 
     def _load_datasets(self) -> None:
         raw = load_fingerprint_store(self.fingerprint_path)
+        self._loaded_store_version = (
+            int(raw["version"]) if "version" in raw else None
+        )
         self._loaded_store_window_seconds = (
             float(raw["window_seconds"]) if "window_seconds" in raw else None
         )
@@ -1475,6 +1886,13 @@ class FingerprintEngine:
                 capture_count=max(1, int(payload.get("capture_count", 1))),
                 node_count=int(payload.get("node_count", len(self.required_node_ids))),
                 window_sample_count=int(payload.get("window_sample_count", len(samples))),
+                observed_window_count=int(
+                    payload.get("observed_window_count", len(samples))
+                ),
+                generated_window_count=int(
+                    payload.get("generated_window_count", len(samples))
+                ),
+                total_window_slots=int(payload.get("total_window_slots", len(samples))),
                 samples=samples,
             )
 
@@ -1504,6 +1922,9 @@ class FingerprintEngine:
                     "capture_count": cell.capture_count,
                     "node_count": cell.node_count,
                     "window_sample_count": cell.window_sample_count,
+                    "observed_window_count": cell.observed_window_count,
+                    "generated_window_count": cell.generated_window_count,
+                    "total_window_slots": cell.total_window_slots,
                     "samples": cell.samples,
                 }
                 for cell_key, cell in sorted(self.cell_datasets.items())
@@ -1617,33 +2038,49 @@ class FingerprintEngine:
 
     def _normalize_training_state_for_config(self) -> None:
         valid_cell_keys = set(self._ordered_cell_keys())
-        config_matches = (
-            self._loaded_store_window_seconds is None
-            or math.isclose(
-                self._loaded_store_window_seconds,
-                self.window_seconds,
-                abs_tol=1e-6,
+        mismatch_reasons: list[str] = []
+        config_matches = True
+        if (
+            self._loaded_store_version is not None
+            and self._loaded_store_version != self.STORE_VERSION
+        ):
+            config_matches = False
+            mismatch_reasons.append(
+                f"stored dataset version {self._loaded_store_version} != {self.STORE_VERSION}"
             )
-        )
+        if self._loaded_store_window_seconds is not None and not math.isclose(
+            self._loaded_store_window_seconds,
+            self.window_seconds,
+            abs_tol=1e-6,
+        ):
+            config_matches = False
+            mismatch_reasons.append("window seconds changed")
         if self._loaded_store_window_step_seconds is not None:
-            config_matches = config_matches and math.isclose(
+            step_matches = math.isclose(
                 self._loaded_store_window_step_seconds,
                 self.window_step_seconds,
                 abs_tol=1e-6,
             )
+            config_matches = config_matches and step_matches
+            if not step_matches:
+                mismatch_reasons.append("window step changed")
         if self._loaded_store_node_ids is not None:
-            config_matches = config_matches and self._loaded_store_node_ids == self.required_node_ids
+            node_matches = self._loaded_store_node_ids == self.required_node_ids
+            config_matches = config_matches and node_matches
+            if not node_matches:
+                mismatch_reasons.append("enabled node set changed")
         if self._loaded_store_input_size is not None:
-            config_matches = config_matches and (
-                self._loaded_store_input_size == self.expected_input_size
-            )
+            input_matches = self._loaded_store_input_size == self.expected_input_size
+            config_matches = config_matches and input_matches
+            if not input_matches:
+                mismatch_reasons.append("input size changed")
 
         if not config_matches:
             if self.cell_datasets:
                 self._log_event_locked(
                     "CFG",
-                    "Cleared saved training data because the config no longer matches "
-                    "the stored windowed dataset",
+                    "Cleared saved training data because "
+                    + ", ".join(mismatch_reasons or ["the stored dataset no longer matches the app"]),
                 )
             self.cell_datasets.clear()
             self._save_datasets()
@@ -1709,6 +2146,7 @@ class FingerprintEngine:
         self.model_metadata_by_name = {}
         self.active_model_name = None
         self._clear_prediction_locked()
+        self._schedule_inference_now_locked()
         remove_store(self.model_path)
 
     def _clear_prediction_locked(self) -> None:
@@ -1718,6 +2156,19 @@ class FingerprintEngine:
         self.last_best_probability = 0.0
         self.pending_best_cell = None
         self.pending_best_since = None
+
+    def _refresh_live_node_telemetry_locked(self, now: float) -> None:
+        if (
+            self._last_node_telemetry_refresh_ts > 0.0
+            and now - self._last_node_telemetry_refresh_ts < self.NODE_TELEMETRY_REFRESH_SECONDS
+        ):
+            return
+        for node_id, node_state in self.live_nodes.items():
+            node_state.window_samples = self._count_recent_frames(
+                self.node_windows.get(node_id),
+                now,
+            )
+        self._last_node_telemetry_refresh_ts = now
 
     def _prune_all_live_windows_locked(self, now: float) -> None:
         for node_id in list(self.node_windows):
@@ -1734,9 +2185,16 @@ class FingerprintEngine:
         if not window:
             self.node_windows.pop(node_id, None)
 
-    def _count_recent_frames(self, window: deque[FeatureFrame], now: float) -> int:
+    def _count_recent_frames(self, window: deque[FeatureFrame] | None, now: float) -> int:
+        if not window:
+            return 0
         window_start = now - self.window_seconds
-        return sum(1 for frame in window if frame.captured_at >= window_start)
+        bucketed = self._bucketize_frames_locked(
+            list(window),
+            start_time=window_start,
+            end_time=now,
+        )
+        return sum(1 for vector in bucketed if vector is not None)
 
     @staticmethod
     def _vector_mean(vectors: list[list[float]]) -> list[float]:

@@ -11,6 +11,7 @@ if str(REPO_ROOT) not in sys.path:
 from app.core import FingerprintEngine
 from app.gui import FingerprintAppWindow
 from app.receiver import UdpReceiverThread
+from app.runtime import EngineRuntimeThread
 
 
 def main() -> int:
@@ -21,13 +22,17 @@ def main() -> int:
         engine.system_config.host.listen_host,
         engine.system_config.host.udp_port,
     )
+    runtime = EngineRuntimeThread(engine)
     receiver.start()
+    runtime.start()
     window = FingerprintAppWindow(engine, receiver)
     try:
         window.run()
     finally:
         receiver.stop()
+        runtime.stop()
         receiver.join(timeout=1.5)
+        runtime.join(timeout=1.5)
     return 0
 
 

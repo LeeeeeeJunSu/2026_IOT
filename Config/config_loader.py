@@ -23,9 +23,9 @@ class GridConfig:
 class FingerprintingConfig:
     capture_seconds: float = 4.0
     window_seconds: float = 0.5
-    window_step_seconds: float = 0.05
-    effective_packets_per_second: float = 20.0
-    window_sample_count: int = 10
+    window_step_seconds: float = 0.1
+    effective_packets_per_second: float = 10.0
+    window_sample_count: int = 5
     window_step_samples: int = 1
     minimum_samples_per_node: int = 6
     feature_bin_count: int = 12
@@ -33,6 +33,10 @@ class FingerprintingConfig:
     baseline_start_delay_seconds: float = 8.0
     baseline_required_for_training: bool = True
     smoothing_half_window: int = 20
+    capture_auto_extend_seconds: float = 6.0
+    capture_extend_step_seconds: float = 2.0
+    minimum_observed_windows: int = 8
+    minimum_observed_window_ratio: float = 0.2
     live_probability_smoothing_seconds: float = 0.0
     best_cell_switch_margin: float = 0.0
     best_cell_switch_delay_seconds: float = 0.0
@@ -106,7 +110,7 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
     )
     effective_packets_per_second = max(
         1.0,
-        float(fingerprinting_raw.get("effective_packets_per_second", 20.0)),
+        float(fingerprinting_raw.get("effective_packets_per_second", 10.0)),
     )
     window_seconds = max(
         0.25,
@@ -121,7 +125,7 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             float(
                 fingerprinting_raw.get(
                     "window_step_seconds",
-                    fingerprinting_raw.get("window_seconds", 0.5),
+                    0.1,
                 )
             ),
             window_seconds,
@@ -186,22 +190,41 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             0,
             int(fingerprinting_raw.get("smoothing_half_window", 20)),
         ),
+        capture_auto_extend_seconds=max(
+            0.0,
+            float(fingerprinting_raw.get("capture_auto_extend_seconds", 6.0)),
+        ),
+        capture_extend_step_seconds=max(
+            0.25,
+            float(fingerprinting_raw.get("capture_extend_step_seconds", 2.0)),
+        ),
+        minimum_observed_windows=max(
+            1,
+            int(fingerprinting_raw.get("minimum_observed_windows", 8)),
+        ),
+        minimum_observed_window_ratio=max(
+            0.0,
+            min(
+                1.0,
+                float(fingerprinting_raw.get("minimum_observed_window_ratio", 0.2)),
+            ),
+        ),
         live_probability_smoothing_seconds=max(
             0.0,
             float(
                 fingerprinting_raw.get(
                     "live_probability_smoothing_seconds",
-                    0.0,
+                    0.75,
                 )
             ),
         ),
         best_cell_switch_margin=max(
             0.0,
-            float(fingerprinting_raw.get("best_cell_switch_margin", 0.0)),
+            float(fingerprinting_raw.get("best_cell_switch_margin", 0.05)),
         ),
         best_cell_switch_delay_seconds=max(
             0.0,
-            float(fingerprinting_raw.get("best_cell_switch_delay_seconds", 0.0)),
+            float(fingerprinting_raw.get("best_cell_switch_delay_seconds", 0.5)),
         ),
         prediction_stale_grace_seconds=max(
             0.0,
@@ -273,6 +296,18 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
                 config.fingerprinting.baseline_required_for_training
             ),
             "smoothing_half_window": config.fingerprinting.smoothing_half_window,
+            "capture_auto_extend_seconds": (
+                config.fingerprinting.capture_auto_extend_seconds
+            ),
+            "capture_extend_step_seconds": (
+                config.fingerprinting.capture_extend_step_seconds
+            ),
+            "minimum_observed_windows": (
+                config.fingerprinting.minimum_observed_windows
+            ),
+            "minimum_observed_window_ratio": (
+                config.fingerprinting.minimum_observed_window_ratio
+            ),
             "live_probability_smoothing_seconds": (
                 config.fingerprinting.live_probability_smoothing_seconds
             ),
