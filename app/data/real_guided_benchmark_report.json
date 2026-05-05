@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-04-19 19:37:35",
+  "workspace": "app\\data\\real_guided_benchmark_workspace",
+  "config_path": "app\\data\\real_guided_benchmark_workspace\\Config\\system_config.json",
+  "config": {
+    "cols": 4,
+    "rows": 4,
+    "captures_per_cell": 2,
+    "capture_seconds": 3.0,
+    "move_seconds": 8.0,
+    "baseline_capture_seconds": 3.0,
+    "baseline_move_seconds": 10.0,
+    "stress_duration_seconds": 6.0
+  },
+  "captures": [],
+  "success": false,
+  "finished_at": "2026-04-19 19:37:50",
+  "error": "TimeoutError('Timed out after 15.0s. Last status: Capture an empty-room baseline, then press Learn on each cell and click Train Models.')"
+}

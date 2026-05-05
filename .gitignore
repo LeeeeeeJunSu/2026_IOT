@@ -3,8 +3,10 @@ __pycache__/
 
 .venv/
 venv/
+.esp-idf/
 
 app/data/communication.log
 app/data/model_bundle.pkl
+app/raw_data/
 
 firmware/esp32-csi-fingerprint-node/build/

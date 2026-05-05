@@ -29,12 +29,13 @@ void app_main(void)
     app_config_load(&cfg);
 
     ESP_LOGI(TAG, "ESP32 CSI fingerprint node ready");
-    ESP_LOGI(TAG, "node_id=%u target=%s:%u ssid=%s channel=%u",
+    ESP_LOGI(TAG, "node_id=%u target=%s:%u ssid=%s channel=%u send_interval_ms=%u",
              (unsigned)cfg.node_id,
              cfg.target_ip,
              (unsigned)cfg.target_port,
              cfg.wifi_ssid,
-             (unsigned)cfg.wifi_channel);
+             (unsigned)cfg.wifi_channel,
+             (unsigned)cfg.csi_send_interval_ms);
 
     csi_wifi_station_start(&cfg);
 
@@ -43,7 +44,7 @@ void app_main(void)
         return;
     }
 
-    ESP_ERROR_CHECK(csi_fingerprint_start(cfg.node_id));
+    ESP_ERROR_CHECK(csi_fingerprint_start(cfg.node_id, cfg.csi_send_interval_ms));
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(10000));

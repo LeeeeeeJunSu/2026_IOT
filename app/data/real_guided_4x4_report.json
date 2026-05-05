@@ -1,0 +1,443 @@
+{
+  "started_at": "2026-04-19 19:51:50",
+  "workspace": "app\\data\\real_guided_4x4_workspace",
+  "config_path": "app\\data\\real_guided_4x4_workspace\\Config\\system_config.json",
+  "config": {
+    "cols": 4,
+    "rows": 4,
+    "captures_per_cell": 2,
+    "capture_seconds": 5.0,
+    "move_seconds": 5.0,
+    "baseline_capture_seconds": 4.0,
+    "baseline_move_seconds": 8.0,
+    "stress_duration_seconds": 6.0,
+    "baseline_retries": 3,
+    "capture_retries": 3
+  },
+  "captures": [
+    {
+      "grid_x": 0,
+      "grid_y": 0,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 2199
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 0,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 1830
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 0,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 2144
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 0,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 2349
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 1,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 1110
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 1,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 2411
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 1,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 1998
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 1,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 108
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 2,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 34
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 2,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 28
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 2,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 3662
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 2,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 1204
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 3,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 1093
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 3,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 2608
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 3,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 4268
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 3,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 91,
+      "total_frames": 936
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 0,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 5823
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 0,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 4532
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 0,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 4611
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 0,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 5219
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 1,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 3250
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 1,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 4314
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 1,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 3692
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 1,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 2283
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 2,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 281
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 2,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 28
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 2,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 5673
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 2,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 3599
+    },
+    {
+      "grid_x": 0,
+      "grid_y": 3,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 1287
+    },
+    {
+      "grid_x": 1,
+      "grid_y": 3,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 4826
+    },
+    {
+      "grid_x": 2,
+      "grid_y": 3,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 4860
+    },
+    {
+      "grid_x": 3,
+      "grid_y": 3,
+      "round": 2,
+      "capture_count": 2,
+      "window_sample_count": 182,
+      "total_frames": 2458
+    }
+  ],
+  "udp_ready": {
+    "nodes": [
+      1,
+      2,
+      3
+    ],
+    "packet_count": 14,
+    "udp_status": "Listening on UDP 0.0.0.0:5005"
+  },
+  "baseline": {
+    "captured_nodes": 3,
+    "required_nodes": 3,
+    "status_message": "Baseline capture completed: 3/3 nodes, 989 total frames. Press Learn on each cell."
+  },
+  "training": {
+    "status_message": "Trained 2 models on 2912 samples. Active model: RandomForestDualStage.",
+    "elapsed_seconds": 7.14,
+    "trained_model_count": 2,
+    "available_models": [
+      "RandomForestDualStage",
+      "RandomForestUnified"
+    ],
+    "dataset": {
+      "trained_cells": 16,
+      "total_cells": 16,
+      "dataset_samples": 2912,
+      "per_cell_samples": [
+        {
+          "grid_x": 0,
+          "grid_y": 0,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 1,
+          "grid_y": 0,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 2,
+          "grid_y": 0,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 3,
+          "grid_y": 0,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 0,
+          "grid_y": 1,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 1,
+          "grid_y": 1,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 2,
+          "grid_y": 1,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 3,
+          "grid_y": 1,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 0,
+          "grid_y": 2,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 1,
+          "grid_y": 2,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 2,
+          "grid_y": 2,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 3,
+          "grid_y": 2,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 0,
+          "grid_y": 3,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 1,
+          "grid_y": 3,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 2,
+          "grid_y": 3,
+          "capture_count": 2,
+          "window_sample_count": 182
+        },
+        {
+          "grid_x": 3,
+          "grid_y": 3,
+          "capture_count": 2,
+          "window_sample_count": 182
+        }
+      ]
+    }
+  },
+  "stress": {
+    "results": [
+      {
+        "model_name": "no_model",
+        "processed_packets": 2890,
+        "elapsed_seconds": 6.0,
+        "processed_packets_per_second": 481.6,
+        "last_inference_duration_ms": 0.003,
+        "last_inference_age_ms": 2469.486,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": false,
+        "best_cell_key": null,
+        "best_probability": 0.0
+      },
+      {
+        "model_name": "RandomForestDualStage",
+        "processed_packets": 1880,
+        "elapsed_seconds": 6.001,
+        "processed_packets_per_second": 313.3,
+        "last_inference_duration_ms": 4.418,
+        "last_inference_age_ms": 77.079,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": false,
+        "best_cell_key": null,
+        "best_probability": 0.0
+      },
+      {
+        "model_name": "RandomForestUnified",
+        "processed_packets": 3369,
+        "elapsed_seconds": 6.001,
+        "processed_packets_per_second": 561.4,
+        "last_inference_duration_ms": 7.883,
+        "last_inference_age_ms": 103.215,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": true,
+        "best_cell_key": "3,3",
+        "best_probability": 0.245163
+      }
+    ]
+  },
+  "success": true,
+  "finished_at": "2026-04-19 19:58:11"
+}

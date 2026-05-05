@@ -1,0 +1,30 @@
+[2026-04-19 20:16:11] [INFO] App started with config app\data\real_guided_smoke_workspace\Config\system_config.json and UDP 0.0.0.0:5005
+[2026-04-19 20:16:11] [UDP] Listening on UDP 0.0.0.0:5005
+[2026-04-19 20:16:13] [UDP] First packet from node 3 (ESP 3) source=172.30.1.90:56168
+[2026-04-19 20:16:13] [UDP] Node 3 seq=145502 packets=1 rssi=-55.0 snr=44.0 source=172.30.1.90:56168
+[2026-04-19 20:16:13] [UDP] First packet from node 1 (ESP 1) source=172.30.1.39:62541
+[2026-04-19 20:16:13] [UDP] Node 1 seq=35767 packets=1 rssi=-29.0 snr=64.0 source=172.30.1.39:62541
+[2026-04-19 20:16:13] [UDP] First packet from node 2 (ESP 2) source=172.30.1.1:55622
+[2026-04-19 20:16:13] [UDP] Node 2 seq=300926 packets=1 rssi=-56.0 snr=43.0 source=172.30.1.1:55622
+[2026-04-19 20:16:13] [BASELINE] Baseline capture armed with 0.0s delay and 3.0s capture
+[2026-04-19 20:16:13] [BASELINE] Baseline capture started for 3.0s
+[2026-04-19 20:16:15] [UDP] Node 3 seq=145870 packets=369 rssi=-77.0 snr=22.0 source=172.30.1.90:56168
+[2026-04-19 20:16:15] [UDP] Node 2 seq=301406 packets=481 rssi=-72.0 snr=27.0 source=172.30.1.1:55622
+[2026-04-19 20:16:15] [UDP] Node 1 seq=36104 packets=338 rssi=-75.0 snr=18.0 source=172.30.1.39:62541
+[2026-04-19 20:16:16] [BASELINE] Baseline capture completed with 3/3 nodes and 1814 total frames
+[2026-04-19 20:16:17] [CAPTURE] Capture started for cell (1, 1) for 3.0s with 5-sample windows and stride 1
+[2026-04-19 20:16:17] [UDP] Node 3 seq=146241 packets=740 rssi=-76.0 snr=23.0 source=172.30.1.90:56168
+[2026-04-19 20:16:17] [UDP] Node 2 seq=301887 packets=962 rssi=-72.0 snr=27.0 source=172.30.1.1:55622
+[2026-04-19 20:16:17] [UDP] Node 1 seq=36477 packets=711 rssi=-75.0 snr=18.0 source=172.30.1.39:62541
+[2026-04-19 20:16:19] [UDP] Node 3 seq=146720 packets=1219 rssi=-77.0 snr=22.0 source=172.30.1.90:56168
+[2026-04-19 20:16:19] [UDP] Node 2 seq=302514 packets=1589 rssi=-72.0 snr=27.0 source=172.30.1.1:55622
+[2026-04-19 20:16:19] [UDP] Node 1 seq=37006 packets=1240 rssi=-74.0 snr=19.0 source=172.30.1.39:62541
+[2026-04-19 20:16:20] [CAPTURE] Capture completed for cell (1, 1) with 26/26 observed windows, generated=26 frames=2274; accumulated windows=26 captures=1
+[2026-04-19 20:16:21] [TRAIN] Trained RandomForestDualStage on 26 samples across 1 cells (hierarchical RF (column + row), n_estimators=280, random_state=200)
+[2026-04-19 20:16:22] [TRAIN] Trained RandomForestUnified on 26 samples across 1 cells (unified RF, n_estimators=320, random_state=200)
+[2026-04-19 20:16:22] [UDP] Node 2 seq=302582 packets=1657 rssi=-72.0 snr=27.0 source=172.30.1.1:55622
+[2026-04-19 20:16:22] [UDP] Node 1 seq=37059 packets=1293 rssi=-76.0 snr=17.0 source=172.30.1.39:62541
+[2026-04-19 20:16:22] [UDP] Node 3 seq=146781 packets=1280 rssi=-77.0 snr=22.0 source=172.30.1.90:56168
+[2026-04-19 20:16:24] [UDP] Node 2 seq=303267 packets=2342 rssi=-72.0 snr=27.0 source=172.30.1.1:55622
+[2026-04-19 20:16:24] [UDP] Node 3 seq=147307 packets=1806 rssi=-77.0 snr=22.0 source=172.30.1.90:56168
+[2026-04-19 20:16:24] [UDP] Node 1 seq=37587 packets=1821 rssi=-74.0 snr=19.0 source=172.30.1.39:62541

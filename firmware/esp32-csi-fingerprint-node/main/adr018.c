@@ -27,6 +27,9 @@ size_t adr018_serialize_frame(const wifi_csi_info_t *info,
     }
 
     uint16_t iq_len = (uint16_t)info->len;
+    if (iq_len > ADR018_MAX_IQ_BYTES) {
+        iq_len = ADR018_MAX_IQ_BYTES;
+    }
     size_t frame_size = ADR018_HEADER_SIZE + iq_len;
     if (frame_size > buf_len) {
         return 0;
@@ -51,4 +54,3 @@ size_t adr018_serialize_frame(const wifi_csi_info_t *info,
 
     return frame_size;
 }
-

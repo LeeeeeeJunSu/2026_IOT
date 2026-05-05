@@ -25,6 +25,13 @@ menu "CSI Fingerprinting Node Configuration"
         help
             UDP port used by the desktop fingerprinting app.
 
+    config CSI_DEFAULT_SEND_INTERVAL_MS
+        int "Default CSI UDP send interval in milliseconds"
+        default 20
+        range 0 1000
+        help
+            Minimum interval between UDP CSI frames sent by one node. Use 0 to send every CSI callback.
+
     config CSI_DEFAULT_NODE_ID
         int "Default node ID"
         default 1
@@ -40,4 +47,3 @@ menu "CSI Fingerprinting Node Configuration"
             Expected WiFi channel for the access point.
 
 endmenu
-

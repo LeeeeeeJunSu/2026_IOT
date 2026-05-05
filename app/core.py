@@ -639,7 +639,30 @@ class FingerprintEngine:
     def process_packet(self, payload: bytes, source: str) -> bool:
         frame = parse_adr018_frame(payload)
         if frame is None:
-            now = time.time()
+            return self.process_receiver_event(
+                {
+                    "type": "packet",
+                    "valid": False,
+                    "source": source,
+                    "received_at": time.time(),
+                }
+            )
+        now = time.time()
+        feature = build_feature_frame(frame, source, now, self.feature_bin_count)
+        return self.process_receiver_event(
+            {
+                "type": "packet",
+                "valid": True,
+                "source": source,
+                "received_at": now,
+                "feature": feature,
+            }
+        )
+
+    def process_receiver_event(self, event: dict[str, object]) -> bool:
+        now = float(event.get("received_at", time.time()))
+        if not event.get("valid"):
+            source = str(event.get("source", "unknown"))
             with self.lock:
                 if now - self.last_invalid_packet_log_ts >= 5.0:
                     self.last_invalid_packet_log_ts = now
@@ -649,8 +672,9 @@ class FingerprintEngine:
                     )
             return False
 
-        now = time.time()
-        feature = build_feature_frame(frame, source, now, self.feature_bin_count)
+        feature = event.get("feature")
+        if not isinstance(feature, FeatureFrame):
+            return False
         with self.lock:
             self.packet_count += 1
             self.last_packet_ts = now
@@ -852,6 +876,13 @@ class FingerprintEngine:
                     "listen_host": self.system_config.host.listen_host,
                     "target_ip": self.system_config.host.target_ip,
                     "udp_port": self.system_config.host.udp_port,
+                    "node_ports": [
+                        {
+                            "node_id": node.node_id,
+                            "port": self.system_config.node_target_port(node),
+                        }
+                        for node in self.system_config.enabled_nodes()
+                    ],
                     "config_path": str(self.config_path),
                 },
                 "grid": {

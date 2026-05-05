@@ -14,7 +14,8 @@ Startup settings come from `Config/system_config.json`.
 - `fingerprinting.effective_packets_per_second`, `fingerprinting.window_sample_count`, and `fingerprinting.window_step_samples` define the paper-style sample-based sliding window used for both dataset generation and live inference
 - `fingerprinting.window_seconds` and `fingerprinting.window_step_seconds` are derived views of the sample-based window settings
 - `fingerprinting.baseline_start_delay_seconds` adds a short delay before empty-room baseline capture begins
-- `nodes[]` provides friendly labels for known ESP32 nodes
+- `nodes[]` provides friendly labels, COM ports for provisioning, per-node UDP
+  target ports, and optional CSI send intervals for known ESP32 nodes
 
 When you apply a new grid size inside the app, it writes the updated values
 back to the shared config file so the simulator and provisioning flow stay in
@@ -34,6 +35,37 @@ Or:
 cd app
 python main.py
 ```
+
+To verify the live UDP stream without opening the UI:
+
+```powershell
+python app\check_udp_ports.py --seconds 10
+```
+
+Each active node should appear on its configured port. With the updated
+firmware and the default `20 ms` CSI send interval, expect roughly 50 packets
+per second per node instead of several hundred.
+
+The app also sends a tiny UDP broadcast stimulus while it is running. This
+keeps enough WiFi frames on the channel for the ESP nodes to produce CSI even
+when the room network is otherwise quiet. Tune it with `host.stimulus_*` in the
+shared config.
+
+## Raw Capture App
+
+Use this when you want to save the raw ESP32 stream for offline validation
+without live inference or model training:
+
+```powershell
+python -m app.raw_main
+```
+
+The raw app uses the same `Config/system_config.json` UDP and grid settings.
+Press `Empty Room` or a cell `Learn` button to create one JSONL file per
+capture session under `app/raw_data/`. Each packet line includes the capture
+start timestamp, packet timestamp, source address, raw packet bytes as base64,
+parsed ADR-018 fields, and the derived feature vector. Set `Duration sec` to
+`0` for manual stop, or to a positive value for automatic stop.
 
 ## Workflow
 

@@ -11,6 +11,10 @@ class HostConfig:
     listen_host: str = "0.0.0.0"
     target_ip: str = "127.0.0.1"
     udp_port: int = 5005
+    stimulus_enabled: bool = True
+    stimulus_broadcast_ip: str = ""
+    stimulus_port: int = 40000
+    stimulus_interval_ms: int = 20
 
 
 @dataclass
@@ -66,6 +70,8 @@ class NodeConfig:
     label: str
     enabled: bool = True
     com_port: str = ""
+    target_port: int | None = None
+    csi_send_interval_ms: int = 20
     wifi_ssid: str = ""
     wifi_password: str = ""
     wifi_channel: int = 6
@@ -83,6 +89,9 @@ class SystemConfig:
     def enabled_nodes(self) -> list[NodeConfig]:
         return [node for node in self.nodes if node.enabled]
 
+    def node_target_port(self, node: NodeConfig) -> int:
+        return int(node.target_port if node.target_port is not None else self.host.udp_port)
+
 
 def default_config_path(base_dir: str | Path | None = None) -> Path:
     if base_dir is None:
@@ -98,6 +107,13 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
         listen_host=str(host_raw.get("listen_host", "0.0.0.0")),
         target_ip=str(host_raw.get("target_ip", "127.0.0.1")),
         udp_port=int(host_raw.get("udp_port", 5005)),
+        stimulus_enabled=bool(host_raw.get("stimulus_enabled", True)),
+        stimulus_broadcast_ip=str(host_raw.get("stimulus_broadcast_ip", "")),
+        stimulus_port=max(1, min(65535, int(host_raw.get("stimulus_port", 40000)))),
+        stimulus_interval_ms=max(
+            5,
+            min(1000, int(host_raw.get("stimulus_interval_ms", 20))),
+        ),
     )
     grid = GridConfig(
         cols=max(1, int(raw.get("grid", {}).get("cols", 3))),
@@ -250,6 +266,15 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
             label=str(item.get("label", f"ESP {item['node_id']}")),
             enabled=bool(item.get("enabled", True)),
             com_port=str(item.get("com_port", "")),
+            target_port=(
+                max(1, min(65535, int(item["target_port"])))
+                if item.get("target_port") is not None
+                else None
+            ),
+            csi_send_interval_ms=max(
+                0,
+                min(1000, int(item.get("csi_send_interval_ms", 20))),
+            ),
             wifi_ssid=str(item.get("wifi_ssid", "")),
             wifi_password=str(item.get("wifi_password", "")),
             wifi_channel=max(1, min(13, int(item.get("wifi_channel", 6)))),
@@ -272,6 +297,10 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
             "listen_host": config.host.listen_host,
             "target_ip": config.host.target_ip,
             "udp_port": config.host.udp_port,
+            "stimulus_enabled": config.host.stimulus_enabled,
+            "stimulus_broadcast_ip": config.host.stimulus_broadcast_ip,
+            "stimulus_port": config.host.stimulus_port,
+            "stimulus_interval_ms": config.host.stimulus_interval_ms,
         },
         "grid": {
             "cols": config.grid.cols,
@@ -337,6 +366,8 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
                 "label": node.label,
                 "enabled": node.enabled,
                 "com_port": node.com_port,
+                "target_port": node.target_port,
+                "csi_send_interval_ms": node.csi_send_interval_ms,
                 "wifi_ssid": node.wifi_ssid,
                 "wifi_password": node.wifi_password,
                 "wifi_channel": node.wifi_channel,

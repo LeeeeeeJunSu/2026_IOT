@@ -1,0 +1,503 @@
+[2026-04-19 19:51:50] [INFO] App started with config app\data\real_guided_4x4_workspace\Config\system_config.json and UDP 0.0.0.0:5005
+[2026-04-19 19:51:50] [UDP] Listening on UDP 0.0.0.0:5005
+[2026-04-19 19:51:58] [UDP] First packet from node 3 (ESP 3) source=172.30.1.90:62121
+[2026-04-19 19:51:58] [UDP] Node 3 seq=57476 packets=1 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:51:58] [UDP] First packet from node 2 (ESP 2) source=172.30.1.1:55622
+[2026-04-19 19:51:58] [UDP] Node 2 seq=48466 packets=1 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:51:58] [UDP] First packet from node 1 (ESP 1) source=172.30.1.39:50206
+[2026-04-19 19:51:58] [UDP] Node 1 seq=41305 packets=1 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:51:58] [BASELINE] Baseline capture armed with 8.0s delay and 4.0s capture
+[2026-04-19 19:52:06] [BASELINE] Baseline capture started for 4.0s
+[2026-04-19 19:52:07] [UDP] Node 2 seq=48470 packets=5 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:07] [UDP] Node 3 seq=57482 packets=7 rssi=-70.0 snr=29.0 source=172.30.1.90:62121
+[2026-04-19 19:52:07] [UDP] Node 1 seq=41309 packets=5 rssi=-22.0 snr=71.0 source=172.30.1.39:50206
+[2026-04-19 19:52:09] [UDP] Node 2 seq=48833 packets=368 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:52:09] [UDP] Node 1 seq=41710 packets=406 rssi=-77.0 snr=16.0 source=172.30.1.39:50206
+[2026-04-19 19:52:09] [UDP] Node 3 seq=57845 packets=195 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:10] [BASELINE] Baseline capture completed with 3/3 nodes and 989 total frames
+[2026-04-19 19:52:11] [UDP] Node 2 seq=49120 packets=655 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:11] [UDP] Node 1 seq=41997 packets=693 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:52:11] [UDP] Node 3 seq=58316 packets=288 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:13] [UDP] Node 2 seq=49426 packets=961 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:13] [UDP] Node 1 seq=42299 packets=995 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:52:13] [UDP] Node 3 seq=58788 packets=409 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:15] [CAPTURE] Capture started for cell (1, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:52:15] [UDP] Node 2 seq=49750 packets=1285 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:15] [UDP] Node 1 seq=42617 packets=1313 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:52:16] [UDP] Node 3 seq=59251 packets=525 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:17] [UDP] Node 2 seq=50069 packets=1604 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:18] [UDP] Node 1 seq=42906 packets=1602 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:18] [UDP] Node 3 seq=59755 packets=646 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:19] [UDP] Node 2 seq=50502 packets=2037 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:20] [UDP] Node 3 seq=60367 packets=850 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:52:20] [CAPTURE] Capture completed for cell (1, 1) with 91/70 valid windows and 2199 frames; accumulated windows=91 captures=1
+[2026-04-19 19:52:21] [UDP] Node 1 seq=43314 packets=1999 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:52:22] [UDP] Node 3 seq=61061 packets=1544 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:52:22] [UDP] Node 2 seq=51416 packets=2951 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:23] [UDP] Node 1 seq=43926 packets=2172 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:24] [UDP] Node 2 seq=52015 packets=3550 rssi=-87.0 snr=12.0 source=172.30.1.1:55622
+[2026-04-19 19:52:24] [UDP] Node 3 seq=61615 packets=2036 rssi=-90.0 snr=9.0 source=172.30.1.90:62121
+[2026-04-19 19:52:25] [CAPTURE] Capture started for cell (2, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:52:25] [UDP] Node 1 seq=44266 packets=2512 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:52:26] [UDP] Node 3 seq=61981 packets=2191 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:52:26] [UDP] Node 2 seq=52369 packets=3904 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:27] [UDP] Node 1 seq=44562 packets=2808 rssi=-71.0 snr=22.0 source=172.30.1.39:50206
+[2026-04-19 19:52:28] [UDP] Node 2 seq=52703 packets=4238 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:28] [UDP] Node 3 seq=62514 packets=2333 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:29] [UDP] Node 1 seq=44882 packets=3128 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:30] [CAPTURE] Capture completed for cell (2, 1) with 91/74 valid windows and 1830 frames; accumulated windows=91 captures=1
+[2026-04-19 19:52:30] [UDP] Node 2 seq=53002 packets=4537 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:30] [UDP] Node 3 seq=62918 packets=2429 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:31] [UDP] Node 1 seq=45166 packets=3412 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:32] [UDP] Node 2 seq=53295 packets=4830 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:32] [UDP] Node 3 seq=63420 packets=2524 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:52:33] [UDP] Node 1 seq=45468 packets=3714 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:52:34] [UDP] Node 2 seq=53608 packets=5143 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:34] [UDP] Node 3 seq=63910 packets=2641 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:35] [CAPTURE] Capture started for cell (3, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:52:35] [UDP] Node 1 seq=45883 packets=4129 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:36] [UDP] Node 2 seq=54054 packets=5589 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:36] [UDP] Node 3 seq=64462 packets=2952 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:37] [UDP] Node 1 seq=46191 packets=4437 rssi=-71.0 snr=22.0 source=172.30.1.39:50206
+[2026-04-19 19:52:38] [UDP] Node 2 seq=54362 packets=5897 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:38] [UDP] Node 3 seq=65074 packets=3127 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:39] [UDP] Node 1 seq=46550 packets=4777 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:40] [CAPTURE] Capture completed for cell (3, 1) with 91/70 valid windows and 2144 frames; accumulated windows=91 captures=1
+[2026-04-19 19:52:40] [UDP] Node 2 seq=54751 packets=6286 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:40] [UDP] Node 3 seq=65435 packets=3371 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:41] [UDP] Node 1 seq=46854 packets=5081 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:42] [UDP] Node 2 seq=55089 packets=6624 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:42] [UDP] Node 3 seq=65934 packets=3501 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:52:43] [UDP] Node 1 seq=47142 packets=5369 rssi=-78.0 snr=15.0 source=172.30.1.39:50206
+[2026-04-19 19:52:44] [UDP] Node 2 seq=55409 packets=6944 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:44] [UDP] Node 3 seq=66445 packets=3657 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:45] [UDP] Node 1 seq=47489 packets=5716 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:52:45] [CAPTURE] Capture started for cell (4, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:52:46] [UDP] Node 2 seq=55730 packets=7265 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:46] [UDP] Node 3 seq=66910 packets=3783 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:52:47] [UDP] Node 1 seq=47786 packets=6013 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:52:48] [UDP] Node 2 seq=56195 packets=7730 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:48] [UDP] Node 3 seq=67514 packets=4095 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:52:49] [UDP] Node 1 seq=48235 packets=6462 rssi=-77.0 snr=16.0 source=172.30.1.39:50206
+[2026-04-19 19:52:50] [CAPTURE] Capture completed for cell (4, 1) with 91/84 valid windows and 2349 frames; accumulated windows=91 captures=1
+[2026-04-19 19:52:50] [UDP] Node 2 seq=56520 packets=8055 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:52:50] [UDP] Node 3 seq=68022 packets=4243 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:52:55] [CAPTURE] Capture started for cell (1, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:52:58] [UDP] Node 1 seq=48612 packets=6839 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:52:58] [UDP] Node 2 seq=56735 packets=8270 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:52:58] [UDP] Node 3 seq=68281 packets=4417 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:53:00] [UDP] Node 1 seq=48982 packets=7209 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:53:00] [UDP] Node 2 seq=57133 packets=8668 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:00] [UDP] Node 3 seq=68690 packets=4587 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:53:00] [CAPTURE] Capture completed for cell (1, 2) with 91/38 valid windows and 1110 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:02] [UDP] Node 1 seq=49281 packets=7508 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:53:02] [UDP] Node 2 seq=57443 packets=8978 rssi=-71.0 snr=28.0 source=172.30.1.1:55622
+[2026-04-19 19:53:02] [UDP] Node 3 seq=69135 packets=4704 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:53:04] [UDP] Node 1 seq=49568 packets=7795 rssi=-78.0 snr=15.0 source=172.30.1.39:50206
+[2026-04-19 19:53:04] [UDP] Node 2 seq=57771 packets=9306 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:04] [UDP] Node 3 seq=69665 packets=4847 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:53:05] [CAPTURE] Capture started for cell (2, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:06] [UDP] Node 1 seq=49853 packets=8080 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:53:06] [UDP] Node 2 seq=58075 packets=9610 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:06] [UDP] Node 3 seq=70105 packets=4958 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:53:08] [UDP] Node 1 seq=50168 packets=8395 rssi=-77.0 snr=16.0 source=172.30.1.39:50206
+[2026-04-19 19:53:08] [UDP] Node 2 seq=58387 packets=9922 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:08] [UDP] Node 3 seq=70566 packets=5074 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:10] [UDP] Node 2 seq=58890 packets=10425 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:10] [UDP] Node 3 seq=71254 packets=5356 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:11] [CAPTURE] Capture completed for cell (2, 2) with 91/56 valid windows and 2411 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:11] [UDP] Node 1 seq=50516 packets=8742 rssi=-76.0 snr=17.0 source=172.30.1.39:50206
+[2026-04-19 19:53:12] [UDP] Node 2 seq=59511 packets=11046 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:12] [UDP] Node 3 seq=71760 packets=5704 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:13] [UDP] Node 1 seq=51295 packets=9312 rssi=-76.0 snr=17.0 source=172.30.1.39:50206
+[2026-04-19 19:53:14] [UDP] Node 2 seq=59917 packets=11452 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:14] [UDP] Node 3 seq=72225 packets=5952 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:15] [UDP] Node 1 seq=51618 packets=9635 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:53:16] [CAPTURE] Capture started for cell (3, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:16] [UDP] Node 2 seq=60219 packets=11754 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:16] [UDP] Node 3 seq=72645 packets=6050 rssi=-72.0 snr=27.0 source=172.30.1.90:62121
+[2026-04-19 19:53:17] [UDP] Node 1 seq=51955 packets=9972 rssi=-77.0 snr=16.0 source=172.30.1.39:50206
+[2026-04-19 19:53:18] [UDP] Node 2 seq=60554 packets=12089 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:18] [UDP] Node 3 seq=73122 packets=6323 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:19] [UDP] Node 1 seq=52220 packets=10237 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:53:20] [UDP] Node 2 seq=60883 packets=12418 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:53:20] [UDP] Node 3 seq=73552 packets=6434 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:53:21] [CAPTURE] Capture completed for cell (3, 2) with 91/64 valid windows and 1998 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:21] [UDP] Node 1 seq=52525 packets=10542 rssi=-76.0 snr=17.0 source=172.30.1.39:50206
+[2026-04-19 19:53:22] [UDP] Node 2 seq=61312 packets=12847 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:22] [UDP] Node 3 seq=74136 packets=6688 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:23] [UDP] Node 1 seq=52990 packets=11007 rssi=-76.0 snr=17.0 source=172.30.1.39:50206
+[2026-04-19 19:53:24] [UDP] Node 2 seq=61610 packets=13145 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:53:24] [UDP] Node 3 seq=74549 packets=6790 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:25] [UDP] Node 1 seq=53307 packets=11324 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:53:26] [CAPTURE] Capture started for cell (4, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:28] [UDP] Node 2 seq=61857 packets=13385 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:53:28] [UDP] Node 3 seq=74988 packets=6947 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:53:28] [UDP] Node 1 seq=53359 packets=11372 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:53:31] [CAPTURE] Capture completed for cell (4, 2) with 91/0 valid windows and 108 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:31] [UDP] Node 2 seq=61895 packets=13423 rssi=-60.0 snr=39.0 source=172.30.1.1:55622
+[2026-04-19 19:53:31] [UDP] Node 1 seq=53384 packets=11397 rssi=-26.0 snr=67.0 source=172.30.1.39:50206
+[2026-04-19 19:53:31] [UDP] Node 3 seq=75033 packets=6992 rssi=-54.0 snr=45.0 source=172.30.1.90:62121
+[2026-04-19 19:53:33] [UDP] Node 2 seq=62002 packets=13530 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:33] [UDP] Node 3 seq=75148 packets=7107 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:53:33] [UDP] Node 1 seq=53470 packets=11483 rssi=-73.0 snr=20.0 source=172.30.1.39:50206
+[2026-04-19 19:53:36] [CAPTURE] Capture started for cell (1, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:38] [UDP] Node 2 seq=62328 packets=13856 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:53:38] [UDP] Node 1 seq=53640 packets=11653 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:53:38] [UDP] Node 3 seq=75564 packets=7342 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:53:41] [CAPTURE] Capture completed for cell (1, 3) with 91/0 valid windows and 34 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:42] [UDP] Node 3 seq=75578 packets=7356 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:42] [UDP] Node 2 seq=62342 packets=13870 rssi=-58.0 snr=41.0 source=172.30.1.1:55622
+[2026-04-19 19:53:42] [UDP] Node 1 seq=53646 packets=11659 rssi=-24.0 snr=69.0 source=172.30.1.39:50206
+[2026-04-19 19:53:44] [UDP] Node 3 seq=76201 packets=7714 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:53:44] [UDP] Node 2 seq=62815 packets=14336 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:53:44] [UDP] Node 1 seq=53947 packets=11954 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:53:46] [CAPTURE] Capture started for cell (2, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:48] [UDP] Node 2 seq=62826 packets=14347 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:53:48] [UDP] Node 1 seq=53954 packets=11961 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:53:48] [UDP] Node 3 seq=76218 packets=7731 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:53:51] [CAPTURE] Capture completed for cell (2, 3) with 91/0 valid windows and 28 frames; accumulated windows=91 captures=1
+[2026-04-19 19:53:54] [UDP] Node 3 seq=76230 packets=7743 rssi=-93.0 snr=6.0 source=172.30.1.90:62121
+[2026-04-19 19:53:54] [UDP] Node 1 seq=53961 packets=11968 rssi=-85.0 snr=8.0 source=172.30.1.39:50206
+[2026-04-19 19:53:54] [UDP] Node 2 seq=62835 packets=14356 rssi=-87.0 snr=12.0 source=172.30.1.1:55622
+[2026-04-19 19:53:56] [CAPTURE] Capture started for cell (3, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:53:56] [UDP] Node 3 seq=76244 packets=7757 rssi=-52.0 snr=47.0 source=172.30.1.90:62121
+[2026-04-19 19:53:56] [UDP] Node 1 seq=53971 packets=11978 rssi=-23.0 snr=70.0 source=172.30.1.39:50206
+[2026-04-19 19:53:56] [UDP] Node 2 seq=62853 packets=14374 rssi=-53.0 snr=46.0 source=172.30.1.1:55622
+[2026-04-19 19:53:58] [UDP] Node 3 seq=76770 packets=8088 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:53:58] [UDP] Node 1 seq=54354 packets=12361 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:53:58] [UDP] Node 2 seq=63445 packets=14966 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:00] [UDP] Node 2 seq=64171 packets=15692 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:00] [UDP] Node 3 seq=77456 packets=8583 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:01] [CAPTURE] Capture completed for cell (3, 3) with 91/65 valid windows and 3662 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:01] [UDP] Node 1 seq=54705 packets=12712 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:02] [UDP] Node 2 seq=65009 packets=16530 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:02] [UDP] Node 3 seq=78177 packets=9247 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:04] [UDP] Node 1 seq=55165 packets=12954 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:04] [UDP] Node 2 seq=65936 packets=17457 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:04] [UDP] Node 3 seq=78922 packets=9992 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:06] [UDP] Node 1 seq=55808 packets=13293 rssi=-71.0 snr=22.0 source=172.30.1.39:50206
+[2026-04-19 19:54:07] [UDP] Node 3 seq=79519 packets=10332 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:07] [UDP] Node 2 seq=66395 packets=17916 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:07] [CAPTURE] Capture started for cell (4, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:08] [UDP] Node 1 seq=55888 packets=13373 rssi=-29.0 snr=64.0 source=172.30.1.39:50206
+[2026-04-19 19:54:09] [UDP] Node 3 seq=79609 packets=10422 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:09] [UDP] Node 2 seq=66492 packets=18013 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:10] [UDP] Node 1 seq=56173 packets=13658 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:12] [CAPTURE] Capture completed for cell (4, 3) with 91/31 valid windows and 1204 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:12] [UDP] Node 2 seq=66835 packets=18356 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:54:12] [UDP] Node 3 seq=80073 packets=10792 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:12] [UDP] Node 1 seq=56206 packets=13691 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:14] [UDP] Node 2 seq=66845 packets=18366 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:54:14] [UDP] Node 3 seq=80086 packets=10805 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:14] [UDP] Node 1 seq=56213 packets=13698 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:16] [UDP] Node 3 seq=80303 packets=10990 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:16] [UDP] Node 2 seq=67053 packets=18574 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:16] [UDP] Node 1 seq=56367 packets=13852 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:17] [CAPTURE] Capture started for cell (1, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:18] [UDP] Node 2 seq=67275 packets=18790 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:54:18] [UDP] Node 1 seq=56528 packets=14005 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:18] [UDP] Node 3 seq=80635 packets=11212 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:54:20] [UDP] Node 2 seq=67301 packets=18816 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:54:20] [UDP] Node 1 seq=56545 packets=14022 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:20] [UDP] Node 3 seq=80669 packets=11246 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:22] [CAPTURE] Capture completed for cell (1, 4) with 91/34 valid windows and 1093 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:27] [CAPTURE] Capture started for cell (2, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:29] [UDP] Node 2 seq=67656 packets=19171 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:54:29] [UDP] Node 1 seq=56793 packets=14270 rssi=-19.0 snr=74.0 source=172.30.1.39:50206
+[2026-04-19 19:54:29] [UDP] Node 3 seq=81139 packets=11545 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:31] [UDP] Node 2 seq=68404 packets=19919 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:31] [UDP] Node 1 seq=57035 packets=14502 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:31] [UDP] Node 3 seq=81825 packets=12145 rssi=-70.0 snr=29.0 source=172.30.1.90:62121
+[2026-04-19 19:54:32] [CAPTURE] Capture completed for cell (2, 4) with 91/17 valid windows and 2608 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:33] [UDP] Node 2 seq=69191 packets=20706 rssi=-79.0 snr=20.0 source=172.30.1.1:55622
+[2026-04-19 19:54:33] [UDP] Node 1 seq=57697 packets=14817 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:33] [UDP] Node 3 seq=82478 packets=12798 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:35] [UDP] Node 2 seq=69895 packets=21402 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:35] [UDP] Node 3 seq=82989 packets=13279 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:35] [UDP] Node 1 seq=58213 packets=15323 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:37] [UDP] Node 2 seq=70765 packets=22272 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:37] [UDP] Node 3 seq=83715 packets=13975 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:37] [UDP] Node 1 seq=58692 packets=15629 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:37] [CAPTURE] Capture started for cell (3, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:39] [UDP] Node 2 seq=71443 packets=22950 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:39] [UDP] Node 3 seq=84300 packets=14518 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:40] [UDP] Node 1 seq=59106 packets=16015 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:41] [UDP] Node 2 seq=72186 packets=23688 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:41] [UDP] Node 3 seq=84874 packets=15027 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:42] [UDP] Node 1 seq=59858 packets=16607 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:43] [CAPTURE] Capture completed for cell (3, 4) with 91/65 valid windows and 4268 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:43] [UDP] Node 3 seq=85376 packets=15486 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:54:43] [UDP] Node 2 seq=72843 packets=24345 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:44] [UDP] Node 1 seq=60179 packets=16928 rssi=-27.0 snr=66.0 source=172.30.1.39:50206
+[2026-04-19 19:54:45] [UDP] Node 3 seq=85924 packets=15878 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:54:45] [UDP] Node 2 seq=73295 packets=24797 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:46] [UDP] Node 1 seq=60382 packets=17131 rssi=-23.0 snr=70.0 source=172.30.1.39:50206
+[2026-04-19 19:54:47] [UDP] Node 3 seq=86270 packets=16192 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:54:47] [UDP] Node 2 seq=73624 packets=25126 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:48] [CAPTURE] Capture started for cell (4, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:48] [UDP] Node 1 seq=60746 packets=17495 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:49] [UDP] Node 3 seq=86851 packets=16653 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:54:49] [UDP] Node 2 seq=74097 packets=25599 rssi=-82.0 snr=17.0 source=172.30.1.1:55622
+[2026-04-19 19:54:50] [UDP] Node 1 seq=60975 packets=17720 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:52] [UDP] Node 2 seq=74224 packets=25726 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:54:52] [UDP] Node 3 seq=86999 packets=16786 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:52] [UDP] Node 1 seq=60999 packets=17744 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:53] [CAPTURE] Capture completed for cell (4, 4) with 91/20 valid windows and 936 frames; accumulated windows=91 captures=1
+[2026-04-19 19:54:54] [UDP] Node 2 seq=74235 packets=25737 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:54:54] [UDP] Node 3 seq=87011 packets=16798 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:54:54] [UDP] Node 1 seq=61002 packets=17747 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:54:56] [UDP] Node 2 seq=74298 packets=25800 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:56] [UDP] Node 3 seq=87082 packets=16869 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:54:56] [UDP] Node 1 seq=61050 packets=17795 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:54:58] [UDP] Node 2 seq=74860 packets=26362 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:54:58] [UDP] Node 3 seq=87654 packets=17274 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:54:58] [CAPTURE] Capture started for cell (1, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:54:59] [UDP] Node 1 seq=61273 packets=18015 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:55:00] [UDP] Node 2 seq=75661 packets=27163 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:00] [UDP] Node 3 seq=88298 packets=17856 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:01] [UDP] Node 1 seq=62064 packets=18576 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:55:02] [UDP] Node 2 seq=76523 packets=28025 rssi=-76.0 snr=23.0 source=172.30.1.1:55622
+[2026-04-19 19:55:02] [UDP] Node 3 seq=89021 packets=18543 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:55:03] [CAPTURE] Capture completed for cell (1, 1) with 91/46 valid windows and 3624 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:06] [UDP] Node 2 seq=76574 packets=28076 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:55:06] [UDP] Node 3 seq=89075 packets=18597 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:55:06] [UDP] Node 1 seq=62393 packets=18815 rssi=-19.0 snr=74.0 source=172.30.1.39:50206
+[2026-04-19 19:55:08] [UDP] Node 2 seq=77197 packets=28699 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:08] [UDP] Node 3 seq=89665 packets=18992 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:55:08] [UDP] Node 1 seq=62862 packets=19284 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:55:08] [CAPTURE] Capture started for cell (2, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:55:10] [UDP] Node 3 seq=90126 packets=19165 rssi=-65.0 snr=34.0 source=172.30.1.90:62121
+[2026-04-19 19:55:10] [UDP] Node 2 seq=77548 packets=29050 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:10] [UDP] Node 1 seq=63085 packets=19507 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:55:12] [UDP] Node 3 seq=90692 packets=19492 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:55:12] [UDP] Node 2 seq=78016 packets=29518 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:12] [UDP] Node 1 seq=63556 packets=19978 rssi=-66.0 snr=27.0 source=172.30.1.39:50206
+[2026-04-19 19:55:14] [CAPTURE] Capture completed for cell (2, 1) with 91/82 valid windows and 2702 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:14] [UDP] Node 3 seq=91251 packets=19820 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:14] [UDP] Node 2 seq=78460 packets=29962 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:14] [UDP] Node 1 seq=64009 packets=20429 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:16] [UDP] Node 2 seq=78784 packets=30286 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:16] [UDP] Node 3 seq=91741 packets=19969 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:55:16] [UDP] Node 1 seq=64269 packets=20689 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:18] [UDP] Node 2 seq=79251 packets=30753 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:55:18] [UDP] Node 3 seq=92295 packets=20270 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:55:18] [UDP] Node 1 seq=64724 packets=21144 rssi=-66.0 snr=27.0 source=172.30.1.39:50206
+[2026-04-19 19:55:19] [CAPTURE] Capture started for cell (3, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:55:21] [UDP] Node 3 seq=92887 packets=20533 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:55:21] [UDP] Node 2 seq=79622 packets=31124 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:55:21] [UDP] Node 1 seq=65066 packets=21486 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:55:23] [UDP] Node 3 seq=93390 packets=21036 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:55:23] [UDP] Node 2 seq=80152 packets=31654 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:23] [UDP] Node 1 seq=65554 packets=21842 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:55:24] [CAPTURE] Capture completed for cell (3, 1) with 91/51 valid windows and 2467 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:25] [UDP] Node 2 seq=80586 packets=32088 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:25] [UDP] Node 1 seq=65925 packets=22213 rssi=-77.0 snr=16.0 source=172.30.1.39:50206
+[2026-04-19 19:55:25] [UDP] Node 3 seq=94043 packets=21323 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:27] [UDP] Node 3 seq=94503 packets=21546 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:27] [UDP] Node 2 seq=80984 packets=32486 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:27] [UDP] Node 1 seq=66256 packets=22544 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:29] [UDP] Node 2 seq=81165 packets=32667 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:55:29] [UDP] Node 1 seq=66430 packets=22706 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:55:29] [UDP] Node 3 seq=94833 packets=21698 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:55:29] [CAPTURE] Capture started for cell (4, 1) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:55:31] [UDP] Node 1 seq=66821 packets=23020 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:31] [UDP] Node 2 seq=81611 packets=33113 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:55:31] [UDP] Node 3 seq=95324 packets=22103 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:55:33] [UDP] Node 1 seq=67189 packets=23387 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:33] [UDP] Node 2 seq=82032 packets=33534 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:33] [UDP] Node 3 seq=95811 packets=22354 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:55:34] [CAPTURE] Capture completed for cell (4, 1) with 91/68 valid windows and 2870 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:35] [UDP] Node 1 seq=67616 packets=23814 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:55:35] [UDP] Node 2 seq=82476 packets=33978 rssi=-68.0 snr=31.0 source=172.30.1.1:55622
+[2026-04-19 19:55:35] [UDP] Node 3 seq=96347 packets=22660 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:55:37] [UDP] Node 1 seq=67916 packets=24114 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:37] [UDP] Node 3 seq=96981 packets=22926 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:55:37] [UDP] Node 2 seq=82858 packets=34360 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:39] [UDP] Node 1 seq=68283 packets=24467 rssi=-80.0 snr=13.0 source=172.30.1.39:50206
+[2026-04-19 19:55:39] [UDP] Node 3 seq=97450 packets=23163 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:39] [UDP] Node 2 seq=83263 packets=34765 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:39] [CAPTURE] Capture started for cell (1, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:55:41] [UDP] Node 1 seq=68651 packets=24835 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:41] [UDP] Node 3 seq=98022 packets=23494 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:41] [UDP] Node 2 seq=83710 packets=35212 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:43] [UDP] Node 1 seq=68891 packets=25075 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:43] [UDP] Node 2 seq=84010 packets=35512 rssi=-69.0 snr=30.0 source=172.30.1.1:55622
+[2026-04-19 19:55:43] [UDP] Node 3 seq=98509 packets=23617 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:45] [CAPTURE] Capture completed for cell (1, 2) with 91/86 valid windows and 2140 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:45] [UDP] Node 1 seq=69113 packets=25297 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:45] [UDP] Node 2 seq=84340 packets=35842 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:45] [UDP] Node 3 seq=99064 packets=23784 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:47] [UDP] Node 1 seq=69442 packets=25626 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:55:47] [UDP] Node 2 seq=84841 packets=36343 rssi=-70.0 snr=29.0 source=172.30.1.1:55622
+[2026-04-19 19:55:47] [UDP] Node 3 seq=99708 packets=24156 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:49] [UDP] Node 1 seq=69772 packets=25956 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:49] [UDP] Node 2 seq=85268 packets=36770 rssi=-68.0 snr=31.0 source=172.30.1.1:55622
+[2026-04-19 19:55:49] [UDP] Node 3 seq=100325 packets=24472 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:55:50] [CAPTURE] Capture started for cell (2, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:55:51] [UDP] Node 1 seq=70136 packets=26304 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:51] [UDP] Node 2 seq=85639 packets=37141 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:51] [UDP] Node 3 seq=100773 packets=24663 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:53] [UDP] Node 1 seq=70332 packets=26500 rssi=-81.0 snr=12.0 source=172.30.1.39:50206
+[2026-04-19 19:55:53] [UDP] Node 2 seq=85992 packets=37494 rssi=-70.0 snr=29.0 source=172.30.1.1:55622
+[2026-04-19 19:55:53] [UDP] Node 3 seq=101340 packets=24851 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:55:55] [CAPTURE] Capture completed for cell (2, 2) with 91/89 valid windows and 1903 frames; accumulated windows=182 captures=2
+[2026-04-19 19:55:55] [UDP] Node 2 seq=86377 packets=37879 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:55] [UDP] Node 1 seq=70544 packets=26712 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:55] [UDP] Node 3 seq=101881 packets=25081 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:55:57] [UDP] Node 2 seq=86894 packets=38395 rssi=-69.0 snr=30.0 source=172.30.1.1:55622
+[2026-04-19 19:55:57] [UDP] Node 1 seq=70887 packets=27055 rssi=-81.0 snr=12.0 source=172.30.1.39:50206
+[2026-04-19 19:55:57] [UDP] Node 3 seq=102520 packets=25471 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:55:59] [UDP] Node 2 seq=87388 packets=38889 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:55:59] [UDP] Node 1 seq=71252 packets=27411 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:55:59] [UDP] Node 3 seq=103115 packets=25844 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:00] [CAPTURE] Capture started for cell (3, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:01] [UDP] Node 2 seq=87816 packets=39317 rssi=-70.0 snr=29.0 source=172.30.1.1:55622
+[2026-04-19 19:56:01] [UDP] Node 1 seq=71583 packets=27742 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:56:02] [UDP] Node 3 seq=103643 packets=26178 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:05] [CAPTURE] Capture completed for cell (3, 2) with 91/42 valid windows and 1694 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:09] [UDP] Node 1 seq=71826 packets=27985 rssi=-24.0 snr=69.0 source=172.30.1.39:50206
+[2026-04-19 19:56:09] [UDP] Node 2 seq=88183 packets=39684 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:09] [UDP] Node 3 seq=104135 packets=26430 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:56:10] [CAPTURE] Capture started for cell (4, 2) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:11] [UDP] Node 2 seq=88585 packets=40086 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:11] [UDP] Node 3 seq=104615 packets=26692 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:11] [UDP] Node 1 seq=72053 packets=28212 rssi=-84.0 snr=9.0 source=172.30.1.39:50206
+[2026-04-19 19:56:13] [UDP] Node 3 seq=105180 packets=26905 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:56:13] [UDP] Node 1 seq=72236 packets=28395 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:56:13] [UDP] Node 2 seq=88956 packets=40457 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:15] [UDP] Node 3 seq=105745 packets=27136 rssi=-69.0 snr=30.0 source=172.30.1.90:62121
+[2026-04-19 19:56:15] [UDP] Node 2 seq=89351 packets=40852 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:15] [UDP] Node 1 seq=72458 packets=28617 rssi=-70.0 snr=23.0 source=172.30.1.39:50206
+[2026-04-19 19:56:16] [CAPTURE] Capture completed for cell (4, 2) with 91/91 valid windows and 2175 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:17] [UDP] Node 3 seq=106363 packets=27535 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:17] [UDP] Node 2 seq=89915 packets=41416 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:17] [UDP] Node 1 seq=72763 packets=28922 rssi=-71.0 snr=22.0 source=172.30.1.39:50206
+[2026-04-19 19:56:19] [UDP] Node 3 seq=106740 packets=27757 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:56:19] [UDP] Node 2 seq=90177 packets=41678 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:56:19] [UDP] Node 1 seq=72898 packets=29055 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:56:21] [CAPTURE] Capture started for cell (1, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:21] [UDP] Node 2 seq=90615 packets=42116 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:56:21] [UDP] Node 3 seq=107278 packets=28093 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:56:21] [UDP] Node 1 seq=73132 packets=29288 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:56:26] [CAPTURE] Capture completed for cell (1, 3) with 91/0 valid windows and 247 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:29] [UDP] Node 1 seq=73135 packets=29291 rssi=-27.0 snr=66.0 source=172.30.1.39:50206
+[2026-04-19 19:56:29] [UDP] Node 2 seq=90617 packets=42118 rssi=-58.0 snr=41.0 source=172.30.1.1:55622
+[2026-04-19 19:56:29] [UDP] Node 3 seq=107282 packets=28097 rssi=-54.0 snr=45.0 source=172.30.1.90:62121
+[2026-04-19 19:56:31] [UDP] Node 1 seq=73565 packets=29716 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:56:31] [UDP] Node 2 seq=91211 packets=42710 rssi=-76.0 snr=23.0 source=172.30.1.1:55622
+[2026-04-19 19:56:31] [UDP] Node 3 seq=107873 packets=28549 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:56:31] [CAPTURE] Capture started for cell (2, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:36] [CAPTURE] Capture completed for cell (2, 3) with 91/0 valid windows and 0 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:39] [UDP] Node 2 seq=91246 packets=42745 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:56:39] [UDP] Node 1 seq=73592 packets=29743 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:56:39] [UDP] Node 3 seq=107913 packets=28589 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:56:41] [CAPTURE] Capture started for cell (3, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:42] [UDP] Node 2 seq=91255 packets=42754 rssi=-58.0 snr=41.0 source=172.30.1.1:55622
+[2026-04-19 19:56:42] [UDP] Node 3 seq=107925 packets=28601 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:42] [UDP] Node 1 seq=73597 packets=29748 rssi=-78.0 snr=15.0 source=172.30.1.39:50206
+[2026-04-19 19:56:44] [UDP] Node 3 seq=108359 packets=28784 rssi=-70.0 snr=29.0 source=172.30.1.90:62121
+[2026-04-19 19:56:44] [UDP] Node 2 seq=91642 packets=43141 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:44] [UDP] Node 1 seq=73907 packets=30058 rssi=-78.0 snr=15.0 source=172.30.1.39:50206
+[2026-04-19 19:56:46] [UDP] Node 3 seq=108888 packets=28965 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:56:46] [UDP] Node 2 seq=92008 packets=43507 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:46] [UDP] Node 1 seq=74165 packets=30316 rssi=-67.0 snr=26.0 source=172.30.1.39:50206
+[2026-04-19 19:56:47] [CAPTURE] Capture completed for cell (3, 3) with 91/83 valid windows and 2011 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:48] [UDP] Node 3 seq=109532 packets=29197 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:48] [UDP] Node 2 seq=92394 packets=43893 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:48] [UDP] Node 1 seq=74492 packets=30643 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:56:50] [UDP] Node 3 seq=110045 packets=29499 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:50] [UDP] Node 2 seq=92853 packets=44352 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:50] [UDP] Node 1 seq=74864 packets=31013 rssi=-65.0 snr=28.0 source=172.30.1.39:50206
+[2026-04-19 19:56:52] [UDP] Node 2 seq=93303 packets=44802 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:56:52] [UDP] Node 3 seq=110608 packets=29810 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:52] [UDP] Node 1 seq=75271 packets=31420 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:56:52] [CAPTURE] Capture started for cell (4, 3) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:56:54] [UDP] Node 2 seq=93729 packets=45228 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:54] [UDP] Node 3 seq=111267 packets=30126 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:54] [UDP] Node 1 seq=75704 packets=31852 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:56:56] [UDP] Node 2 seq=94065 packets=45564 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:56:56] [UDP] Node 3 seq=111678 packets=30256 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:56:56] [UDP] Node 1 seq=76023 packets=32171 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:56:57] [CAPTURE] Capture completed for cell (4, 3) with 91/74 valid windows and 2395 frames; accumulated windows=182 captures=2
+[2026-04-19 19:56:59] [UDP] Node 2 seq=94326 packets=45825 rssi=-65.0 snr=34.0 source=172.30.1.1:55622
+[2026-04-19 19:56:59] [UDP] Node 1 seq=76301 packets=32448 rssi=-21.0 snr=72.0 source=172.30.1.39:50206
+[2026-04-19 19:56:59] [UDP] Node 3 seq=112116 packets=30474 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:57:01] [UDP] Node 2 seq=94681 packets=46180 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:01] [UDP] Node 1 seq=76635 packets=32782 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:01] [UDP] Node 3 seq=112578 packets=30655 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:02] [CAPTURE] Capture started for cell (1, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:57:08] [CAPTURE] Capture completed for cell (1, 4) with 91/0 valid windows and 194 frames; accumulated windows=182 captures=2
+[2026-04-19 19:57:09] [UDP] Node 2 seq=94882 packets=46381 rssi=-66.0 snr=33.0 source=172.30.1.1:55622
+[2026-04-19 19:57:09] [UDP] Node 3 seq=112906 packets=30814 rssi=-68.0 snr=31.0 source=172.30.1.90:62121
+[2026-04-19 19:57:09] [UDP] Node 1 seq=76790 packets=32937 rssi=-80.0 snr=13.0 source=172.30.1.39:50206
+[2026-04-19 19:57:11] [UDP] Node 3 seq=113319 packets=31017 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:11] [UDP] Node 2 seq=95263 packets=46762 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:11] [UDP] Node 1 seq=77142 packets=33289 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:13] [CAPTURE] Capture started for cell (2, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:57:13] [UDP] Node 3 seq=113958 packets=31286 rssi=-71.0 snr=28.0 source=172.30.1.90:62121
+[2026-04-19 19:57:13] [UDP] Node 2 seq=95640 packets=47138 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:13] [UDP] Node 1 seq=77542 packets=33686 rssi=-69.0 snr=24.0 source=172.30.1.39:50206
+[2026-04-19 19:57:15] [UDP] Node 3 seq=114357 packets=31452 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:15] [UDP] Node 2 seq=95990 packets=47488 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:15] [UDP] Node 1 seq=77873 packets=34017 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:17] [UDP] Node 2 seq=96205 packets=47703 rssi=-62.0 snr=37.0 source=172.30.1.1:55622
+[2026-04-19 19:57:17] [UDP] Node 1 seq=78083 packets=34227 rssi=-33.0 snr=60.0 source=172.30.1.39:50206
+[2026-04-19 19:57:17] [UDP] Node 3 seq=114792 packets=31612 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:57:18] [CAPTURE] Capture completed for cell (2, 4) with 91/57 valid windows and 2218 frames; accumulated windows=182 captures=2
+[2026-04-19 19:57:19] [UDP] Node 3 seq=115252 packets=31866 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:57:19] [UDP] Node 2 seq=96617 packets=48115 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:19] [UDP] Node 1 seq=78472 packets=34616 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:21] [UDP] Node 3 seq=115763 packets=32160 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:21] [UDP] Node 2 seq=97016 packets=48514 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:21] [UDP] Node 1 seq=78851 packets=34995 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:23] [CAPTURE] Capture started for cell (3, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:57:23] [UDP] Node 1 seq=79156 packets=35300 rssi=-79.0 snr=14.0 source=172.30.1.39:50206
+[2026-04-19 19:57:23] [UDP] Node 3 seq=116245 packets=32299 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:23] [UDP] Node 2 seq=97330 packets=48828 rssi=-68.0 snr=31.0 source=172.30.1.1:55622
+[2026-04-19 19:57:29] [CAPTURE] Capture completed for cell (3, 4) with 91/6 valid windows and 592 frames; accumulated windows=182 captures=2
+[2026-04-19 19:57:29] [UDP] Node 2 seq=97508 packets=49006 rssi=-63.0 snr=36.0 source=172.30.1.1:55622
+[2026-04-19 19:57:29] [UDP] Node 3 seq=116574 packets=32480 rssi=-54.0 snr=45.0 source=172.30.1.90:62121
+[2026-04-19 19:57:29] [UDP] Node 1 seq=79370 packets=35499 rssi=-30.0 snr=63.0 source=172.30.1.39:50206
+[2026-04-19 19:57:32] [UDP] Node 3 seq=117072 packets=32842 rssi=-55.0 snr=44.0 source=172.30.1.90:62121
+[2026-04-19 19:57:32] [UDP] Node 2 seq=97916 packets=49414 rssi=-62.0 snr=37.0 source=172.30.1.1:55622
+[2026-04-19 19:57:32] [UDP] Node 1 seq=79645 packets=35771 rssi=-31.0 snr=62.0 source=172.30.1.39:50206
+[2026-04-19 19:57:34] [CAPTURE] Capture started for cell (4, 4) for 5.0s with 10-sample windows and stride 1
+[2026-04-19 19:57:35] [UDP] Node 2 seq=97935 packets=49433 rssi=-62.0 snr=37.0 source=172.30.1.1:55622
+[2026-04-19 19:57:35] [UDP] Node 3 seq=117093 packets=32863 rssi=-55.0 snr=44.0 source=172.30.1.90:62121
+[2026-04-19 19:57:35] [UDP] Node 1 seq=79659 packets=35785 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:37] [UDP] Node 3 seq=117549 packets=33096 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:37] [UDP] Node 2 seq=98326 packets=49824 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:57:37] [UDP] Node 1 seq=79900 packets=36026 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:57:39] [UDP] Node 1 seq=80076 packets=36202 rssi=-23.0 snr=70.0 source=172.30.1.39:50206
+[2026-04-19 19:57:39] [UDP] Node 2 seq=98642 packets=50140 rssi=-54.0 snr=45.0 source=172.30.1.1:55622
+[2026-04-19 19:57:39] [UDP] Node 3 seq=117971 packets=33241 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:57:39] [CAPTURE] Capture completed for cell (4, 4) with 91/67 valid windows and 1522 frames; accumulated windows=182 captures=2
+[2026-04-19 19:57:44] [TRAIN] Trained RandomForestDualStage on 2912 samples across 16 cells (hierarchical RF (column + row), n_estimators=280, random_state=200)
+[2026-04-19 19:57:46] [TRAIN] Trained RandomForestUnified on 2912 samples across 16 cells (unified RF, n_estimators=320, random_state=200)
+[2026-04-19 19:57:47] [UDP] Node 1 seq=80088 packets=36214 rssi=-84.0 snr=9.0 source=172.30.1.39:50206
+[2026-04-19 19:57:47] [UDP] Node 2 seq=98661 packets=50159 rssi=-74.0 snr=25.0 source=172.30.1.1:55622
+[2026-04-19 19:57:47] [UDP] Node 3 seq=117997 packets=33249 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:57:50] [UDP] Node 3 seq=119899 packets=34062 rssi=-70.0 snr=29.0 source=172.30.1.90:62121
+[2026-04-19 19:57:50] [UDP] Node 2 seq=99845 packets=51343 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:57:50] [UDP] Node 1 seq=80890 packets=37016 rssi=-20.0 snr=73.0 source=172.30.1.39:50206
+[2026-04-19 19:58:00] [UDP] Node 2 seq=99876 packets=51374 rssi=-64.0 snr=35.0 source=172.30.1.1:55622
+[2026-04-19 19:58:00] [UDP] Node 3 seq=119938 packets=34101 rssi=-70.0 snr=29.0 source=172.30.1.90:62121
+[2026-04-19 19:58:00] [UDP] Node 1 seq=80917 packets=37043 rssi=-21.0 snr=72.0 source=172.30.1.39:50206
+[2026-04-19 19:58:02] [UDP] Node 2 seq=100272 packets=51769 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:58:02] [UDP] Node 1 seq=81176 packets=37302 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:58:02] [UDP] Node 3 seq=120508 packets=34406 rssi=-67.0 snr=32.0 source=172.30.1.90:62121
+[2026-04-19 19:58:04] [UDP] Node 2 seq=100497 packets=51994 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:58:04] [UDP] Node 1 seq=81338 packets=37464 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:58:04] [UDP] Node 3 seq=120763 packets=34607 rssi=-76.0 snr=23.0 source=172.30.1.90:62121
+[2026-04-19 19:58:06] [UDP] Node 3 seq=121322 packets=34969 rssi=-66.0 snr=33.0 source=172.30.1.90:62121
+[2026-04-19 19:58:06] [UDP] Node 2 seq=100918 packets=52413 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:58:06] [UDP] Node 1 seq=81648 packets=37769 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:58:07] [PREDICT] Best cell changed to (2, 2) probability=24.9%
+[2026-04-19 19:58:08] [UDP] Node 3 seq=121980 packets=35364 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:58:08] [UDP] Node 2 seq=101392 packets=52886 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:58:08] [UDP] Node 1 seq=81980 packets=38101 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:58:10] [UDP] Node 3 seq=122605 packets=35704 rssi=-77.0 snr=22.0 source=172.30.1.90:62121
+[2026-04-19 19:58:10] [UDP] Node 2 seq=101794 packets=53286 rssi=-67.0 snr=32.0 source=172.30.1.1:55622
+[2026-04-19 19:58:10] [UDP] Node 1 seq=82263 packets=38384 rssi=-68.0 snr=25.0 source=172.30.1.39:50206
+[2026-04-19 19:58:11] [PREDICT] Best cell changed to (4, 4) probability=24.5%

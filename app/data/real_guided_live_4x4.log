@@ -1,0 +1,4 @@
+[2026-04-19 19:37:35] Real guided benchmark workspace ready at app\data\real_guided_benchmark_workspace. Grid=4x4, captures_per_cell=2.
+[2026-04-19 19:37:35] Waiting for real ESP32 traffic on the configured UDP port. Make sure the nodes are powered and sending.
+[2026-04-19 19:37:50] Real guided benchmark failed: TimeoutError('Timed out after 15.0s. Last status: Capture an empty-room baseline, then press Learn on each cell and click Train Models.')
+[2026-04-19 19:37:50] Wrote benchmark report to app\data\real_guided_benchmark_report.json.

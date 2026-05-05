@@ -32,6 +32,7 @@ void app_config_load(app_config_t *cfg)
     copy_default(cfg->wifi_password, sizeof(cfg->wifi_password), CONFIG_CSI_DEFAULT_WIFI_PASSWORD);
     copy_default(cfg->target_ip, sizeof(cfg->target_ip), CONFIG_CSI_DEFAULT_TARGET_IP);
     cfg->target_port = (uint16_t)CONFIG_CSI_DEFAULT_TARGET_PORT;
+    cfg->csi_send_interval_ms = (uint16_t)CONFIG_CSI_DEFAULT_SEND_INTERVAL_MS;
     cfg->node_id = (uint8_t)CONFIG_CSI_DEFAULT_NODE_ID;
     cfg->wifi_channel = (uint8_t)CONFIG_CSI_DEFAULT_WIFI_CHANNEL;
 
@@ -67,6 +68,12 @@ void app_config_load(app_config_t *cfg)
     if (nvs_get_u16(handle, "target_port", &port) == ESP_OK) {
         cfg->target_port = port;
         ESP_LOGI(TAG, "NVS override: target_port=%u", cfg->target_port);
+    }
+
+    uint16_t send_interval_ms = 0;
+    if (nvs_get_u16(handle, "send_int_ms", &send_interval_ms) == ESP_OK) {
+        cfg->csi_send_interval_ms = send_interval_ms;
+        ESP_LOGI(TAG, "NVS override: send_int_ms=%u", cfg->csi_send_interval_ms);
     }
 
     uint8_t node_id = 0;

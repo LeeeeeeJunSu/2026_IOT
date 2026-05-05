@@ -9,6 +9,7 @@ param(
     [string]$TargetIp,
     [int]$TargetPort = 5005,
     [int]$WifiChannel = 6,
+    [int]$SendIntervalMs = 20,
     [string]$ProjectRoot = (Join-Path $PSScriptRoot "..\esp32-csi-fingerprint-node")
 )
 
@@ -24,6 +25,7 @@ $resolvedWifiPassword = $WifiPassword
 $resolvedTargetIp = $TargetIp
 $resolvedTargetPort = $TargetPort
 $resolvedWifiChannel = $WifiChannel
+$resolvedSendIntervalMs = $SendIntervalMs
 
 if ($ConfigPath -and (Test-Path $ConfigPath)) {
     $config = Get-Content $ConfigPath -Raw | ConvertFrom-Json
@@ -55,6 +57,9 @@ if ($ConfigPath -and (Test-Path $ConfigPath)) {
         }
         if (-not $PSBoundParameters.ContainsKey('WifiChannel') -and $null -ne $selectedNode.wifi_channel) {
             $resolvedWifiChannel = [int]$selectedNode.wifi_channel
+        }
+        if (-not $PSBoundParameters.ContainsKey('SendIntervalMs') -and $null -ne $selectedNode.csi_send_interval_ms) {
+            $resolvedSendIntervalMs = [int]$selectedNode.csi_send_interval_ms
         }
         if (-not $PSBoundParameters.ContainsKey('TargetIp') -and $config.host.target_ip) {
             $resolvedTargetIp = [string]$config.host.target_ip
@@ -88,6 +93,7 @@ ssid,data,string,$resolvedWifiSsid
 password,data,string,$resolvedWifiPassword
 target_ip,data,string,$resolvedTargetIp
 target_port,data,u16,$resolvedTargetPort
+send_int_ms,data,u16,$resolvedSendIntervalMs
 node_id,data,u8,$resolvedNodeId
 wifi_channel,data,u8,$resolvedWifiChannel
 "@

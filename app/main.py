@@ -10,28 +10,29 @@ if str(REPO_ROOT) not in sys.path:
 
 from app.core import FingerprintEngine
 from app.gui import FingerprintAppWindow
-from app.receiver import UdpReceiverThread
+from app.receiver import build_receivers_for_config
 from app.runtime import EngineRuntimeThread
+from app.stimulus import build_stimulus_for_config
 
 
 def main() -> int:
     workspace = Path(__file__).resolve().parent
     engine = FingerprintEngine(workspace)
-    receiver = UdpReceiverThread(
-        engine,
-        engine.system_config.host.listen_host,
-        engine.system_config.host.udp_port,
-    )
+    receiver = build_receivers_for_config(engine, engine.system_config)
+    stimulus = build_stimulus_for_config(engine.system_config)
     runtime = EngineRuntimeThread(engine)
     receiver.start()
+    stimulus.start()
     runtime.start()
     window = FingerprintAppWindow(engine, receiver)
     try:
         window.run()
     finally:
         receiver.stop()
+        stimulus.stop()
         runtime.stop()
         receiver.join(timeout=1.5)
+        stimulus.join(timeout=1.5)
         runtime.join(timeout=1.5)
     return 0
 

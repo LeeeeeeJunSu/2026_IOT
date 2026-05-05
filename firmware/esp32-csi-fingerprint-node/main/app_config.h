@@ -12,6 +12,7 @@ typedef struct {
     char wifi_password[APP_CFG_PASS_MAX];
     char target_ip[APP_CFG_IP_MAX];
     uint16_t target_port;
+    uint16_t csi_send_interval_ms;
     uint8_t node_id;
     uint8_t wifi_channel;
 } app_config_t;
@@ -19,4 +20,3 @@ typedef struct {
 void app_config_load(app_config_t *cfg);
 
 #endif
-

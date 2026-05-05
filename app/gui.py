@@ -4,11 +4,11 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 
 from .core import FingerprintEngine
-from .receiver import UdpReceiverThread
+from .receiver import UdpReceiverGroup
 
 
 class FingerprintAppWindow:
-    def __init__(self, engine: FingerprintEngine, receiver: UdpReceiverThread) -> None:
+    def __init__(self, engine: FingerprintEngine, receiver: UdpReceiverGroup) -> None:
         self.engine = engine
         self.receiver = receiver
         self.root = tk.Tk()
@@ -497,7 +497,8 @@ class FingerprintAppWindow:
 
         self.udp_var.set(
             f"{snapshot['udp_status']} | target IP for firmware/simulator: "
-            f"{snapshot['host']['target_ip']}:{snapshot['host']['udp_port']} | "
+            f"{snapshot['host']['target_ip']} | ports: "
+            f"{self._format_node_ports(snapshot['host']['node_ports'])} | "
             f"config: {snapshot['host']['config_path']} | "
             f"log: {snapshot['comm_log_path']}"
         )
@@ -621,6 +622,12 @@ class FingerprintAppWindow:
                 self.comm_log_listbox.insert(tk.END, line)
         if logs:
             self.comm_log_listbox.yview_moveto(1.0)
+
+    @staticmethod
+    def _format_node_ports(node_ports: list[dict[str, int]]) -> str:
+        if not node_ports:
+            return "-"
+        return ", ".join(f"{item['node_id']}:{item['port']}" for item in node_ports)
 
     @staticmethod
     def _probability_text(cell: dict[str, object], ready: bool) -> str:

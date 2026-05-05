@@ -1,0 +1,111 @@
+{
+  "started_at": "2026-04-19 20:16:11",
+  "workspace": "app\\data\\real_guided_smoke_workspace",
+  "config_path": "app\\data\\real_guided_smoke_workspace\\Config\\system_config.json",
+  "config": {
+    "cols": 1,
+    "rows": 1,
+    "captures_per_cell": 1,
+    "capture_seconds": 3.0,
+    "move_seconds": 0.0,
+    "baseline_capture_seconds": 3.0,
+    "baseline_move_seconds": 0.0,
+    "stress_duration_seconds": 1.0,
+    "baseline_retries": 3,
+    "capture_retries": 3
+  },
+  "captures": [
+    {
+      "grid_x": 0,
+      "grid_y": 0,
+      "round": 1,
+      "capture_count": 1,
+      "window_sample_count": 26,
+      "observed_window_count": 26,
+      "generated_window_count": 26,
+      "observed_window_ratio": 1.0,
+      "total_frames": 2274
+    }
+  ],
+  "udp_ready": {
+    "nodes": [
+      1,
+      2,
+      3
+    ],
+    "packet_count": 31,
+    "udp_status": "Listening on UDP 0.0.0.0:5005"
+  },
+  "baseline": {
+    "captured_nodes": 3,
+    "required_nodes": 3,
+    "status_message": "Baseline capture completed: 3/3 nodes, 1814 total frames. Press Learn on each cell."
+  },
+  "training": {
+    "status_message": "Trained 2 models on 26 samples. Active model: RandomForestDualStage.",
+    "elapsed_seconds": 2.187,
+    "trained_model_count": 2,
+    "available_models": [
+      "RandomForestDualStage",
+      "RandomForestUnified"
+    ],
+    "dataset": {
+      "trained_cells": 1,
+      "total_cells": 1,
+      "dataset_samples": 26,
+      "per_cell_samples": [
+        {
+          "grid_x": 0,
+          "grid_y": 0,
+          "capture_count": 1,
+          "window_sample_count": 26,
+          "observed_window_count": 26,
+          "generated_window_count": 26,
+          "observed_window_ratio": 1.0
+        }
+      ]
+    }
+  },
+  "stress": {
+    "results": [
+      {
+        "model_name": "no_model",
+        "processed_packets": 816,
+        "elapsed_seconds": 1.003,
+        "processed_packets_per_second": 813.7,
+        "last_inference_duration_ms": 0.006,
+        "last_inference_age_ms": 40.399,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": false,
+        "best_cell_key": null,
+        "best_probability": 0.0
+      },
+      {
+        "model_name": "RandomForestDualStage",
+        "processed_packets": 988,
+        "elapsed_seconds": 1.001,
+        "processed_packets_per_second": 987.3,
+        "last_inference_duration_ms": 11.117,
+        "last_inference_age_ms": 34.737,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": false,
+        "best_cell_key": null,
+        "best_probability": 0.0
+      },
+      {
+        "model_name": "RandomForestUnified",
+        "processed_packets": 1121,
+        "elapsed_seconds": 1.003,
+        "processed_packets_per_second": 1117.2,
+        "last_inference_duration_ms": 22.353,
+        "last_inference_age_ms": 47.308,
+        "inference_interval_seconds": 0.1,
+        "prediction_ready": false,
+        "best_cell_key": null,
+        "best_probability": 0.0
+      }
+    ]
+  },
+  "success": true,
+  "finished_at": "2026-04-19 20:16:25"
+}

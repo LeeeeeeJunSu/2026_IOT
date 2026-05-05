@@ -10,9 +10,10 @@ partition table are enabled by default.
 ## Default behavior
 
 - Target host: set at provisioning time
-- UDP port: `5005`
+- UDP port: set at provisioning time, usually one port per node
 - CSI frame format: ADR-018, unchanged from the existing node firmware
 - Node ID: `1` by default, but configurable per device
+- CSI send interval: `20 ms` by default
 
 ## Build
 
@@ -30,6 +31,10 @@ Use the helper script from `firmware/scripts`, or flash directly:
 idf.py -p COM7 flash
 ```
 
+The updated app binary logs `send_interval_ms=20` at startup. If the boot log
+does not include that field, the board is still running the old firmware even
+if NVS provisioning succeeded.
+
 ## Provision
 
 Provisioning writes a small NVS image with WiFi credentials and the UDP target
@@ -43,6 +48,14 @@ Kconfig defaults when NVS is empty.
   -NodeLabel "ESP 1"
 ..\scripts\provision.ps1 -Port COM7 -WifiSsid "MyWiFi" -WifiPassword "secret" `
   -TargetIp "192.168.1.20" -TargetPort 5005 -NodeId 1 -WifiChannel 6
+```
+
+Or provision from the repository root with the Python helper:
+
+```powershell
+python firmware\scripts\provision_from_config.py --host-ip 172.30.1.48 --node-id 1 --com-port COM5 --target-port 5001 --send-interval-ms 20
+python firmware\scripts\provision_from_config.py --host-ip 172.30.1.48 --node-id 2 --com-port COM4 --target-port 5002 --send-interval-ms 20
+python firmware\scripts\provision_from_config.py --host-ip 172.30.1.48 --node-id 3 --com-port COM6 --target-port 5003 --send-interval-ms 20
 ```
 
 If you want a one-step firmware refresh, run build, flash, and provision in that
