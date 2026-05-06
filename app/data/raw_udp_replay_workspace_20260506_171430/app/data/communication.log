@@ -1,0 +1,13 @@
+[2026-05-06 17:14:30] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_171430\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:14:30] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:14:30] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:14:30] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:14:30] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:14:30] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:14:30] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:14:30] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:14:30] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:14:30] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:14:30] [BASELINE] Baseline capture armed with 0.0s delay and 6.2s capture
+[2026-05-06 17:14:31] [BASELINE] Baseline capture started for 6.2s
+[2026-05-06 17:14:37] [BASELINE] Baseline capture failed; captured_nodes=0/9 frames=0

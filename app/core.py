@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from Config.config_loader import load_system_config, save_system_config
 
 from .protocol import (
@@ -16,7 +17,9 @@ from .protocol import (
     build_feature_frame,
     parse_adr018_frame,
 )
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+
+from .raw_training import DEFAULT_QUANTILES, SCALAR_KEYS, smooth_rows
 
 from .storage import (
     load_fingerprint_store,
@@ -25,6 +28,8 @@ from .storage import (
     save_fingerprint_store,
     save_pickle_store,
 )
+
+EMPTY_ROOM_CLASS_KEY = "empty_room"
 
 
 @dataclass
@@ -97,118 +102,16 @@ class ModelMetadata:
     trained_at: float
     window_seconds: float
     window_step_seconds: float
+    feature_signature: str
     node_ids: list[int]
     input_size: int
     sample_count: int
     class_labels: list[str]
     summary: str
 
-
-class DualStageRandomForestClassifier:
-    def __init__(
-        self,
-        *,
-        n_estimators: int = 280,
-        random_state: int = 200,
-        max_depth: int | None = None,
-        min_samples_leaf: int = 1,
-        min_samples_split: int = 2,
-        max_features: str | int | float | None = "sqrt",
-    ) -> None:
-        self.n_estimators = int(n_estimators)
-        self.random_state = int(random_state)
-        self.max_depth = max_depth
-        self.min_samples_leaf = int(min_samples_leaf)
-        self.min_samples_split = int(min_samples_split)
-        self.max_features = max_features
-        self.column_classifier = RandomForestClassifier(
-            n_estimators=self.n_estimators,
-            random_state=self.random_state,
-            max_depth=self.max_depth,
-            min_samples_leaf=self.min_samples_leaf,
-            min_samples_split=self.min_samples_split,
-            max_features=self.max_features,
-            n_jobs=-1,
-        )
-        self.row_classifier = RandomForestClassifier(
-            n_estimators=self.n_estimators,
-            random_state=self.random_state,
-            max_depth=self.max_depth,
-            min_samples_leaf=self.min_samples_leaf,
-            min_samples_split=self.min_samples_split,
-            max_features=self.max_features,
-            n_jobs=-1,
-        )
-        self.classes_: list[str] = []
-        self._class_pairs: list[tuple[str, str]] = []
-        self._column_prob_index: dict[str, int] = {}
-        self._row_prob_index: dict[str, int] = {}
-
-    @staticmethod
-    def _split_cell_label(label: str) -> tuple[str, str]:
-        grid_x_text, grid_y_text = str(label).split(",", 1)
-        return grid_x_text, grid_y_text
-
-    def fit(self, features: list[list[float]], labels: list[str]) -> DualStageRandomForestClassifier:
-        if not features or not labels:
-            raise RuntimeError("Training samples are required for dual-stage RandomForest.")
-        column_labels: list[str] = []
-        row_labels: list[str] = []
-        for label in labels:
-            grid_x_text, grid_y_text = self._split_cell_label(label)
-            column_labels.append(grid_x_text)
-            row_labels.append(grid_y_text)
-
-        self.column_classifier.fit(features, column_labels)
-        self.row_classifier.fit(features, row_labels)
-        self._column_prob_index = {
-            str(value): index for index, value in enumerate(self.column_classifier.classes_)
-        }
-        self._row_prob_index = {
-            str(value): index for index, value in enumerate(self.row_classifier.classes_)
-        }
-
-        ordered_labels: list[str] = []
-        seen: set[str] = set()
-        for label in labels:
-            normalized = str(label)
-            if normalized in seen:
-                continue
-            seen.add(normalized)
-            ordered_labels.append(normalized)
-        self.classes_ = ordered_labels
-        self._class_pairs = [self._split_cell_label(label) for label in self.classes_]
-        return self
-
-    def predict_proba(self, features: list[list[float]]) -> list[list[float]]:
-        if not self.classes_:
-            raise RuntimeError("Dual-stage RandomForest model is not fitted.")
-        column_probabilities = self.column_classifier.predict_proba(features)
-        row_probabilities = self.row_classifier.predict_proba(features)
-
-        merged_probabilities: list[list[float]] = []
-        for sample_index in range(len(features)):
-            row_distribution: list[float] = []
-            for grid_x_text, grid_y_text in self._class_pairs:
-                column_index = self._column_prob_index.get(grid_x_text)
-                row_index = self._row_prob_index.get(grid_y_text)
-                if column_index is None or row_index is None:
-                    row_distribution.append(0.0)
-                    continue
-                row_distribution.append(
-                    float(column_probabilities[sample_index][column_index])
-                    * float(row_probabilities[sample_index][row_index])
-                )
-            total = sum(row_distribution)
-            if total > 0.0:
-                row_distribution = [value / total for value in row_distribution]
-            merged_probabilities.append(row_distribution)
-        return merged_probabilities
-
-
 class FingerprintEngine:
-    STORE_VERSION = 8
-    MODEL_ORDER = ("RandomForestDualStage", "RandomForestUnified")
+    STORE_VERSION = 9
+    MODEL_ORDER = ("ExtraTreesWindowed",)
     LIVE_PREPROCESS_HORIZON_WINDOWS = 6
     INFERENCE_MIN_INTERVAL_SECONDS = 0.10
     RUNTIME_MAX_TICK_SECONDS = 0.05
@@ -226,6 +129,7 @@ class FingerprintEngine:
         self.node_windows: dict[int, deque[FeatureFrame]] = {}
         self.live_nodes: dict[int, LiveNodeState] = {}
         self.cell_datasets: dict[str, CellDataset] = {}
+        self.empty_room_dataset: CellDataset | None = None
         self.capture_session: CaptureSession | None = None
         self.baseline_capture_session: BaselineCaptureSession | None = None
         self.packet_count = 0
@@ -255,6 +159,7 @@ class FingerprintEngine:
         self._loaded_store_version: int | None = None
         self._loaded_store_window_seconds: float | None = None
         self._loaded_store_window_step_seconds: float | None = None
+        self._loaded_store_feature_signature: str | None = None
         self._loaded_store_node_ids: list[int] | None = None
         self._loaded_store_input_size: int | None = None
         self._inference_dirty = True
@@ -274,8 +179,7 @@ class FingerprintEngine:
             )
         elif any(dataset.window_sample_count > 0 for dataset in self.cell_datasets.values()):
             self.status_message = (
-                "Saved Learn data loaded. Click Train Models to fit "
-                "RandomForestDualStage / RandomForestUnified."
+                "Saved Learn data loaded. Click Train Models to fit ExtraTreesWindowed."
             )
         self._log_event_locked(
             "INFO",
@@ -344,6 +248,12 @@ class FingerprintEngine:
         return self.system_config.fingerprinting.smoothing_half_window
 
     @property
+    def scalar_smoothing_half_window(self) -> int:
+        if self.smoothing_half_window <= 0:
+            return 0
+        return max(1, self.smoothing_half_window // 2)
+
+    @property
     def capture_auto_extend_seconds(self) -> float:
         return self.system_config.fingerprinting.capture_auto_extend_seconds
 
@@ -395,11 +305,32 @@ class FingerprintEngine:
 
     @property
     def per_node_feature_size(self) -> int:
-        return ACTIVE_SUBCARRIER_COUNT * 2
+        amplitude_feature_size = ACTIVE_SUBCARRIER_COUNT * 2
+        quantile_feature_size = ACTIVE_SUBCARRIER_COUNT * len(DEFAULT_QUANTILES)
+        scalar_feature_size = len(SCALAR_KEYS) * 2
+        return amplitude_feature_size + quantile_feature_size + scalar_feature_size
 
     @property
     def expected_input_size(self) -> int:
         return len(self.required_node_ids) * self.per_node_feature_size
+
+    @property
+    def feature_signature(self) -> str:
+        quantile_signature = ",".join(str(int(value)) for value in DEFAULT_QUANTILES)
+        return (
+            "windowed_et_v1:"
+            f"quantiles={quantile_signature}:"
+            f"amp_smooth={self.smoothing_half_window}:"
+            f"scalar_smooth={self.scalar_smoothing_half_window}:"
+            f"per_node={self.per_node_feature_size}"
+        )
+
+    @property
+    def has_empty_room_training(self) -> bool:
+        return (
+            self.empty_room_dataset is not None
+            and self.empty_room_dataset.window_sample_count > 0
+        )
 
     def set_udp_status(self, message: str) -> None:
         with self.lock:
@@ -448,7 +379,10 @@ class FingerprintEngine:
                     "Re-capturing the baseline requires clearing the learned cell datasets first."
                 )
             if reset_training:
-                self._reset_training_state_locked(clear_baseline=False)
+                self._reset_training_state_locked(
+                    clear_baseline=False,
+                    clear_empty_room_dataset=True,
+                )
             ready_at = now + self.baseline_start_delay_seconds
             self.baseline_capture_session = BaselineCaptureSession(
                 ready_at=ready_at,
@@ -473,18 +407,17 @@ class FingerprintEngine:
 
     def clear_baseline(self) -> None:
         with self.lock:
-            self.baseline_capture_session = None
-            self.empty_room_baseline_by_node.clear()
-            self.empty_room_baseline_counts.clear()
-            self._save_datasets()
-            if self.cell_datasets:
-                self._reset_training_state_locked(clear_baseline=False)
+            had_training = bool(self.cell_datasets)
+            self._reset_training_state_locked(
+                clear_baseline=True,
+                clear_empty_room_dataset=True,
+            )
+            if had_training:
                 self.status_message = (
                     "Cleared the empty-room baseline and learned cell datasets. "
                     "Capture a new baseline before learning again."
                 )
             else:
-                self._clear_models_locked()
                 self.status_message = (
                     "Cleared the empty-room baseline. Capture a new baseline before learning."
                 )
@@ -548,7 +481,10 @@ class FingerprintEngine:
             self._schedule_inference_now_locked()
 
             if grid_changed or window_changed or window_step_changed:
-                self._reset_training_state_locked(clear_baseline=False)
+                self._reset_training_state_locked(
+                    clear_baseline=False,
+                    clear_empty_room_dataset=True,
+                )
                 reason = []
                 if grid_changed:
                     reason.append(f"grid {cols}x{rows}")
@@ -630,7 +566,10 @@ class FingerprintEngine:
 
     def clear_all(self) -> None:
         with self.lock:
-            self._reset_training_state_locked(clear_baseline=False)
+            self._reset_training_state_locked(
+                clear_baseline=False,
+                clear_empty_room_dataset=False,
+            )
             self.status_message = (
                 "Cleared all saved Learn data and all trained models. The baseline was kept."
             )
@@ -675,6 +614,7 @@ class FingerprintEngine:
         feature = event.get("feature")
         if not isinstance(feature, FeatureFrame):
             return False
+        source = str(event.get("source", "unknown"))
         with self.lock:
             self.packet_count += 1
             self.last_packet_ts = now
@@ -848,6 +788,14 @@ class FingerprintEngine:
                         }
                     )
 
+            empty_room_trained = self.has_empty_room_training
+            empty_room_dataset = self.empty_room_dataset
+            empty_room_samples = (
+                empty_room_dataset.window_sample_count if empty_room_dataset else 0
+            )
+            if empty_room_trained:
+                dataset_samples += empty_room_samples
+
             nodes = []
             for node_id, node in sorted(self.live_nodes.items()):
                 nodes.append(
@@ -898,7 +846,11 @@ class FingerprintEngine:
                 "training": {
                     "trained_cells": trained_cells,
                     "total_cells": self.total_cells,
+                    "trained_classes": trained_cells + (1 if empty_room_trained else 0),
+                    "total_classes": self.total_cells + 1,
                     "dataset_samples": dataset_samples,
+                    "empty_room_trained": empty_room_trained,
+                    "empty_room_samples": empty_room_samples,
                     "required_nodes": len(self.required_node_ids),
                     "baseline_ready": baseline_ready,
                     "model_ready": active_model_ready,
@@ -946,9 +898,35 @@ class FingerprintEngine:
                     "active_model": self.active_model_name,
                     "available_models": available_models,
                     "best_cell_key": self.last_best_cell,
+                    "best_label_key": self.last_best_cell,
+                    "best_label_display": self._display_label_for_key(self.last_best_cell),
+                    "best_is_empty_room": self.last_best_cell == EMPTY_ROOM_CLASS_KEY,
                     "best_probability": self.last_best_probability,
                 },
                 "cells": cells,
+                "empty_room": {
+                    "cell_key": EMPTY_ROOM_CLASS_KEY,
+                    "label": "Empty Room",
+                    "trained": empty_room_trained,
+                    "node_count": empty_room_dataset.node_count if empty_room_dataset else 0,
+                    "total_frames": empty_room_dataset.total_frames if empty_room_dataset else 0,
+                    "capture_count": empty_room_dataset.capture_count if empty_room_dataset else 0,
+                    "window_sample_count": empty_room_samples,
+                    "observed_window_count": empty_room_dataset.observed_window_count
+                    if empty_room_dataset
+                    else 0,
+                    "generated_window_count": empty_room_dataset.generated_window_count
+                    if empty_room_dataset
+                    else 0,
+                    "observed_window_ratio": (
+                        float(empty_room_dataset.observed_window_count)
+                        / max(1, empty_room_dataset.total_window_slots)
+                    )
+                    if empty_room_dataset
+                    else 0.0,
+                    "probability": self.last_probabilities.get(EMPTY_ROOM_CLASS_KEY, 0.0),
+                    "is_best": self.last_best_cell == EMPTY_ROOM_CLASS_KEY,
+                },
                 "nodes": nodes,
                 "udp_status": self.udp_status,
                 "status_message": self.status_message,
@@ -1120,19 +1098,57 @@ class FingerprintEngine:
 
         self.empty_room_baseline_by_node.update(updated_baselines)
         self.empty_room_baseline_counts.update(updated_counts)
+        empty_room_build = self._build_dataset_samples_from_frames_locked(
+            frames_by_node=session.frames_by_node,
+            start_time=session.started_at,
+            end_time=session.ends_at,
+        )
+        if empty_room_build.samples:
+            self.empty_room_dataset = CellDataset(
+                cell_key=EMPTY_ROOM_CLASS_KEY,
+                grid_x=-1,
+                grid_y=-1,
+                captured_at=captured_at,
+                total_frames=empty_room_build.total_frames,
+                capture_count=1,
+                node_count=len(required_node_ids),
+                window_sample_count=len(empty_room_build.samples),
+                observed_window_count=empty_room_build.observed_window_count,
+                generated_window_count=empty_room_build.generated_window_count,
+                total_window_slots=empty_room_build.total_window_slots,
+                samples=empty_room_build.samples,
+            )
+        else:
+            self.empty_room_dataset = None
         self._save_datasets()
         self.status_message = (
             f"Baseline capture completed: {captured_nodes}/{len(required_node_ids)} nodes, "
-            f"{total_frames} total frames. Press Learn on each cell."
+            f"{total_frames} total frames. Empty-room class windows="
+            f"{0 if self.empty_room_dataset is None else self.empty_room_dataset.window_sample_count}. "
+            "Press Learn on each cell."
         )
         self._log_event_locked(
             "BASELINE",
             f"Baseline capture completed with {captured_nodes}/{len(required_node_ids)} nodes "
-            f"and {total_frames} total frames",
+            f"and {total_frames} total frames; empty-room windows="
+            f"{0 if self.empty_room_dataset is None else self.empty_room_dataset.window_sample_count}",
         )
 
     def _build_dataset_samples_locked(
         self, session: CaptureSession
+    ) -> DatasetBuildResult:
+        return self._build_dataset_samples_from_frames_locked(
+            frames_by_node=session.frames_by_node,
+            start_time=session.started_at,
+            end_time=session.ends_at,
+        )
+
+    def _build_dataset_samples_from_frames_locked(
+        self,
+        *,
+        frames_by_node: dict[int, list[FeatureFrame]],
+        start_time: float,
+        end_time: float,
     ) -> DatasetBuildResult:
         required_node_ids = self.required_node_ids
         if not required_node_ids:
@@ -1141,7 +1157,7 @@ class FingerprintEngine:
         total_frames = 0
         observed_node_ids: set[int] = set()
         for node_id in required_node_ids:
-            frames = session.frames_by_node.get(node_id, [])
+            frames = frames_by_node.get(node_id, [])
             total_frames += len(frames)
             if frames:
                 observed_node_ids.add(node_id)
@@ -1153,12 +1169,13 @@ class FingerprintEngine:
 
         (
             aligned_vectors_by_node,
+            aligned_scalars_by_node,
             total_resampled_slots,
             valid_resampled_slots,
-        ) = self._build_aligned_node_vectors_locked(
-            session.frames_by_node,
-            start_time=session.started_at,
-            end_time=session.ends_at,
+        ) = self._build_aligned_node_feature_rows_locked(
+            frames_by_node,
+            start_time=start_time,
+            end_time=end_time,
         )
         result.total_resampled_slots = total_resampled_slots
         result.valid_resampled_slots = valid_resampled_slots
@@ -1168,9 +1185,10 @@ class FingerprintEngine:
         features_by_node: dict[int, list[list[float]]] = {}
         window_counts: list[int] = []
         for node_id in required_node_ids:
-            features_by_node[node_id] = self._build_window_feature_vectors_from_vectors(
-                aligned_vectors_by_node.get(node_id, []),
-                node_id,
+            features_by_node[node_id] = self._build_window_feature_vectors_from_rows_locked(
+                node_id=node_id,
+                amplitude_rows=aligned_vectors_by_node.get(node_id, []),
+                scalar_rows=aligned_scalars_by_node.get(node_id, []),
             )
             window_counts.append(len(features_by_node[node_id]))
 
@@ -1189,6 +1207,146 @@ class FingerprintEngine:
 
         result.samples = samples
         return result
+
+    def _build_aligned_node_feature_rows_locked(
+        self,
+        frames_by_node: dict[int, list[FeatureFrame]],
+        *,
+        start_time: float,
+        end_time: float,
+    ) -> tuple[dict[int, list[list[float]]], dict[int, list[list[float]]], int, int]:
+        required_node_ids = self.required_node_ids
+        aligned_vectors_by_node = {node_id: [] for node_id in required_node_ids}
+        aligned_scalars_by_node = {node_id: [] for node_id in required_node_ids}
+        if not required_node_ids:
+            return aligned_vectors_by_node, aligned_scalars_by_node, 0, 0
+
+        bucketed_vectors_by_node: dict[int, list[list[float] | None]] = {}
+        bucketed_scalars_by_node: dict[int, list[list[float] | None]] = {}
+        total_slots = 0
+        for node_id in required_node_ids:
+            (
+                bucketed_vectors,
+                bucketed_scalars,
+            ) = self._bucketize_feature_frames_locked(
+                frames_by_node.get(node_id, []),
+                start_time=start_time,
+                end_time=end_time,
+            )
+            bucketed_vectors_by_node[node_id] = bucketed_vectors
+            bucketed_scalars_by_node[node_id] = bucketed_scalars
+            total_slots = max(total_slots, len(bucketed_vectors))
+
+        if total_slots <= 0:
+            return aligned_vectors_by_node, aligned_scalars_by_node, 0, 0
+
+        valid_slots = 0
+        for index in range(total_slots):
+            if any(
+                index >= len(bucketed_vectors_by_node[node_id])
+                or bucketed_vectors_by_node[node_id][index] is None
+                for node_id in required_node_ids
+            ):
+                continue
+            valid_slots += 1
+
+        for node_id in required_node_ids:
+            aligned_vectors_by_node[node_id] = self._fill_bucket_gaps_locked(
+                node_id,
+                bucketed_vectors_by_node.get(node_id, []),
+                total_slots=total_slots,
+            )
+            aligned_scalars_by_node[node_id] = self._fill_scalar_bucket_gaps_locked(
+                bucketed_scalars_by_node.get(node_id, []),
+                total_slots=total_slots,
+            )
+
+        return aligned_vectors_by_node, aligned_scalars_by_node, total_slots, valid_slots
+
+    def _bucketize_feature_frames_locked(
+        self,
+        frames: list[FeatureFrame],
+        *,
+        start_time: float,
+        end_time: float,
+    ) -> tuple[list[list[float] | None], list[list[float] | None]]:
+        if end_time <= start_time:
+            return [], []
+        bucket_count = max(
+            1,
+            int(round((end_time - start_time) * self.effective_packets_per_second)),
+        )
+        vector_buckets: list[list[list[float]]] = [[] for _ in range(bucket_count)]
+        scalar_buckets: list[list[list[float]]] = [[] for _ in range(bucket_count)]
+        for frame in frames:
+            if len(frame.feature_vector) != ACTIVE_SUBCARRIER_COUNT:
+                continue
+            if frame.captured_at < start_time or frame.captured_at > end_time:
+                continue
+            position = (frame.captured_at - start_time) * self.effective_packets_per_second
+            bucket_index = int(position)
+            if bucket_index < 0:
+                continue
+            if bucket_index >= bucket_count:
+                if math.isclose(frame.captured_at, end_time, abs_tol=1e-9):
+                    bucket_index = bucket_count - 1
+                else:
+                    continue
+            vector_buckets[bucket_index].append(list(frame.feature_vector))
+            scalar_buckets[bucket_index].append(self._scalar_vector_from_frame(frame))
+
+        aggregated_vectors: list[list[float] | None] = []
+        aggregated_scalars: list[list[float] | None] = []
+        for vector_bucket, scalar_bucket in zip(vector_buckets, scalar_buckets):
+            aggregated_vectors.append(self._vector_mean(vector_bucket) if vector_bucket else None)
+            aggregated_scalars.append(self._vector_mean(scalar_bucket) if scalar_bucket else None)
+        return aggregated_vectors, aggregated_scalars
+
+    def _fill_scalar_bucket_gaps_locked(
+        self,
+        bucketed: list[list[float] | None],
+        *,
+        total_slots: int,
+    ) -> list[list[float]]:
+        normalized: list[list[float] | None] = list(bucketed[:total_slots])
+        if len(normalized) < total_slots:
+            normalized.extend([None] * (total_slots - len(normalized)))
+
+        last_seen: list[float] | None = None
+        for index, vector in enumerate(normalized):
+            if vector is not None:
+                last_seen = list(vector)
+                continue
+            if last_seen is not None:
+                normalized[index] = list(last_seen)
+
+        next_seen: list[float] | None = None
+        for index in range(total_slots - 1, -1, -1):
+            vector = normalized[index]
+            if vector is not None:
+                next_seen = list(vector)
+                continue
+            if next_seen is not None:
+                normalized[index] = list(next_seen)
+
+        default_vector = [0.0] * len(SCALAR_KEYS)
+        filled: list[list[float]] = []
+        for vector in normalized:
+            filled.append(list(vector) if vector is not None else list(default_vector))
+        return filled
+
+    @staticmethod
+    def _scalar_vector_from_frame(frame: FeatureFrame) -> list[float]:
+        return [
+            float(frame.rssi_dbm),
+            float(frame.snr_db),
+            float(frame.amplitude_mean),
+            float(frame.amplitude_std),
+            float(frame.amplitude_rms),
+            float(frame.amplitude_p90),
+            float(frame.gradient_mean),
+            float(frame.phase_step_std),
+        ]
 
     def _required_observed_window_count_locked(self, total_window_slots: int) -> int:
         if total_window_slots <= 0:
@@ -1263,6 +1421,79 @@ class FingerprintEngine:
             end_time=end_time,
         )
         return self._build_window_feature_vectors_from_vectors(vectors, node_id)
+
+    def _build_window_feature_vectors_from_rows_locked(
+        self,
+        node_id: int,
+        amplitude_rows: list[list[float]],
+        scalar_rows: list[list[float]],
+    ) -> list[list[float]]:
+        if len(amplitude_rows) < self.window_sample_count:
+            return []
+        if len(scalar_rows) < self.window_sample_count:
+            return []
+
+        prepared_amplitudes, prepared_scalars = self._preprocess_node_rows_locked(
+            node_id=node_id,
+            amplitude_rows=amplitude_rows,
+            scalar_rows=scalar_rows,
+        )
+        features: list[list[float]] = []
+        for start in range(
+            0,
+            len(prepared_amplitudes) - self.window_sample_count + 1,
+            self.window_step_samples,
+        ):
+            amplitude_window = prepared_amplitudes[start : start + self.window_sample_count]
+            scalar_window = prepared_scalars[start : start + self.window_sample_count]
+
+            parts = [
+                amplitude_window.mean(axis=0),
+                amplitude_window.std(axis=0),
+                np.percentile(
+                    amplitude_window,
+                    list(DEFAULT_QUANTILES),
+                    axis=0,
+                ).reshape(-1),
+                scalar_window.mean(axis=0),
+                scalar_window.std(axis=0),
+            ]
+            features.append(
+                np.concatenate(parts).astype(np.float32, copy=False).tolist()
+            )
+        return features
+
+    def _preprocess_node_rows_locked(
+        self,
+        *,
+        node_id: int,
+        amplitude_rows: list[list[float]],
+        scalar_rows: list[list[float]],
+    ) -> tuple[np.ndarray, np.ndarray]:
+        amplitude_array = np.asarray(amplitude_rows, dtype=np.float32)
+        scalar_array = np.asarray(scalar_rows, dtype=np.float32)
+
+        baseline = np.asarray(
+            self._baseline_vector_for_node_locked(node_id, amplitude_rows),
+            dtype=np.float32,
+        )
+        centered = amplitude_array - baseline
+        scales = np.percentile(np.abs(centered), 95.0, axis=0)
+        scales = np.maximum(scales, 1e-6).astype(np.float32, copy=False)
+        normalized_amplitudes = centered / scales
+        normalized_amplitudes = smooth_rows(
+            normalized_amplitudes,
+            self.smoothing_half_window,
+        )
+
+        scalar_mean = scalar_array.mean(axis=0)
+        scalar_std = scalar_array.std(axis=0)
+        normalized_scalars = (scalar_array - scalar_mean) / np.maximum(scalar_std, 1e-6)
+        normalized_scalars = smooth_rows(
+            normalized_scalars,
+            self.scalar_smoothing_half_window,
+        )
+        return normalized_amplitudes, normalized_scalars
 
     def _build_window_feature_vectors_from_vectors(
         self,
@@ -1550,13 +1781,14 @@ class FingerprintEngine:
             self._clear_prediction_locked()
             return
 
+        probability_keys = self._probability_label_keys_locked()
         raw_probabilities = {
-            cell_key: 0.0 for cell_key in self._ordered_cell_keys()
+            label_key: 0.0 for label_key in probability_keys
         }
         probabilities = active_pipeline.predict_proba([sample])[0]
         classes = [str(label) for label in active_pipeline.classes_]
-        for cell_key, probability in zip(classes, probabilities):
-            raw_probabilities[cell_key] = float(probability)
+        for label_key, probability in zip(classes, probabilities):
+            raw_probabilities[label_key] = float(probability)
 
         self.last_probabilities = self._smooth_probabilities_locked(
             raw_probabilities,
@@ -1600,10 +1832,10 @@ class FingerprintEngine:
         alpha = 1.0 - math.exp(-delta_seconds / smoothing_seconds)
         alpha = max(0.18, min(0.85, alpha))
         smoothed = {}
-        for cell_key in self._ordered_cell_keys():
-            previous = self.last_probabilities.get(cell_key, 0.0)
-            current = raw_probabilities.get(cell_key, 0.0)
-            smoothed[cell_key] = previous + (current - previous) * alpha
+        for label_key in self._probability_label_keys_locked():
+            previous = self.last_probabilities.get(label_key, 0.0)
+            current = raw_probabilities.get(label_key, 0.0)
+            smoothed[label_key] = previous + (current - previous) * alpha
 
         total = sum(smoothed.values())
         if total > 0.0:
@@ -1656,10 +1888,12 @@ class FingerprintEngine:
             self.last_best_probability = candidate_probability
             self.pending_best_cell = None
             self.pending_best_since = None
-            best_x, best_y = [int(value) + 1 for value in self.last_best_cell.split(",")]
+            best_label = self._display_label_for_key(self.last_best_cell) or str(
+                self.last_best_cell
+            )
             self._log_event_locked(
                 "PREDICT",
-                f"Best cell changed to ({best_x}, {best_y}) "
+                f"Best state changed to {best_label} "
                 f"probability={self.last_best_probability * 100.0:.1f}%",
             )
             return
@@ -1709,9 +1943,10 @@ class FingerprintEngine:
         }
         (
             aligned_vectors_by_node,
+            aligned_scalars_by_node,
             _total_resampled_slots,
             valid_resampled_slots,
-        ) = self._build_aligned_node_vectors_locked(
+        ) = self._build_aligned_node_feature_rows_locked(
             aligned_frames_by_node,
             start_time=start_time,
             end_time=now,
@@ -1721,10 +1956,10 @@ class FingerprintEngine:
 
         sample: list[float] = []
         for node_id in required_node_ids:
-            aligned_vectors = aligned_vectors_by_node.get(node_id, [])
-            per_node_features = self._build_window_feature_vectors_from_vectors(
-                aligned_vectors,
-                node_id,
+            per_node_features = self._build_window_feature_vectors_from_rows_locked(
+                node_id=node_id,
+                amplitude_rows=aligned_vectors_by_node.get(node_id, []),
+                scalar_rows=aligned_scalars_by_node.get(node_id, []),
             )
             if not per_node_features:
                 return None
@@ -1753,10 +1988,12 @@ class FingerprintEngine:
             return False
         if len(self.cell_datasets) != self.total_cells or self.expected_input_size <= 0:
             return False
-        return all(
+        if not all(
             cell_key in self.cell_datasets and bool(self.cell_datasets[cell_key].samples)
             for cell_key in ordered_cell_keys
-        )
+        ):
+            return False
+        return self.has_empty_room_training
 
     def _available_model_names_locked(self) -> list[str]:
         return [
@@ -1782,37 +2019,34 @@ class FingerprintEngine:
                     )
                 features.append(sample)
                 labels.append(cell_key)
+        if self.empty_room_dataset is None or not self.empty_room_dataset.samples:
+            raise RuntimeError("Empty-room training samples are required before training.")
+        for sample in self.empty_room_dataset.samples:
+            if len(sample) != self.expected_input_size:
+                raise RuntimeError(
+                    "Training data mismatch for Empty Room; expected input size "
+                    f"{self.expected_input_size}, got {len(sample)}."
+                )
+            features.append(sample)
+            labels.append(EMPTY_ROOM_CLASS_KEY)
         return features, labels
 
     def _build_model_pipeline_locked(
         self, model_name: str
     ) -> tuple[Any, str]:
-        if model_name == "RandomForestDualStage":
-            model = DualStageRandomForestClassifier(
-                n_estimators=280,
-                random_state=200,
-                max_depth=None,
-                min_samples_leaf=1,
-                min_samples_split=2,
-                max_features="sqrt",
-            )
-            return (
-                model,
-                "hierarchical RF (column + row), n_estimators=280, random_state=200",
-            )
-        if model_name == "RandomForestUnified":
-            model = RandomForestClassifier(
+        if model_name == "ExtraTreesWindowed":
+            model = ExtraTreesClassifier(
                 n_estimators=320,
-                random_state=200,
-                max_depth=None,
+                random_state=42,
+                max_features="sqrt",
                 min_samples_leaf=1,
                 min_samples_split=2,
-                max_features="sqrt",
-                n_jobs=-1,
+                class_weight="balanced_subsample",
+                n_jobs=1,
             )
             return (
                 model,
-                "unified RF, n_estimators=320, random_state=200",
+                "windowed ExtraTrees, quantile+scalar features, n_estimators=320, random_state=42",
             )
         raise RuntimeError(f"Unsupported model '{model_name}'.")
 
@@ -1826,7 +2060,7 @@ class FingerprintEngine:
 
         trained_models: list[str] = []
         sample_count = len(features)
-        class_labels = self._ordered_cell_keys()
+        class_labels = self._ordered_class_keys_locked()
         for model_name in self.MODEL_ORDER:
             pipeline, summary = self._build_model_pipeline_locked(model_name)
             pipeline.fit(features, labels)
@@ -1836,6 +2070,7 @@ class FingerprintEngine:
                 trained_at=time.time(),
                 window_seconds=self.window_seconds,
                 window_step_seconds=self.window_step_seconds,
+                feature_signature=self.feature_signature,
                 node_ids=self.required_node_ids,
                 input_size=self.expected_input_size,
                 sample_count=sample_count,
@@ -1846,7 +2081,7 @@ class FingerprintEngine:
             self._log_event_locked(
                 "TRAIN",
                 f"Trained {model_name} on {sample_count} samples across "
-                f"{len(class_labels)} cells ({summary})",
+                f"{len(class_labels)} classes ({summary})",
             )
 
         self.active_model_name = (
@@ -1874,6 +2109,9 @@ class FingerprintEngine:
             float(raw["window_step_seconds"])
             if "window_step_seconds" in raw
             else self._loaded_store_window_seconds
+        )
+        self._loaded_store_feature_signature = (
+            str(raw["feature_signature"]) if "feature_signature" in raw else None
         )
         self._loaded_store_node_ids = (
             [int(value) for value in raw.get("node_ids", [])]
@@ -1927,11 +2165,42 @@ class FingerprintEngine:
                 samples=samples,
             )
 
+        empty_room_payload = raw.get("empty_room")
+        if isinstance(empty_room_payload, dict):
+            samples_raw = empty_room_payload.get("samples")
+            if isinstance(samples_raw, list):
+                samples = [
+                    [float(value) for value in sample]
+                    for sample in samples_raw
+                    if isinstance(sample, list)
+                ]
+                self.empty_room_dataset = CellDataset(
+                    cell_key=EMPTY_ROOM_CLASS_KEY,
+                    grid_x=-1,
+                    grid_y=-1,
+                    captured_at=float(empty_room_payload.get("captured_at", 0.0)),
+                    total_frames=int(empty_room_payload.get("total_frames", 0)),
+                    capture_count=max(1, int(empty_room_payload.get("capture_count", 1))),
+                    node_count=int(empty_room_payload.get("node_count", len(self.required_node_ids))),
+                    window_sample_count=int(empty_room_payload.get("window_sample_count", len(samples))),
+                    observed_window_count=int(
+                        empty_room_payload.get("observed_window_count", len(samples))
+                    ),
+                    generated_window_count=int(
+                        empty_room_payload.get("generated_window_count", len(samples))
+                    ),
+                    total_window_slots=int(
+                        empty_room_payload.get("total_window_slots", len(samples))
+                    ),
+                    samples=samples,
+                )
+
     def _save_datasets(self) -> None:
         payload = {
             "version": self.STORE_VERSION,
             "window_seconds": self.window_seconds,
             "window_step_seconds": self.window_step_seconds,
+            "feature_signature": self.feature_signature,
             "node_ids": self.required_node_ids,
             "input_size": self.expected_input_size,
             "baseline": {
@@ -1943,6 +2212,19 @@ class FingerprintEngine:
                     str(node_id): count
                     for node_id, count in sorted(self.empty_room_baseline_counts.items())
                 },
+            },
+            "empty_room": None
+            if self.empty_room_dataset is None
+            else {
+                "captured_at": self.empty_room_dataset.captured_at,
+                "total_frames": self.empty_room_dataset.total_frames,
+                "capture_count": self.empty_room_dataset.capture_count,
+                "node_count": self.empty_room_dataset.node_count,
+                "window_sample_count": self.empty_room_dataset.window_sample_count,
+                "observed_window_count": self.empty_room_dataset.observed_window_count,
+                "generated_window_count": self.empty_room_dataset.generated_window_count,
+                "total_window_slots": self.empty_room_dataset.total_window_slots,
+                "samples": self.empty_room_dataset.samples,
             },
             "cells": {
                 cell_key: {
@@ -1997,7 +2279,7 @@ class FingerprintEngine:
                 remove_store(self.model_path)
                 return
             fallback_model_name = str(
-                metadata_raw.get("model_key", "RandomForestUnified")
+                metadata_raw.get("model_key", "ExtraTreesWindowed")
             )
             if fallback_model_name not in self.MODEL_ORDER:
                 remove_store(self.model_path)
@@ -2033,6 +2315,7 @@ class FingerprintEngine:
                     metadata_raw.get("window_seconds", 0.0),
                 )
             ),
+            feature_signature=str(metadata_raw.get("feature_signature", "")),
             node_ids=[int(value) for value in metadata_raw.get("node_ids", [])],
             input_size=int(metadata_raw.get("input_size", 0)),
             sample_count=int(metadata_raw.get("sample_count", 0)),
@@ -2054,6 +2337,7 @@ class FingerprintEngine:
                         "trained_at": metadata.trained_at,
                         "window_seconds": metadata.window_seconds,
                         "window_step_seconds": metadata.window_step_seconds,
+                        "feature_signature": metadata.feature_signature,
                         "node_ids": metadata.node_ids,
                         "input_size": metadata.input_size,
                         "sample_count": metadata.sample_count,
@@ -2095,6 +2379,13 @@ class FingerprintEngine:
             config_matches = config_matches and step_matches
             if not step_matches:
                 mismatch_reasons.append("window step changed")
+        if self._loaded_store_feature_signature is not None:
+            feature_matches = (
+                self._loaded_store_feature_signature == self.feature_signature
+            )
+            config_matches = config_matches and feature_matches
+            if not feature_matches:
+                mismatch_reasons.append("feature pipeline changed")
         if self._loaded_store_node_ids is not None:
             node_matches = self._loaded_store_node_ids == self.required_node_ids
             config_matches = config_matches and node_matches
@@ -2114,6 +2405,7 @@ class FingerprintEngine:
                     + ", ".join(mismatch_reasons or ["the stored dataset no longer matches the app"]),
                 )
             self.cell_datasets.clear()
+            self.empty_room_dataset = None
             self._save_datasets()
             remove_store(self.model_path)
             return
@@ -2123,6 +2415,13 @@ class FingerprintEngine:
         }
         if len(normalized) != len(self.cell_datasets):
             self.cell_datasets = normalized
+            self._save_datasets()
+
+        if (
+            self.empty_room_dataset is not None
+            and any(len(sample) != self.expected_input_size for sample in self.empty_room_dataset.samples)
+        ):
+            self.empty_room_dataset = None
             self._save_datasets()
 
         valid_node_ids = set(self.required_node_ids)
@@ -2153,22 +2452,32 @@ class FingerprintEngine:
             abs_tol=1e-6,
         ):
             return False
+        if metadata.feature_signature != self.feature_signature:
+            return False
         if metadata.node_ids != self.required_node_ids:
             return False
         if metadata.input_size != self.expected_input_size:
             return False
-        if metadata.class_labels != self._ordered_cell_keys():
+        if metadata.class_labels != self._ordered_class_keys_locked():
             return False
         return True
 
-    def _reset_training_state_locked(self, *, clear_baseline: bool) -> None:
+    def _reset_training_state_locked(
+        self,
+        *,
+        clear_baseline: bool,
+        clear_empty_room_dataset: bool,
+    ) -> None:
         self.baseline_capture_session = None
         self.capture_session = None
         self.cell_datasets.clear()
         self.node_windows.clear()
+        if clear_empty_room_dataset:
+            self.empty_room_dataset = None
         if clear_baseline:
             self.empty_room_baseline_by_node.clear()
             self.empty_room_baseline_counts.clear()
+            self.empty_room_dataset = None
         self._save_datasets()
         self._clear_models_locked()
 
@@ -2255,6 +2564,27 @@ class FingerprintEngine:
             for grid_y in range(self.grid_rows)
             for grid_x in range(self.grid_cols)
         ]
+
+    def _ordered_class_keys_locked(self) -> list[str]:
+        return [*self._ordered_cell_keys(), EMPTY_ROOM_CLASS_KEY]
+
+    def _probability_label_keys_locked(self) -> list[str]:
+        if self.active_model_name is not None:
+            metadata = self.model_metadata_by_name.get(self.active_model_name)
+            if metadata is not None and metadata.class_labels:
+                return list(metadata.class_labels)
+        return self._ordered_class_keys_locked()
+
+    def _display_label_for_key(self, label_key: str | None) -> str:
+        if not label_key:
+            return ""
+        if label_key == EMPTY_ROOM_CLASS_KEY:
+            return "Empty Room"
+        try:
+            grid_x_text, grid_y_text = label_key.split(",", 1)
+            return f"Cell ({int(grid_x_text) + 1}, {int(grid_y_text) + 1})"
+        except (TypeError, ValueError):
+            return label_key
 
     def _node_label(self, node_id: int) -> str:
         for node in self.system_config.nodes:

@@ -7,14 +7,14 @@ from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_test_split
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Evaluate saved fingerprint datasets with RandomForest classifiers."
+        description="Evaluate saved fingerprint datasets with the ExtraTrees windowed classifier."
     )
     parser.add_argument(
         "--store",
@@ -25,20 +25,40 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def display_cell(cell_key: str) -> str:
-    grid_x, grid_y = [int(value) for value in cell_key.split(",")]
+EMPTY_ROOM_CLASS_KEY = "empty_room"
+
+
+def display_label(label_key: str) -> str:
+    if label_key == EMPTY_ROOM_CLASS_KEY:
+        return "Empty Room"
+    grid_x, grid_y = [int(value) for value in label_key.split(",")]
     return f"({grid_x + 1},{grid_y + 1})"
 
 
-def make_model(_input_size: int) -> RandomForestClassifier:
-    return RandomForestClassifier(
+def ordered_labels_from_counts(counts: OrderedDict[str, int]) -> list[str]:
+    cell_labels: list[tuple[int, int, str]] = []
+    include_empty_room = False
+    for label_key in counts:
+        if label_key == EMPTY_ROOM_CLASS_KEY:
+            include_empty_room = True
+            continue
+        grid_x_text, grid_y_text = label_key.split(",", 1)
+        cell_labels.append((int(grid_y_text), int(grid_x_text), label_key))
+    ordered = [label_key for _, _, label_key in sorted(cell_labels)]
+    if include_empty_room:
+        ordered.append(EMPTY_ROOM_CLASS_KEY)
+    return ordered
+
+
+def make_model(_input_size: int) -> ExtraTreesClassifier:
+    return ExtraTreesClassifier(
         n_estimators=320,
-        random_state=200,
-        max_depth=None,
+        random_state=42,
         min_samples_leaf=1,
         min_samples_split=2,
         max_features="sqrt",
-        n_jobs=-1,
+        class_weight="balanced_subsample",
+        n_jobs=1,
     )
 
 
@@ -65,6 +85,13 @@ def main() -> None:
         for sample in samples:
             features.append([float(value) for value in sample])
             labels.append(cell_key)
+    empty_room_payload = raw.get("empty_room")
+    if isinstance(empty_room_payload, dict):
+        empty_room_samples = empty_room_payload.get("samples", [])
+        counts[EMPTY_ROOM_CLASS_KEY] = len(empty_room_samples)
+        for sample in empty_room_samples:
+            features.append([float(value) for value in sample])
+            labels.append(EMPTY_ROOM_CLASS_KEY)
 
     X = np.asarray(features, dtype=float)
     y = np.asarray(labels)
@@ -73,8 +100,8 @@ def main() -> None:
     if input_size <= 0:
         input_size = int(X.shape[1])
 
-    ordered_labels = list(cells.keys())
-    target_names = [display_cell(cell_key) for cell_key in ordered_labels]
+    ordered_labels = ordered_labels_from_counts(counts)
+    target_names = [display_label(label_key) for label_key in ordered_labels]
 
     train_model = make_model(input_size)
     train_model.fit(X, y)
@@ -174,12 +201,12 @@ def main() -> None:
 
     print("=== DATASET ===")
     print(
-        "cells="
+        "classes="
         f"{len(ordered_labels)} total_samples={len(X)} input_size={X.shape[1]} "
         f"nodes={len(node_ids)} window={window_seconds:.2f}s step={window_step_seconds:.2f}s"
     )
-    for cell_key, count in counts.items():
-        print(f"cell {display_cell(cell_key)} samples={count}")
+    for label_key, count in counts.items():
+        print(f"class {display_label(label_key)} samples={count}")
     print()
 
     print("=== TRAIN FIT ===")
@@ -223,7 +250,7 @@ def main() -> None:
     print(f"purge_gap_windows={purged_results['gap']}")
     for cell_key, total, train_count, test_count in purged_results["summary"]:
         print(
-            f"cell {display_cell(cell_key)} total={total} "
+            f"class {display_label(cell_key)} total={total} "
             f"train={train_count} test={test_count}"
         )
     if not purged_results["available"]:

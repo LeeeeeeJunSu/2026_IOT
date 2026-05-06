@@ -1,0 +1,681 @@
+[2026-05-06 17:21:51] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:21:51] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:21:51] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:21:51] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:21:51] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:21:51] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:21:51] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:21:51] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:21:51] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:21:51] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:21:51] [BASELINE] Baseline capture armed with 0.0s delay and 6.2s capture
+[2026-05-06 17:21:51] [BASELINE] Baseline capture started for 6.2s
+[2026-05-06 17:21:51] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:58885 -> 5603
+[2026-05-06 17:21:51] [UDP] Node 3 seq=41560 packets=1 rssi=-52.0 snr=43.0 source=127.0.0.1:58885 -> 5603
+[2026-05-06 17:21:51] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:58885 -> 5602
+[2026-05-06 17:21:51] [UDP] Node 2 seq=41615 packets=1 rssi=-33.0 snr=59.0 source=127.0.0.1:58885 -> 5602
+[2026-05-06 17:21:51] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:58885 -> 5605
+[2026-05-06 17:21:51] [UDP] Node 5 seq=21952 packets=1 rssi=-49.0 snr=41.0 source=127.0.0.1:58885 -> 5605
+[2026-05-06 17:21:51] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:58885 -> 5609
+[2026-05-06 17:21:51] [UDP] Node 9 seq=42224 packets=1 rssi=-45.0 snr=46.0 source=127.0.0.1:58885 -> 5609
+[2026-05-06 17:21:52] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:58885 -> 5606
+[2026-05-06 17:21:52] [UDP] Node 6 seq=21945 packets=1 rssi=-31.0 snr=59.0 source=127.0.0.1:58885 -> 5606
+[2026-05-06 17:21:52] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:58885 -> 5604
+[2026-05-06 17:21:52] [UDP] Node 4 seq=41553 packets=1 rssi=-48.0 snr=47.0 source=127.0.0.1:58885 -> 5604
+[2026-05-06 17:21:52] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:58885 -> 5607
+[2026-05-06 17:21:52] [UDP] Node 7 seq=41633 packets=1 rssi=-36.0 snr=55.0 source=127.0.0.1:58885 -> 5607
+[2026-05-06 17:21:52] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:58885 -> 5601
+[2026-05-06 17:21:52] [UDP] Node 1 seq=41584 packets=1 rssi=-50.0 snr=45.0 source=127.0.0.1:58885 -> 5601
+[2026-05-06 17:21:52] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:58885 -> 5608
+[2026-05-06 17:21:52] [UDP] Node 8 seq=42221 packets=1 rssi=-22.0 snr=68.0 source=127.0.0.1:58885 -> 5608
+[2026-05-06 17:21:54] [UDP] Node 3 seq=42165 packets=558 rssi=-52.0 snr=43.0 source=127.0.0.1:58885 -> 5603
+[2026-05-06 17:21:54] [UDP] Node 9 seq=42830 packets=552 rssi=-44.0 snr=47.0 source=127.0.0.1:58885 -> 5609
+[2026-05-06 17:21:54] [UDP] Node 2 seq=42223 packets=561 rssi=-32.0 snr=60.0 source=127.0.0.1:58885 -> 5602
+[2026-05-06 17:21:54] [UDP] Node 5 seq=22561 packets=559 rssi=-29.0 snr=62.0 source=127.0.0.1:58885 -> 5605
+[2026-05-06 17:21:54] [UDP] Node 7 seq=42243 packets=565 rssi=-36.0 snr=55.0 source=127.0.0.1:58885 -> 5607
+[2026-05-06 17:21:54] [UDP] Node 4 seq=42163 packets=558 rssi=-49.0 snr=46.0 source=127.0.0.1:58885 -> 5604
+[2026-05-06 17:21:54] [UDP] Node 6 seq=22555 packets=561 rssi=-31.0 snr=59.0 source=127.0.0.1:58885 -> 5606
+[2026-05-06 17:21:54] [UDP] Node 1 seq=42194 packets=557 rssi=-51.0 snr=44.0 source=127.0.0.1:58885 -> 5601
+[2026-05-06 17:21:54] [UDP] Node 8 seq=42831 packets=573 rssi=-22.0 snr=68.0 source=127.0.0.1:58885 -> 5608
+[2026-05-06 17:21:56] [UDP] Node 3 seq=42717 packets=1079 rssi=-52.0 snr=43.0 source=127.0.0.1:58885 -> 5603
+[2026-05-06 17:21:56] [UDP] Node 9 seq=43429 packets=1115 rssi=-44.0 snr=47.0 source=127.0.0.1:58885 -> 5609
+[2026-05-06 17:21:56] [UDP] Node 5 seq=23066 packets=1044 rssi=-29.0 snr=61.0 source=127.0.0.1:58885 -> 5605
+[2026-05-06 17:21:56] [UDP] Node 2 seq=42790 packets=1100 rssi=-40.0 snr=52.0 source=127.0.0.1:58885 -> 5602
+[2026-05-06 17:21:56] [UDP] Node 7 seq=42870 packets=1168 rssi=-36.0 snr=55.0 source=127.0.0.1:58885 -> 5607
+[2026-05-06 17:21:56] [UDP] Node 4 seq=42708 packets=1064 rssi=-48.0 snr=47.0 source=127.0.0.1:58885 -> 5604
+[2026-05-06 17:21:56] [UDP] Node 8 seq=43386 packets=1109 rssi=-22.0 snr=68.0 source=127.0.0.1:58885 -> 5608
+[2026-05-06 17:21:56] [UDP] Node 6 seq=23179 packets=1147 rssi=-31.0 snr=60.0 source=127.0.0.1:58885 -> 5606
+[2026-05-06 17:21:56] [UDP] Node 1 seq=42797 packets=1122 rssi=-51.0 snr=44.0 source=127.0.0.1:58885 -> 5601
+[2026-05-06 17:21:58] [UDP] Node 9 seq=44001 packets=1661 rssi=-44.0 snr=47.0 source=127.0.0.1:58885 -> 5609
+[2026-05-06 17:21:58] [UDP] Node 3 seq=43308 packets=1640 rssi=-53.0 snr=42.0 source=127.0.0.1:58885 -> 5603
+[2026-05-06 17:21:58] [UDP] Node 1 seq=43360 packets=1652 rssi=-50.0 snr=45.0 source=127.0.0.1:58885 -> 5601
+[2026-05-06 17:21:58] [UDP] Node 2 seq=43379 packets=1659 rssi=-40.0 snr=52.0 source=127.0.0.1:58885 -> 5602
+[2026-05-06 17:21:58] [UDP] Node 4 seq=43274 packets=1591 rssi=-49.0 snr=46.0 source=127.0.0.1:58885 -> 5604
+[2026-05-06 17:21:58] [UDP] Node 8 seq=43968 packets=1668 rssi=-23.0 snr=67.0 source=127.0.0.1:58885 -> 5608
+[2026-05-06 17:21:58] [UDP] Node 7 seq=43410 packets=1688 rssi=-36.0 snr=55.0 source=127.0.0.1:58885 -> 5607
+[2026-05-06 17:21:58] [UDP] Node 6 seq=23722 packets=1659 rssi=-31.0 snr=60.0 source=127.0.0.1:58885 -> 5606
+[2026-05-06 17:21:58] [UDP] Node 5 seq=23663 packets=1606 rssi=-29.0 snr=61.0 source=127.0.0.1:58885 -> 5605
+[2026-05-06 17:21:58] [BASELINE] Baseline capture completed with 9/9 nodes and 15156 total frames; empty-room windows=54
+[2026-05-06 17:21:58] [CAPTURE] Capture started for cell (1, 1) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:00] [UDP] Node 2 seq=26009 packets=2083 rssi=-38.0 snr=54.0 source=127.0.0.1:58886 -> 5602
+[2026-05-06 17:22:00] [UDP] Node 4 seq=25887 packets=2000 rssi=-48.0 snr=47.0 source=127.0.0.1:58886 -> 5604
+[2026-05-06 17:22:00] [UDP] Node 8 seq=26611 packets=2110 rssi=-22.0 snr=68.0 source=127.0.0.1:58886 -> 5608
+[2026-05-06 17:22:00] [UDP] Node 9 seq=26615 packets=2067 rssi=-48.0 snr=43.0 source=127.0.0.1:58886 -> 5609
+[2026-05-06 17:22:00] [UDP] Node 1 seq=25974 packets=2055 rssi=-53.0 snr=42.0 source=127.0.0.1:58886 -> 5601
+[2026-05-06 17:22:00] [UDP] Node 7 seq=26026 packets=2104 rssi=-35.0 snr=56.0 source=127.0.0.1:58886 -> 5607
+[2026-05-06 17:22:00] [UDP] Node 6 seq=6337 packets=2067 rssi=-31.0 snr=60.0 source=127.0.0.1:58886 -> 5606
+[2026-05-06 17:22:00] [UDP] Node 5 seq=6319 packets=2052 rssi=-34.0 snr=56.0 source=127.0.0.1:58886 -> 5605
+[2026-05-06 17:22:00] [UDP] Node 3 seq=25952 packets=2076 rssi=-53.0 snr=42.0 source=127.0.0.1:58886 -> 5603
+[2026-05-06 17:22:02] [UDP] Node 1 seq=26552 packets=2589 rssi=-50.0 snr=45.0 source=127.0.0.1:58886 -> 5601
+[2026-05-06 17:22:02] [UDP] Node 9 seq=27189 packets=2603 rssi=-46.0 snr=45.0 source=127.0.0.1:58886 -> 5609
+[2026-05-06 17:22:02] [UDP] Node 5 seq=6852 packets=2549 rssi=-27.0 snr=63.0 source=127.0.0.1:58886 -> 5605
+[2026-05-06 17:22:02] [UDP] Node 8 seq=27161 packets=2638 rssi=-20.0 snr=70.0 source=127.0.0.1:58886 -> 5608
+[2026-05-06 17:22:02] [UDP] Node 7 seq=26600 packets=2650 rssi=-35.0 snr=56.0 source=127.0.0.1:58886 -> 5607
+[2026-05-06 17:22:02] [UDP] Node 6 seq=6913 packets=2600 rssi=-30.0 snr=61.0 source=127.0.0.1:58886 -> 5606
+[2026-05-06 17:22:02] [UDP] Node 3 seq=26483 packets=2579 rssi=-52.0 snr=43.0 source=127.0.0.1:58886 -> 5603
+[2026-05-06 17:22:02] [UDP] Node 4 seq=26404 packets=2480 rssi=-53.0 snr=42.0 source=127.0.0.1:58886 -> 5604
+[2026-05-06 17:22:02] [UDP] Node 2 seq=26556 packets=2599 rssi=-38.0 snr=54.0 source=127.0.0.1:58886 -> 5602
+[2026-05-06 17:22:04] [UDP] Node 7 seq=27196 packets=3226 rssi=-35.0 snr=56.0 source=127.0.0.1:58886 -> 5607
+[2026-05-06 17:22:04] [UDP] Node 3 seq=27027 packets=3097 rssi=-50.0 snr=45.0 source=127.0.0.1:58886 -> 5603
+[2026-05-06 17:22:04] [UDP] Node 4 seq=26923 packets=2971 rssi=-50.0 snr=45.0 source=127.0.0.1:58886 -> 5604
+[2026-05-06 17:22:04] [UDP] Node 2 seq=27072 packets=3096 rssi=-39.0 snr=53.0 source=127.0.0.1:58886 -> 5602
+[2026-05-06 17:22:04] [UDP] Node 6 seq=7508 packets=3164 rssi=-31.0 snr=59.0 source=127.0.0.1:58886 -> 5606
+[2026-05-06 17:22:04] [UDP] Node 9 seq=27767 packets=3145 rssi=-46.0 snr=45.0 source=127.0.0.1:58886 -> 5609
+[2026-05-06 17:22:04] [UDP] Node 1 seq=27116 packets=3130 rssi=-51.0 snr=44.0 source=127.0.0.1:58886 -> 5601
+[2026-05-06 17:22:04] [UDP] Node 5 seq=7368 packets=3033 rssi=-29.0 snr=62.0 source=127.0.0.1:58886 -> 5605
+[2026-05-06 17:22:04] [UDP] Node 8 seq=27678 packets=3141 rssi=-22.0 snr=68.0 source=127.0.0.1:58886 -> 5608
+[2026-05-06 17:22:05] [CAPTURE] Capture completed for cell (1, 1) with 54/54 observed windows, generated=54 frames=14691; accumulated windows=54 captures=1
+[2026-05-06 17:22:05] [CAPTURE] Capture started for cell (2, 1) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:06] [UDP] Node 6 seq=3575 packets=3565 rssi=-31.0 snr=60.0 source=127.0.0.1:53290 -> 5606
+[2026-05-06 17:22:06] [UDP] Node 5 seq=7799 packets=3428 rssi=-28.0 snr=62.0 source=127.0.0.1:58886 -> 5605
+[2026-05-06 17:22:06] [UDP] Node 1 seq=27549 packets=3522 rssi=-49.0 snr=46.0 source=127.0.0.1:58886 -> 5601
+[2026-05-06 17:22:06] [UDP] Node 3 seq=27453 packets=3495 rssi=-58.0 snr=37.0 source=127.0.0.1:58886 -> 5603
+[2026-05-06 17:22:06] [UDP] Node 4 seq=27316 packets=3340 rssi=-53.0 snr=42.0 source=127.0.0.1:58886 -> 5604
+[2026-05-06 17:22:06] [UDP] Node 7 seq=23260 packets=3634 rssi=-35.0 snr=56.0 source=127.0.0.1:53290 -> 5607
+[2026-05-06 17:22:06] [UDP] Node 9 seq=28186 packets=3538 rssi=-48.0 snr=43.0 source=127.0.0.1:58886 -> 5609
+[2026-05-06 17:22:06] [UDP] Node 8 seq=28092 packets=3530 rssi=-20.0 snr=70.0 source=127.0.0.1:58886 -> 5608
+[2026-05-06 17:22:06] [UDP] Node 2 seq=27498 packets=3495 rssi=-38.0 snr=54.0 source=127.0.0.1:58886 -> 5602
+[2026-05-06 17:22:08] [UDP] Node 6 seq=4166 packets=4080 rssi=-31.0 snr=60.0 source=127.0.0.1:53290 -> 5606
+[2026-05-06 17:22:08] [UDP] Node 5 seq=4003 packets=3932 rssi=-32.0 snr=58.0 source=127.0.0.1:53290 -> 5605
+[2026-05-06 17:22:08] [UDP] Node 9 seq=24422 packets=4049 rssi=-45.0 snr=46.0 source=127.0.0.1:53290 -> 5609
+[2026-05-06 17:22:08] [UDP] Node 2 seq=23717 packets=4008 rssi=-54.0 snr=38.0 source=127.0.0.1:53290 -> 5602
+[2026-05-06 17:22:08] [UDP] Node 1 seq=23781 packets=4034 rssi=-51.0 snr=44.0 source=127.0.0.1:53290 -> 5601
+[2026-05-06 17:22:08] [UDP] Node 4 seq=23509 packets=3822 rssi=-49.0 snr=46.0 source=127.0.0.1:53290 -> 5604
+[2026-05-06 17:22:08] [UDP] Node 7 seq=23837 packets=4142 rssi=-43.0 snr=48.0 source=127.0.0.1:53290 -> 5607
+[2026-05-06 17:22:08] [UDP] Node 8 seq=24306 packets=4041 rssi=-22.0 snr=68.0 source=127.0.0.1:53290 -> 5608
+[2026-05-06 17:22:08] [UDP] Node 3 seq=23676 packets=4008 rssi=-53.0 snr=42.0 source=127.0.0.1:53290 -> 5603
+[2026-05-06 17:22:10] [UDP] Node 3 seq=24230 packets=4510 rssi=-53.0 snr=42.0 source=127.0.0.1:53290 -> 5603
+[2026-05-06 17:22:10] [UDP] Node 6 seq=4763 packets=4620 rssi=-30.0 snr=60.0 source=127.0.0.1:53290 -> 5606
+[2026-05-06 17:22:10] [UDP] Node 7 seq=24425 packets=4684 rssi=-35.0 snr=56.0 source=127.0.0.1:53290 -> 5607
+[2026-05-06 17:22:10] [UDP] Node 4 seq=24018 packets=4288 rssi=-50.0 snr=45.0 source=127.0.0.1:53290 -> 5604
+[2026-05-06 17:22:10] [UDP] Node 9 seq=25002 packets=4580 rssi=-49.0 snr=42.0 source=127.0.0.1:53290 -> 5609
+[2026-05-06 17:22:10] [UDP] Node 8 seq=24861 packets=4558 rssi=-22.0 snr=68.0 source=127.0.0.1:53290 -> 5608
+[2026-05-06 17:22:10] [UDP] Node 1 seq=24355 packets=4559 rssi=-52.0 snr=43.0 source=127.0.0.1:53290 -> 5601
+[2026-05-06 17:22:10] [UDP] Node 2 seq=24268 packets=4512 rssi=-45.0 snr=47.0 source=127.0.0.1:53290 -> 5602
+[2026-05-06 17:22:10] [UDP] Node 5 seq=4541 packets=4421 rssi=-57.0 snr=34.0 source=127.0.0.1:53290 -> 5605
+[2026-05-06 17:22:12] [CAPTURE] Capture completed for cell (2, 1) with 54/54 observed windows, generated=54 frames=14416; accumulated windows=54 captures=1
+[2026-05-06 17:22:12] [UDP] Node 9 seq=25474 packets=5010 rssi=-64.0 snr=27.0 source=127.0.0.1:53290 -> 5609
+[2026-05-06 17:22:12] [UDP] Node 7 seq=24916 packets=5140 rssi=-46.0 snr=45.0 source=127.0.0.1:53290 -> 5607
+[2026-05-06 17:22:12] [UDP] Node 1 seq=24821 packets=4988 rssi=-52.0 snr=43.0 source=127.0.0.1:53290 -> 5601
+[2026-05-06 17:22:12] [UDP] Node 5 seq=4950 packets=4800 rssi=-31.0 snr=59.0 source=127.0.0.1:53290 -> 5605
+[2026-05-06 17:22:12] [UDP] Node 2 seq=24696 packets=4917 rssi=-51.0 snr=41.0 source=127.0.0.1:53290 -> 5602
+[2026-05-06 17:22:12] [UDP] Node 3 seq=24670 packets=4919 rssi=-55.0 snr=40.0 source=127.0.0.1:53290 -> 5603
+[2026-05-06 17:22:12] [UDP] Node 4 seq=24434 packets=4668 rssi=-48.0 snr=47.0 source=127.0.0.1:53290 -> 5604
+[2026-05-06 17:22:12] [UDP] Node 6 seq=5246 packets=5061 rssi=-52.0 snr=39.0 source=127.0.0.1:53290 -> 5606
+[2026-05-06 17:22:12] [UDP] Node 8 seq=25291 packets=4968 rssi=-24.0 snr=66.0 source=127.0.0.1:53290 -> 5608
+[2026-05-06 17:22:12] [CAPTURE] Capture started for cell (1, 2) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:14] [UDP] Node 7 seq=28445 packets=5642 rssi=-26.0 snr=65.0 source=127.0.0.1:53291 -> 5607
+[2026-05-06 17:22:14] [UDP] Node 3 seq=28228 packets=5422 rssi=-69.0 snr=26.0 source=127.0.0.1:53291 -> 5603
+[2026-05-06 17:22:14] [UDP] Node 2 seq=28247 packets=5425 rssi=-41.0 snr=51.0 source=127.0.0.1:53291 -> 5602
+[2026-05-06 17:22:14] [UDP] Node 9 seq=29021 packets=5520 rssi=-47.0 snr=44.0 source=127.0.0.1:53291 -> 5609
+[2026-05-06 17:22:14] [UDP] Node 5 seq=8490 packets=5315 rssi=-30.0 snr=60.0 source=127.0.0.1:53291 -> 5605
+[2026-05-06 17:22:14] [UDP] Node 1 seq=28379 packets=5496 rssi=-52.0 snr=43.0 source=127.0.0.1:53291 -> 5601
+[2026-05-06 17:22:14] [UDP] Node 8 seq=28813 packets=5474 rssi=-22.0 snr=68.0 source=127.0.0.1:53291 -> 5608
+[2026-05-06 17:22:14] [UDP] Node 4 seq=24935 packets=5133 rssi=-51.0 snr=44.0 source=127.0.0.1:53290 -> 5604
+[2026-05-06 17:22:14] [UDP] Node 6 seq=8796 packets=5569 rssi=-31.0 snr=60.0 source=127.0.0.1:53291 -> 5606
+[2026-05-06 17:22:16] [UDP] Node 3 seq=28793 packets=5944 rssi=-48.0 snr=47.0 source=127.0.0.1:53291 -> 5603
+[2026-05-06 17:22:16] [UDP] Node 7 seq=29008 packets=6166 rssi=-35.0 snr=56.0 source=127.0.0.1:53291 -> 5607
+[2026-05-06 17:22:16] [UDP] Node 2 seq=28815 packets=5950 rssi=-40.0 snr=52.0 source=127.0.0.1:53291 -> 5602
+[2026-05-06 17:22:16] [UDP] Node 5 seq=9082 packets=5841 rssi=-47.0 snr=44.0 source=127.0.0.1:53291 -> 5605
+[2026-05-06 17:22:16] [UDP] Node 1 seq=28947 packets=6018 rssi=-52.0 snr=43.0 source=127.0.0.1:53291 -> 5601
+[2026-05-06 17:22:16] [UDP] Node 9 seq=29586 packets=6044 rssi=-47.0 snr=44.0 source=127.0.0.1:53291 -> 5609
+[2026-05-06 17:22:16] [UDP] Node 4 seq=28461 packets=5616 rssi=-48.0 snr=47.0 source=127.0.0.1:53291 -> 5604
+[2026-05-06 17:22:16] [UDP] Node 8 seq=29387 packets=6003 rssi=-22.0 snr=68.0 source=127.0.0.1:53291 -> 5608
+[2026-05-06 17:22:16] [UDP] Node 6 seq=9371 packets=6098 rssi=-31.0 snr=60.0 source=127.0.0.1:53291 -> 5606
+[2026-05-06 17:22:18] [UDP] Node 3 seq=29313 packets=6429 rssi=-51.0 snr=44.0 source=127.0.0.1:53291 -> 5603
+[2026-05-06 17:22:18] [UDP] Node 7 seq=29594 packets=6725 rssi=-35.0 snr=56.0 source=127.0.0.1:53291 -> 5607
+[2026-05-06 17:22:18] [UDP] Node 1 seq=29529 packets=6560 rssi=-52.0 snr=43.0 source=127.0.0.1:53291 -> 5601
+[2026-05-06 17:22:18] [UDP] Node 5 seq=9610 packets=6328 rssi=-30.0 snr=61.0 source=127.0.0.1:53291 -> 5605
+[2026-05-06 17:22:18] [UDP] Node 2 seq=29341 packets=6449 rssi=-40.0 snr=52.0 source=127.0.0.1:53291 -> 5602
+[2026-05-06 17:22:18] [UDP] Node 9 seq=30162 packets=6585 rssi=-45.0 snr=46.0 source=127.0.0.1:53291 -> 5609
+[2026-05-06 17:22:18] [UDP] Node 4 seq=28980 packets=6091 rssi=-49.0 snr=46.0 source=127.0.0.1:53291 -> 5604
+[2026-05-06 17:22:18] [UDP] Node 6 seq=9955 packets=6639 rssi=-31.0 snr=60.0 source=127.0.0.1:53291 -> 5606
+[2026-05-06 17:22:18] [UDP] Node 8 seq=29918 packets=6511 rssi=-22.0 snr=68.0 source=127.0.0.1:53291 -> 5608
+[2026-05-06 17:22:19] [CAPTURE] Capture completed for cell (1, 2) with 54/54 observed windows, generated=54 frames=14365; accumulated windows=54 captures=1
+[2026-05-06 17:22:19] [CAPTURE] Capture started for cell (2, 2) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:20] [UDP] Node 3 seq=29671 packets=6761 rssi=-56.0 snr=39.0 source=127.0.0.1:53291 -> 5603
+[2026-05-06 17:22:20] [UDP] Node 2 seq=29682 packets=6774 rssi=-40.0 snr=52.0 source=127.0.0.1:53291 -> 5602
+[2026-05-06 17:22:20] [UDP] Node 7 seq=29951 packets=7070 rssi=-35.0 snr=56.0 source=127.0.0.1:53291 -> 5607
+[2026-05-06 17:22:20] [UDP] Node 9 seq=30524 packets=6929 rssi=-46.0 snr=45.0 source=127.0.0.1:53291 -> 5609
+[2026-05-06 17:22:20] [UDP] Node 5 seq=9964 packets=6663 rssi=-48.0 snr=42.0 source=127.0.0.1:53291 -> 5605
+[2026-05-06 17:22:20] [UDP] Node 1 seq=29888 packets=6891 rssi=-50.0 snr=45.0 source=127.0.0.1:53291 -> 5601
+[2026-05-06 17:22:20] [UDP] Node 4 seq=29307 packets=6392 rssi=-47.0 snr=48.0 source=127.0.0.1:53291 -> 5604
+[2026-05-06 17:22:20] [UDP] Node 6 seq=10324 packets=6986 rssi=-31.0 snr=60.0 source=127.0.0.1:53291 -> 5606
+[2026-05-06 17:22:20] [UDP] Node 8 seq=30256 packets=6837 rssi=-22.0 snr=68.0 source=127.0.0.1:53291 -> 5608
+[2026-05-06 17:22:22] [UDP] Node 2 seq=31614 packets=7298 rssi=-40.0 snr=52.0 source=127.0.0.1:53295 -> 5602
+[2026-05-06 17:22:22] [UDP] Node 3 seq=31612 packets=7287 rssi=-53.0 snr=42.0 source=127.0.0.1:53295 -> 5603
+[2026-05-06 17:22:22] [UDP] Node 9 seq=32454 packets=7453 rssi=-44.0 snr=47.0 source=127.0.0.1:53295 -> 5609
+[2026-05-06 17:22:22] [UDP] Node 7 seq=31871 packets=7591 rssi=-33.0 snr=58.0 source=127.0.0.1:53295 -> 5607
+[2026-05-06 17:22:22] [UDP] Node 5 seq=11898 packets=7189 rssi=-30.0 snr=61.0 source=127.0.0.1:53295 -> 5605
+[2026-05-06 17:22:22] [UDP] Node 1 seq=31822 packets=7410 rssi=-51.0 snr=44.0 source=127.0.0.1:53295 -> 5601
+[2026-05-06 17:22:22] [UDP] Node 6 seq=12265 packets=7513 rssi=-31.0 snr=60.0 source=127.0.0.1:53295 -> 5606
+[2026-05-06 17:22:22] [UDP] Node 8 seq=32178 packets=7361 rssi=-22.0 snr=68.0 source=127.0.0.1:53295 -> 5608
+[2026-05-06 17:22:22] [UDP] Node 4 seq=29816 packets=6868 rssi=-48.0 snr=47.0 source=127.0.0.1:53291 -> 5604
+[2026-05-06 17:22:24] [UDP] Node 2 seq=32167 packets=7824 rssi=-48.0 snr=44.0 source=127.0.0.1:53295 -> 5602
+[2026-05-06 17:22:24] [UDP] Node 9 seq=33020 packets=7977 rssi=-45.0 snr=46.0 source=127.0.0.1:53295 -> 5609
+[2026-05-06 17:22:24] [UDP] Node 3 seq=32168 packets=7811 rssi=-53.0 snr=42.0 source=127.0.0.1:53295 -> 5603
+[2026-05-06 17:22:24] [UDP] Node 7 seq=32422 packets=8116 rssi=-36.0 snr=55.0 source=127.0.0.1:53295 -> 5607
+[2026-05-06 17:22:24] [UDP] Node 1 seq=32393 packets=7934 rssi=-51.0 snr=44.0 source=127.0.0.1:53295 -> 5601
+[2026-05-06 17:22:24] [UDP] Node 5 seq=12468 packets=7721 rssi=-29.0 snr=61.0 source=127.0.0.1:53295 -> 5605
+[2026-05-06 17:22:24] [UDP] Node 6 seq=12842 packets=8044 rssi=-31.0 snr=60.0 source=127.0.0.1:53295 -> 5606
+[2026-05-06 17:22:24] [UDP] Node 4 seq=31723 packets=7355 rssi=-50.0 snr=45.0 source=127.0.0.1:53295 -> 5604
+[2026-05-06 17:22:24] [UDP] Node 8 seq=32711 packets=7879 rssi=-21.0 snr=69.0 source=127.0.0.1:53295 -> 5608
+[2026-05-06 17:22:26] [CAPTURE] Capture completed for cell (2, 2) with 54/54 observed windows, generated=54 frames=14577; accumulated windows=54 captures=1
+[2026-05-06 17:22:26] [UDP] Node 6 seq=13198 packets=8374 rssi=-31.0 snr=60.0 source=127.0.0.1:53295 -> 5606
+[2026-05-06 17:22:26] [UDP] Node 8 seq=33061 packets=8206 rssi=-22.0 snr=68.0 source=127.0.0.1:53295 -> 5608
+[2026-05-06 17:22:26] [UDP] Node 4 seq=32053 packets=7662 rssi=-52.0 snr=43.0 source=127.0.0.1:53295 -> 5604
+[2026-05-06 17:22:26] [UDP] Node 9 seq=33381 packets=8325 rssi=-45.0 snr=46.0 source=127.0.0.1:53295 -> 5609
+[2026-05-06 17:22:26] [UDP] Node 1 seq=32767 packets=8284 rssi=-63.0 snr=32.0 source=127.0.0.1:53295 -> 5601
+[2026-05-06 17:22:26] [UDP] Node 2 seq=32536 packets=8158 rssi=-50.0 snr=43.0 source=127.0.0.1:53295 -> 5602
+[2026-05-06 17:22:26] [UDP] Node 7 seq=32792 packets=8476 rssi=-35.0 snr=56.0 source=127.0.0.1:53295 -> 5607
+[2026-05-06 17:22:26] [UDP] Node 3 seq=32546 packets=8146 rssi=-53.0 snr=42.0 source=127.0.0.1:53295 -> 5603
+[2026-05-06 17:22:26] [UDP] Node 5 seq=12801 packets=8033 rssi=-31.0 snr=59.0 source=127.0.0.1:53295 -> 5605
+[2026-05-06 17:22:26] [CAPTURE] Capture started for cell (1, 3) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:28] [UDP] Node 6 seq=14356 packets=8901 rssi=-31.0 snr=60.0 source=127.0.0.1:64461 -> 5606
+[2026-05-06 17:22:28] [UDP] Node 4 seq=32584 packets=8158 rssi=-47.0 snr=48.0 source=127.0.0.1:53295 -> 5604
+[2026-05-06 17:22:28] [UDP] Node 8 seq=33601 packets=8727 rssi=-21.0 snr=69.0 source=127.0.0.1:53295 -> 5608
+[2026-05-06 17:22:28] [UDP] Node 1 seq=33929 packets=8817 rssi=-51.0 snr=44.0 source=127.0.0.1:64461 -> 5601
+[2026-05-06 17:22:28] [UDP] Node 9 seq=34545 packets=8860 rssi=-46.0 snr=45.0 source=127.0.0.1:64461 -> 5609
+[2026-05-06 17:22:28] [UDP] Node 2 seq=33104 packets=8691 rssi=-41.0 snr=51.0 source=127.0.0.1:53295 -> 5602
+[2026-05-06 17:22:28] [UDP] Node 3 seq=33102 packets=8670 rssi=-53.0 snr=42.0 source=127.0.0.1:53295 -> 5603
+[2026-05-06 17:22:28] [UDP] Node 7 seq=33967 packets=9029 rssi=-35.0 snr=56.0 source=127.0.0.1:64461 -> 5607
+[2026-05-06 17:22:28] [UDP] Node 5 seq=13352 packets=8546 rssi=-30.0 snr=60.0 source=127.0.0.1:53295 -> 5605
+[2026-05-06 17:22:30] [UDP] Node 4 seq=33120 packets=8663 rssi=-46.0 snr=49.0 source=127.0.0.1:53295 -> 5604
+[2026-05-06 17:22:30] [UDP] Node 6 seq=14928 packets=9432 rssi=-37.0 snr=53.0 source=127.0.0.1:64461 -> 5606
+[2026-05-06 17:22:30] [UDP] Node 1 seq=34486 packets=9341 rssi=-51.0 snr=44.0 source=127.0.0.1:64461 -> 5601
+[2026-05-06 17:22:30] [UDP] Node 3 seq=34260 packets=9203 rssi=-52.0 snr=43.0 source=127.0.0.1:64461 -> 5603
+[2026-05-06 17:22:30] [UDP] Node 8 seq=34752 packets=9265 rssi=-21.0 snr=69.0 source=127.0.0.1:64461 -> 5608
+[2026-05-06 17:22:30] [UDP] Node 7 seq=34518 packets=9558 rssi=-35.0 snr=56.0 source=127.0.0.1:64461 -> 5607
+[2026-05-06 17:22:30] [UDP] Node 5 seq=14504 packets=9078 rssi=-30.0 snr=60.0 source=127.0.0.1:64461 -> 5605
+[2026-05-06 17:22:30] [UDP] Node 9 seq=35108 packets=9389 rssi=-46.0 snr=45.0 source=127.0.0.1:64461 -> 5609
+[2026-05-06 17:22:30] [UDP] Node 2 seq=34251 packets=9223 rssi=-40.0 snr=52.0 source=127.0.0.1:64461 -> 5602
+[2026-05-06 17:22:32] [UDP] Node 6 seq=15503 packets=9970 rssi=-31.0 snr=59.0 source=127.0.0.1:64461 -> 5606
+[2026-05-06 17:22:32] [UDP] Node 4 seq=34229 packets=9152 rssi=-48.0 snr=47.0 source=127.0.0.1:64461 -> 5604
+[2026-05-06 17:22:32] [UDP] Node 3 seq=34821 packets=9722 rssi=-58.0 snr=37.0 source=127.0.0.1:64461 -> 5603
+[2026-05-06 17:22:32] [UDP] Node 7 seq=35085 packets=10095 rssi=-35.0 snr=56.0 source=127.0.0.1:64461 -> 5607
+[2026-05-06 17:22:32] [UDP] Node 5 seq=15062 packets=9589 rssi=-30.0 snr=60.0 source=127.0.0.1:64461 -> 5605
+[2026-05-06 17:22:32] [UDP] Node 8 seq=35298 packets=9786 rssi=-22.0 snr=68.0 source=127.0.0.1:64461 -> 5608
+[2026-05-06 17:22:32] [UDP] Node 1 seq=35068 packets=9875 rssi=-67.0 snr=28.0 source=127.0.0.1:64461 -> 5601
+[2026-05-06 17:22:32] [UDP] Node 9 seq=35671 packets=9921 rssi=-45.0 snr=46.0 source=127.0.0.1:64461 -> 5609
+[2026-05-06 17:22:32] [UDP] Node 2 seq=34808 packets=9747 rssi=-41.0 snr=51.0 source=127.0.0.1:64461 -> 5602
+[2026-05-06 17:22:33] [CAPTURE] Capture completed for cell (1, 3) with 54/54 observed windows, generated=54 frames=14697; accumulated windows=54 captures=1
+[2026-05-06 17:22:33] [CAPTURE] Capture started for cell (2, 3) for 6.2s with 9-sample windows and stride 1
+[2026-05-06 17:22:34] [UDP] Node 4 seq=34486 packets=9393 rssi=-48.0 snr=47.0 source=127.0.0.1:64461 -> 5604
+[2026-05-06 17:22:34] [UDP] Node 6 seq=15784 packets=10232 rssi=-46.0 snr=44.0 source=127.0.0.1:64461 -> 5606
+[2026-05-06 17:22:34] [UDP] Node 5 seq=15304 packets=9820 rssi=-30.0 snr=60.0 source=127.0.0.1:64461 -> 5605
+[2026-05-06 17:22:34] [UDP] Node 3 seq=35075 packets=9964 rssi=-58.0 snr=37.0 source=127.0.0.1:64461 -> 5603
+[2026-05-06 17:22:34] [UDP] Node 7 seq=35365 packets=10366 rssi=-35.0 snr=56.0 source=127.0.0.1:64461 -> 5607
+[2026-05-06 17:22:34] [UDP] Node 1 seq=35342 packets=10130 rssi=-50.0 snr=45.0 source=127.0.0.1:64461 -> 5601
+[2026-05-06 17:22:34] [UDP] Node 9 seq=35939 packets=10171 rssi=-45.0 snr=46.0 source=127.0.0.1:64461 -> 5609
+[2026-05-06 17:22:34] [UDP] Node 8 seq=35544 packets=10026 rssi=-22.0 snr=68.0 source=127.0.0.1:64461 -> 5608
+[2026-05-06 17:22:34] [UDP] Node 2 seq=35068 packets=9995 rssi=-40.0 snr=52.0 source=127.0.0.1:64461 -> 5602
+[2026-05-06 17:22:36] [UDP] Node 4 seq=35027 packets=9898 rssi=-49.0 snr=46.0 source=127.0.0.1:64461 -> 5604
+[2026-05-06 17:22:36] [UDP] Node 6 seq=16939 packets=10767 rssi=-31.0 snr=60.0 source=127.0.0.1:64462 -> 5606
+[2026-05-06 17:22:36] [UDP] Node 7 seq=36514 packets=10908 rssi=-35.0 snr=56.0 source=127.0.0.1:64462 -> 5607
+[2026-05-06 17:22:36] [UDP] Node 8 seq=36087 packets=10548 rssi=-22.0 snr=68.0 source=127.0.0.1:64461 -> 5608
+[2026-05-06 17:22:36] [UDP] Node 9 seq=37076 packets=10699 rssi=-45.0 snr=46.0 source=127.0.0.1:64462 -> 5609
+[2026-05-06 17:22:36] [UDP] Node 3 seq=35628 packets=10485 rssi=-63.0 snr=32.0 source=127.0.0.1:64461 -> 5603
+[2026-05-06 17:22:36] [UDP] Node 5 seq=15869 packets=10350 rssi=-29.0 snr=61.0 source=127.0.0.1:64461 -> 5605
+[2026-05-06 17:22:36] [UDP] Node 1 seq=36492 packets=10665 rssi=-55.0 snr=40.0 source=127.0.0.1:64462 -> 5601
+[2026-05-06 17:22:36] [UDP] Node 2 seq=35621 packets=10524 rssi=-51.0 snr=41.0 source=127.0.0.1:64461 -> 5602
+[2026-05-06 17:22:38] [UDP] Node 4 seq=35573 packets=10415 rssi=-48.0 snr=47.0 source=127.0.0.1:64461 -> 5604
+[2026-05-06 17:22:38] [UDP] Node 6 seq=17510 packets=11299 rssi=-31.0 snr=60.0 source=127.0.0.1:64462 -> 5606
+[2026-05-06 17:22:38] [UDP] Node 1 seq=37065 packets=11192 rssi=-63.0 snr=32.0 source=127.0.0.1:64462 -> 5601
+[2026-05-06 17:22:38] [UDP] Node 7 seq=37069 packets=11435 rssi=-35.0 snr=56.0 source=127.0.0.1:64462 -> 5607
+[2026-05-06 17:22:38] [UDP] Node 3 seq=36765 packets=11010 rssi=-53.0 snr=42.0 source=127.0.0.1:64462 -> 5603
+[2026-05-06 17:22:38] [UDP] Node 9 seq=37638 packets=11224 rssi=-45.0 snr=46.0 source=127.0.0.1:64462 -> 5609
+[2026-05-06 17:22:38] [UDP] Node 8 seq=37216 packets=11074 rssi=-18.0 snr=72.0 source=127.0.0.1:64462 -> 5608
+[2026-05-06 17:22:38] [UDP] Node 5 seq=17007 packets=10881 rssi=-29.0 snr=61.0 source=127.0.0.1:64462 -> 5605
+[2026-05-06 17:22:38] [UDP] Node 2 seq=36764 packets=11058 rssi=-56.0 snr=36.0 source=127.0.0.1:64462 -> 5602
+[2026-05-06 17:22:41] [CAPTURE] Capture completed for cell (2, 3) with 54/54 observed windows, generated=54 frames=14664; accumulated windows=54 captures=1
+[2026-05-06 17:22:41] [TRAIN] Trained ExtraTreesWindowed on 378 samples across 7 classes (windowed ExtraTrees, quantile+scalar features, n_estimators=320, random_state=42)
+[2026-05-06 17:22:41] [UDP] Node 9 seq=38054 packets=11614 rssi=-55.0 snr=36.0 source=127.0.0.1:64462 -> 5609
+[2026-05-06 17:22:41] [UDP] Node 8 seq=37623 packets=11465 rssi=-22.0 snr=68.0 source=127.0.0.1:64462 -> 5608
+[2026-05-06 17:22:41] [UDP] Node 1 seq=37491 packets=11583 rssi=-65.0 snr=30.0 source=127.0.0.1:64462 -> 5601
+[2026-05-06 17:22:41] [UDP] Node 7 seq=37494 packets=11829 rssi=-35.0 snr=56.0 source=127.0.0.1:64462 -> 5607
+[2026-05-06 17:22:41] [UDP] Node 2 seq=37172 packets=11445 rssi=-39.0 snr=53.0 source=127.0.0.1:64462 -> 5602
+[2026-05-06 17:22:41] [UDP] Node 3 seq=37194 packets=11405 rssi=-53.0 snr=42.0 source=127.0.0.1:64462 -> 5603
+[2026-05-06 17:22:41] [UDP] Node 4 seq=36555 packets=10793 rssi=-49.0 snr=46.0 source=127.0.0.1:64462 -> 5604
+[2026-05-06 17:22:41] [UDP] Node 6 seq=17939 packets=11696 rssi=-31.0 snr=59.0 source=127.0.0.1:64462 -> 5606
+[2026-05-06 17:22:42] [UDP] Node 5 seq=17428 packets=11277 rssi=-29.0 snr=61.0 source=127.0.0.1:64462 -> 5605
+[2026-05-06 17:22:42] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:22:42] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:22:42] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:22:42] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:22:42] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:22:42] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:22:42] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:22:42] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:22:42] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:22:42] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:22:42] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:61536 -> 5603
+[2026-05-06 17:22:42] [UDP] Node 3 seq=41560 packets=1 rssi=-52.0 snr=43.0 source=127.0.0.1:61536 -> 5603
+[2026-05-06 17:22:42] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:61536 -> 5602
+[2026-05-06 17:22:42] [UDP] Node 2 seq=41615 packets=1 rssi=-33.0 snr=59.0 source=127.0.0.1:61536 -> 5602
+[2026-05-06 17:22:42] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:61536 -> 5609
+[2026-05-06 17:22:42] [UDP] Node 9 seq=42224 packets=1 rssi=-45.0 snr=46.0 source=127.0.0.1:61536 -> 5609
+[2026-05-06 17:22:42] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:61536 -> 5605
+[2026-05-06 17:22:42] [UDP] Node 5 seq=21952 packets=1 rssi=-49.0 snr=41.0 source=127.0.0.1:61536 -> 5605
+[2026-05-06 17:22:42] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:61536 -> 5606
+[2026-05-06 17:22:42] [UDP] Node 6 seq=21945 packets=1 rssi=-31.0 snr=59.0 source=127.0.0.1:61536 -> 5606
+[2026-05-06 17:22:42] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:61536 -> 5604
+[2026-05-06 17:22:42] [UDP] Node 4 seq=41553 packets=1 rssi=-48.0 snr=47.0 source=127.0.0.1:61536 -> 5604
+[2026-05-06 17:22:42] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:61536 -> 5607
+[2026-05-06 17:22:42] [UDP] Node 7 seq=41633 packets=1 rssi=-36.0 snr=55.0 source=127.0.0.1:61536 -> 5607
+[2026-05-06 17:22:42] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:61536 -> 5601
+[2026-05-06 17:22:42] [UDP] Node 1 seq=41584 packets=1 rssi=-50.0 snr=45.0 source=127.0.0.1:61536 -> 5601
+[2026-05-06 17:22:42] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:61536 -> 5608
+[2026-05-06 17:22:42] [UDP] Node 8 seq=42221 packets=1 rssi=-22.0 snr=68.0 source=127.0.0.1:61536 -> 5608
+[2026-05-06 17:22:44] [UDP] Node 2 seq=41952 packets=317 rssi=-50.0 snr=42.0 source=127.0.0.1:61536 -> 5602
+[2026-05-06 17:22:44] [UDP] Node 3 seq=41897 packets=322 rssi=-73.0 snr=22.0 source=127.0.0.1:61536 -> 5603
+[2026-05-06 17:22:44] [UDP] Node 9 seq=42563 packets=323 rssi=-44.0 snr=47.0 source=127.0.0.1:61536 -> 5609
+[2026-05-06 17:22:44] [UDP] Node 5 seq=22290 packets=319 rssi=-29.0 snr=61.0 source=127.0.0.1:61536 -> 5605
+[2026-05-06 17:22:44] [UDP] Node 7 seq=41969 packets=315 rssi=-36.0 snr=55.0 source=127.0.0.1:61536 -> 5607
+[2026-05-06 17:22:44] [UDP] Node 4 seq=41900 packets=320 rssi=-48.0 snr=47.0 source=127.0.0.1:61536 -> 5604
+[2026-05-06 17:22:44] [UDP] Node 1 seq=41926 packets=321 rssi=-50.0 snr=45.0 source=127.0.0.1:61536 -> 5601
+[2026-05-06 17:22:44] [UDP] Node 6 seq=22288 packets=326 rssi=-31.0 snr=60.0 source=127.0.0.1:61536 -> 5606
+[2026-05-06 17:22:44] [UDP] Node 8 seq=42552 packets=318 rssi=-21.0 snr=69.0 source=127.0.0.1:61536 -> 5608
+[2026-05-06 17:22:46] [UDP] Node 3 seq=42080 packets=484 rssi=-52.0 snr=43.0 source=127.0.0.1:61536 -> 5603
+[2026-05-06 17:22:46] [UDP] Node 2 seq=42132 packets=482 rssi=-40.0 snr=52.0 source=127.0.0.1:61536 -> 5602
+[2026-05-06 17:22:46] [UDP] Node 9 seq=42754 packets=487 rssi=-44.0 snr=47.0 source=127.0.0.1:61536 -> 5609
+[2026-05-06 17:22:46] [UDP] Node 7 seq=42140 packets=472 rssi=-36.0 snr=55.0 source=127.0.0.1:61536 -> 5607
+[2026-05-06 17:22:46] [UDP] Node 1 seq=42109 packets=485 rssi=-51.0 snr=44.0 source=127.0.0.1:61536 -> 5601
+[2026-05-06 17:22:46] [UDP] Node 6 seq=22472 packets=489 rssi=-31.0 snr=59.0 source=127.0.0.1:61536 -> 5606
+[2026-05-06 17:22:46] [UDP] Node 5 seq=22478 packets=485 rssi=-31.0 snr=59.0 source=127.0.0.1:61536 -> 5605
+[2026-05-06 17:22:46] [UDP] Node 4 seq=42080 packets=483 rssi=-48.0 snr=47.0 source=127.0.0.1:61536 -> 5604
+[2026-05-06 17:22:46] [UDP] Node 8 seq=42718 packets=468 rssi=-22.0 snr=68.0 source=127.0.0.1:61536 -> 5608
+[2026-05-06 17:22:48] [UDP] Node 6 seq=22631 packets=635 rssi=-59.0 snr=32.0 source=127.0.0.1:61536 -> 5606
+[2026-05-06 17:22:48] [UDP] Node 7 seq=42307 packets=627 rssi=-36.0 snr=55.0 source=127.0.0.1:61536 -> 5607
+[2026-05-06 17:22:48] [UDP] Node 2 seq=42319 packets=655 rssi=-40.0 snr=52.0 source=127.0.0.1:61536 -> 5602
+[2026-05-06 17:22:48] [UDP] Node 9 seq=42938 packets=656 rssi=-44.0 snr=47.0 source=127.0.0.1:61536 -> 5609
+[2026-05-06 17:22:48] [UDP] Node 8 seq=42879 packets=620 rssi=-23.0 snr=67.0 source=127.0.0.1:61536 -> 5608
+[2026-05-06 17:22:48] [UDP] Node 3 seq=42267 packets=656 rssi=-52.0 snr=43.0 source=127.0.0.1:61536 -> 5603
+[2026-05-06 17:22:48] [UDP] Node 1 seq=42290 packets=650 rssi=-51.0 snr=44.0 source=127.0.0.1:61536 -> 5601
+[2026-05-06 17:22:48] [UDP] Node 4 seq=42252 packets=643 rssi=-48.0 snr=47.0 source=127.0.0.1:61536 -> 5604
+[2026-05-06 17:22:48] [UDP] Node 5 seq=22650 packets=646 rssi=-29.0 snr=61.0 source=127.0.0.1:61536 -> 5605
+[2026-05-06 17:22:49] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:22:49] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:22:49] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:22:49] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:22:49] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:22:49] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:22:49] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:22:49] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:22:49] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:22:49] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:22:50] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:55741 -> 5602
+[2026-05-06 17:22:50] [UDP] Node 2 seq=25700 packets=1 rssi=-48.0 snr=44.0 source=127.0.0.1:55741 -> 5602
+[2026-05-06 17:22:50] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:55741 -> 5608
+[2026-05-06 17:22:50] [UDP] Node 8 seq=26302 packets=1 rssi=-59.0 snr=31.0 source=127.0.0.1:55741 -> 5608
+[2026-05-06 17:22:50] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:55741 -> 5609
+[2026-05-06 17:22:50] [UDP] Node 9 seq=26307 packets=1 rssi=-49.0 snr=42.0 source=127.0.0.1:55741 -> 5609
+[2026-05-06 17:22:50] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:55741 -> 5607
+[2026-05-06 17:22:50] [UDP] Node 7 seq=25717 packets=1 rssi=-40.0 snr=51.0 source=127.0.0.1:55741 -> 5607
+[2026-05-06 17:22:50] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:55741 -> 5601
+[2026-05-06 17:22:50] [UDP] Node 1 seq=25664 packets=1 rssi=-52.0 snr=43.0 source=127.0.0.1:55741 -> 5601
+[2026-05-06 17:22:50] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:55741 -> 5605
+[2026-05-06 17:22:50] [UDP] Node 5 seq=6037 packets=1 rssi=-55.0 snr=35.0 source=127.0.0.1:55741 -> 5605
+[2026-05-06 17:22:50] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:55741 -> 5606
+[2026-05-06 17:22:50] [UDP] Node 6 seq=6028 packets=1 rssi=-24.0 snr=67.0 source=127.0.0.1:55741 -> 5606
+[2026-05-06 17:22:50] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:55741 -> 5603
+[2026-05-06 17:22:50] [UDP] Node 3 seq=25643 packets=1 rssi=-57.0 snr=38.0 source=127.0.0.1:55741 -> 5603
+[2026-05-06 17:22:50] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:55741 -> 5604
+[2026-05-06 17:22:50] [UDP] Node 4 seq=25637 packets=1 rssi=-47.0 snr=48.0 source=127.0.0.1:55741 -> 5604
+[2026-05-06 17:22:52] [UDP] Node 2 seq=26040 packets=326 rssi=-38.0 snr=54.0 source=127.0.0.1:55741 -> 5602
+[2026-05-06 17:22:52] [UDP] Node 7 seq=26048 packets=322 rssi=-35.0 snr=56.0 source=127.0.0.1:55741 -> 5607
+[2026-05-06 17:22:52] [UDP] Node 5 seq=6369 packets=315 rssi=-36.0 snr=54.0 source=127.0.0.1:55741 -> 5605
+[2026-05-06 17:22:52] [UDP] Node 8 seq=26635 packets=322 rssi=-22.0 snr=68.0 source=127.0.0.1:55741 -> 5608
+[2026-05-06 17:22:52] [UDP] Node 1 seq=26006 packets=317 rssi=-51.0 snr=44.0 source=127.0.0.1:55741 -> 5601
+[2026-05-06 17:22:52] [UDP] Node 6 seq=6365 packets=321 rssi=-47.0 snr=43.0 source=127.0.0.1:55741 -> 5606
+[2026-05-06 17:22:52] [UDP] Node 9 seq=26643 packets=316 rssi=-47.0 snr=44.0 source=127.0.0.1:55741 -> 5609
+[2026-05-06 17:22:52] [UDP] Node 3 seq=25980 packets=322 rssi=-53.0 snr=42.0 source=127.0.0.1:55741 -> 5603
+[2026-05-06 17:22:52] [UDP] Node 4 seq=25976 packets=325 rssi=-48.0 snr=47.0 source=127.0.0.1:55741 -> 5604
+[2026-05-06 17:22:54] [PREDICT] Best state changed to Cell (2, 1) probability=43.8%
+[2026-05-06 17:22:54] [UDP] Node 7 seq=26229 packets=492 rssi=-52.0 snr=39.0 source=127.0.0.1:55741 -> 5607
+[2026-05-06 17:22:54] [UDP] Node 2 seq=26221 packets=498 rssi=-39.0 snr=53.0 source=127.0.0.1:55741 -> 5602
+[2026-05-06 17:22:54] [UDP] Node 5 seq=6555 packets=489 rssi=-34.0 snr=56.0 source=127.0.0.1:55741 -> 5605
+[2026-05-06 17:22:54] [UDP] Node 4 seq=26167 packets=501 rssi=-50.0 snr=45.0 source=127.0.0.1:55741 -> 5604
+[2026-05-06 17:22:54] [UDP] Node 3 seq=26170 packets=500 rssi=-51.0 snr=44.0 source=127.0.0.1:55741 -> 5603
+[2026-05-06 17:22:54] [UDP] Node 6 seq=6556 packets=495 rssi=-31.0 snr=59.0 source=127.0.0.1:55741 -> 5606
+[2026-05-06 17:22:54] [UDP] Node 9 seq=26825 packets=487 rssi=-46.0 snr=45.0 source=127.0.0.1:55741 -> 5609
+[2026-05-06 17:22:54] [UDP] Node 8 seq=26813 packets=493 rssi=-22.0 snr=68.0 source=127.0.0.1:55741 -> 5608
+[2026-05-06 17:22:54] [UDP] Node 1 seq=26195 packets=492 rssi=-54.0 snr=41.0 source=127.0.0.1:55741 -> 5601
+[2026-05-06 17:22:54] [PREDICT] Best state changed to Cell (1, 1) probability=52.5%
+[2026-05-06 17:22:56] [UDP] Node 6 seq=6725 packets=653 rssi=-32.0 snr=58.0 source=127.0.0.1:55741 -> 5606
+[2026-05-06 17:22:56] [UDP] Node 2 seq=26404 packets=671 rssi=-37.0 snr=55.0 source=127.0.0.1:55741 -> 5602
+[2026-05-06 17:22:56] [UDP] Node 5 seq=6723 packets=644 rssi=-30.0 snr=60.0 source=127.0.0.1:55741 -> 5605
+[2026-05-06 17:22:56] [UDP] Node 3 seq=26348 packets=668 rssi=-53.0 snr=42.0 source=127.0.0.1:55741 -> 5603
+[2026-05-06 17:22:56] [UDP] Node 1 seq=26382 packets=660 rssi=-51.0 snr=44.0 source=127.0.0.1:55741 -> 5601
+[2026-05-06 17:22:56] [UDP] Node 4 seq=26345 packets=667 rssi=-50.0 snr=45.0 source=127.0.0.1:55741 -> 5604
+[2026-05-06 17:22:56] [UDP] Node 9 seq=27000 packets=653 rssi=-47.0 snr=44.0 source=127.0.0.1:55741 -> 5609
+[2026-05-06 17:22:56] [UDP] Node 8 seq=26983 packets=658 rssi=-22.0 snr=68.0 source=127.0.0.1:55741 -> 5608
+[2026-05-06 17:22:56] [UDP] Node 7 seq=26409 packets=663 rssi=-34.0 snr=57.0 source=127.0.0.1:55741 -> 5607
+[2026-05-06 17:22:57] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:22:57] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:22:57] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:22:57] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:22:57] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:22:57] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:22:57] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:22:57] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:22:57] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:22:57] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:22:57] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:55745 -> 5603
+[2026-05-06 17:22:57] [UDP] Node 3 seq=23167 packets=1 rssi=-54.0 snr=41.0 source=127.0.0.1:55745 -> 5603
+[2026-05-06 17:22:57] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:55745 -> 5609
+[2026-05-06 17:22:57] [UDP] Node 9 seq=23831 packets=1 rssi=-41.0 snr=50.0 source=127.0.0.1:55745 -> 5609
+[2026-05-06 17:22:57] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:55745 -> 5601
+[2026-05-06 17:22:57] [UDP] Node 1 seq=23190 packets=1 rssi=-70.0 snr=25.0 source=127.0.0.1:55745 -> 5601
+[2026-05-06 17:22:57] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:55745 -> 5608
+[2026-05-06 17:22:57] [UDP] Node 8 seq=23828 packets=1 rssi=-23.0 snr=67.0 source=127.0.0.1:55745 -> 5608
+[2026-05-06 17:22:57] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:55745 -> 5606
+[2026-05-06 17:22:57] [UDP] Node 6 seq=3552 packets=1 rssi=-30.0 snr=60.0 source=127.0.0.1:55745 -> 5606
+[2026-05-06 17:22:57] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:55745 -> 5605
+[2026-05-06 17:22:57] [UDP] Node 5 seq=3562 packets=1 rssi=-53.0 snr=37.0 source=127.0.0.1:55745 -> 5605
+[2026-05-06 17:22:57] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:55745 -> 5607
+[2026-05-06 17:22:57] [UDP] Node 7 seq=23241 packets=1 rssi=-31.0 snr=60.0 source=127.0.0.1:55745 -> 5607
+[2026-05-06 17:22:57] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:55745 -> 5604
+[2026-05-06 17:22:57] [UDP] Node 4 seq=23161 packets=1 rssi=-49.0 snr=46.0 source=127.0.0.1:55745 -> 5604
+[2026-05-06 17:22:57] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:55745 -> 5602
+[2026-05-06 17:22:57] [UDP] Node 2 seq=23225 packets=1 rssi=-45.0 snr=47.0 source=127.0.0.1:55745 -> 5602
+[2026-05-06 17:22:59] [UDP] Node 1 seq=23569 packets=304 rssi=-52.0 snr=43.0 source=127.0.0.1:55745 -> 5601
+[2026-05-06 17:22:59] [UDP] Node 8 seq=24204 packets=313 rssi=-23.0 snr=67.0 source=127.0.0.1:55745 -> 5608
+[2026-05-06 17:22:59] [UDP] Node 3 seq=23552 packets=318 rssi=-54.0 snr=41.0 source=127.0.0.1:55745 -> 5603
+[2026-05-06 17:22:59] [UDP] Node 9 seq=24213 packets=310 rssi=-42.0 snr=49.0 source=127.0.0.1:55745 -> 5609
+[2026-05-06 17:22:59] [UDP] Node 5 seq=3940 packets=323 rssi=-32.0 snr=58.0 source=127.0.0.1:55745 -> 5605
+[2026-05-06 17:22:59] [UDP] Node 6 seq=3930 packets=319 rssi=-31.0 snr=60.0 source=127.0.0.1:55745 -> 5606
+[2026-05-06 17:22:59] [UDP] Node 4 seq=23546 packets=320 rssi=-51.0 snr=44.0 source=127.0.0.1:55745 -> 5604
+[2026-05-06 17:22:59] [UDP] Node 7 seq=23615 packets=322 rssi=-51.0 snr=40.0 source=127.0.0.1:55745 -> 5607
+[2026-05-06 17:22:59] [UDP] Node 2 seq=23610 packets=319 rssi=-51.0 snr=41.0 source=127.0.0.1:55745 -> 5602
+[2026-05-06 17:23:01] [UDP] Node 4 seq=23731 packets=495 rssi=-45.0 snr=50.0 source=127.0.0.1:55745 -> 5604
+[2026-05-06 17:23:01] [UDP] Node 6 seq=4114 packets=488 rssi=-29.0 snr=62.0 source=127.0.0.1:55745 -> 5606
+[2026-05-06 17:23:01] [UDP] Node 5 seq=4125 packets=493 rssi=-32.0 snr=58.0 source=127.0.0.1:55745 -> 5605
+[2026-05-06 17:23:01] [UDP] Node 8 seq=24390 packets=487 rssi=-22.0 snr=68.0 source=127.0.0.1:55745 -> 5608
+[2026-05-06 17:23:01] [UDP] Node 7 seq=23799 packets=493 rssi=-40.0 snr=51.0 source=127.0.0.1:55745 -> 5607
+[2026-05-06 17:23:01] [UDP] Node 2 seq=23789 packets=489 rssi=-42.0 snr=50.0 source=127.0.0.1:55745 -> 5602
+[2026-05-06 17:23:01] [UDP] Node 9 seq=24408 packets=486 rssi=-42.0 snr=49.0 source=127.0.0.1:55745 -> 5609
+[2026-05-06 17:23:01] [UDP] Node 3 seq=23741 packets=492 rssi=-54.0 snr=41.0 source=127.0.0.1:55745 -> 5603
+[2026-05-06 17:23:01] [UDP] Node 1 seq=23755 packets=479 rssi=-50.0 snr=45.0 source=127.0.0.1:55745 -> 5601
+[2026-05-06 17:23:03] [UDP] Node 9 seq=24588 packets=653 rssi=-50.0 snr=41.0 source=127.0.0.1:55745 -> 5609
+[2026-05-06 17:23:03] [UDP] Node 2 seq=23968 packets=652 rssi=-47.0 snr=45.0 source=127.0.0.1:55745 -> 5602
+[2026-05-06 17:23:03] [UDP] Node 7 seq=23987 packets=662 rssi=-24.0 snr=67.0 source=127.0.0.1:55745 -> 5607
+[2026-05-06 17:23:03] [UDP] Node 3 seq=23924 packets=657 rssi=-56.0 snr=39.0 source=127.0.0.1:55745 -> 5603
+[2026-05-06 17:23:03] [UDP] Node 5 seq=4312 packets=660 rssi=-33.0 snr=57.0 source=127.0.0.1:55745 -> 5605
+[2026-05-06 17:23:03] [UDP] Node 4 seq=23926 packets=666 rssi=-48.0 snr=47.0 source=127.0.0.1:55745 -> 5604
+[2026-05-06 17:23:03] [UDP] Node 6 seq=4291 packets=649 rssi=-57.0 snr=34.0 source=127.0.0.1:55745 -> 5606
+[2026-05-06 17:23:03] [UDP] Node 8 seq=24575 packets=656 rssi=-40.0 snr=50.0 source=127.0.0.1:55745 -> 5608
+[2026-05-06 17:23:03] [UDP] Node 1 seq=23942 packets=645 rssi=-53.0 snr=42.0 source=127.0.0.1:55745 -> 5601
+[2026-05-06 17:23:04] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:23:04] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:23:04] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:23:04] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:23:04] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:23:04] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:23:04] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:23:04] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:23:04] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:23:04] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:23:04] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:55746 -> 5607
+[2026-05-06 17:23:04] [UDP] Node 7 seq=28150 packets=1 rssi=-36.0 snr=55.0 source=127.0.0.1:55746 -> 5607
+[2026-05-06 17:23:04] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:55746 -> 5604
+[2026-05-06 17:23:04] [UDP] Node 4 seq=28070 packets=1 rssi=-43.0 snr=52.0 source=127.0.0.1:55746 -> 5604
+[2026-05-06 17:23:04] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:55746 -> 5606
+[2026-05-06 17:23:04] [UDP] Node 6 seq=8461 packets=1 rssi=-32.0 snr=59.0 source=127.0.0.1:55746 -> 5606
+[2026-05-06 17:23:04] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:55746 -> 5605
+[2026-05-06 17:23:04] [UDP] Node 5 seq=8471 packets=1 rssi=-51.0 snr=39.0 source=127.0.0.1:55746 -> 5605
+[2026-05-06 17:23:04] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:55746 -> 5608
+[2026-05-06 17:23:04] [UDP] Node 8 seq=28736 packets=1 rssi=-22.0 snr=68.0 source=127.0.0.1:55746 -> 5608
+[2026-05-06 17:23:04] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:55746 -> 5602
+[2026-05-06 17:23:04] [UDP] Node 2 seq=28134 packets=1 rssi=-39.0 snr=53.0 source=127.0.0.1:55746 -> 5602
+[2026-05-06 17:23:04] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:55746 -> 5603
+[2026-05-06 17:23:04] [UDP] Node 3 seq=28076 packets=1 rssi=-64.0 snr=31.0 source=127.0.0.1:55746 -> 5603
+[2026-05-06 17:23:04] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:55746 -> 5601
+[2026-05-06 17:23:04] [UDP] Node 1 seq=28099 packets=1 rssi=-53.0 snr=42.0 source=127.0.0.1:55746 -> 5601
+[2026-05-06 17:23:04] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:55746 -> 5609
+[2026-05-06 17:23:04] [UDP] Node 9 seq=28740 packets=1 rssi=-46.0 snr=45.0 source=127.0.0.1:55746 -> 5609
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Cell (1, 1) probability=25.0%
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Cell (2, 2) probability=20.6%
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Cell (1, 3) probability=24.1%
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Cell (2, 2) probability=22.5%
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Empty Room probability=27.8%
+[2026-05-06 17:23:06] [UDP] Node 7 seq=28510 packets=331 rssi=-35.0 snr=56.0 source=127.0.0.1:55746 -> 5607
+[2026-05-06 17:23:06] [UDP] Node 4 seq=28437 packets=326 rssi=-48.0 snr=47.0 source=127.0.0.1:55746 -> 5604
+[2026-05-06 17:23:06] [UDP] Node 8 seq=29093 packets=332 rssi=-22.0 snr=68.0 source=127.0.0.1:55746 -> 5608
+[2026-05-06 17:23:06] [UDP] Node 1 seq=28475 packets=333 rssi=-52.0 snr=43.0 source=127.0.0.1:55746 -> 5601
+[2026-05-06 17:23:06] [UDP] Node 3 seq=28449 packets=337 rssi=-51.0 snr=44.0 source=127.0.0.1:55746 -> 5603
+[2026-05-06 17:23:06] [UDP] Node 5 seq=8838 packets=328 rssi=-29.0 snr=61.0 source=127.0.0.1:55746 -> 5605
+[2026-05-06 17:23:06] [UDP] Node 2 seq=28510 packets=334 rssi=-40.0 snr=52.0 source=127.0.0.1:55746 -> 5602
+[2026-05-06 17:23:06] [UDP] Node 9 seq=29112 packets=337 rssi=-46.0 snr=45.0 source=127.0.0.1:55746 -> 5609
+[2026-05-06 17:23:06] [UDP] Node 6 seq=8824 packets=327 rssi=-31.0 snr=60.0 source=127.0.0.1:55746 -> 5606
+[2026-05-06 17:23:06] [PREDICT] Best state changed to Cell (1, 3) probability=25.0%
+[2026-05-06 17:23:07] [PREDICT] Best state changed to Cell (2, 2) probability=30.3%
+[2026-05-06 17:23:07] [PREDICT] Best state changed to Cell (1, 3) probability=25.9%
+[2026-05-06 17:23:07] [PREDICT] Best state changed to Cell (2, 2) probability=24.1%
+[2026-05-06 17:23:08] [PREDICT] Best state changed to Empty Room probability=34.4%
+[2026-05-06 17:23:08] [PREDICT] Best state changed to Cell (1, 1) probability=29.1%
+[2026-05-06 17:23:08] [UDP] Node 8 seq=29263 packets=495 rssi=-21.0 snr=69.0 source=127.0.0.1:55746 -> 5608
+[2026-05-06 17:23:08] [UDP] Node 3 seq=28635 packets=504 rssi=-51.0 snr=44.0 source=127.0.0.1:55746 -> 5603
+[2026-05-06 17:23:08] [UDP] Node 4 seq=28620 packets=491 rssi=-47.0 snr=48.0 source=127.0.0.1:55746 -> 5604
+[2026-05-06 17:23:08] [UDP] Node 1 seq=28658 packets=498 rssi=-52.0 snr=43.0 source=127.0.0.1:55746 -> 5601
+[2026-05-06 17:23:08] [UDP] Node 9 seq=29291 packets=499 rssi=-30.0 snr=61.0 source=127.0.0.1:55746 -> 5609
+[2026-05-06 17:23:08] [UDP] Node 7 seq=28675 packets=485 rssi=-36.0 snr=55.0 source=127.0.0.1:55746 -> 5607
+[2026-05-06 17:23:08] [UDP] Node 6 seq=8997 packets=487 rssi=-31.0 snr=60.0 source=127.0.0.1:55746 -> 5606
+[2026-05-06 17:23:08] [UDP] Node 2 seq=28690 packets=501 rssi=-37.0 snr=55.0 source=127.0.0.1:55746 -> 5602
+[2026-05-06 17:23:08] [UDP] Node 5 seq=9013 packets=489 rssi=-29.0 snr=61.0 source=127.0.0.1:55746 -> 5605
+[2026-05-06 17:23:08] [PREDICT] Best state changed to Empty Room probability=31.2%
+[2026-05-06 17:23:09] [PREDICT] Best state changed to Cell (1, 2) probability=34.1%
+[2026-05-06 17:23:10] [UDP] Node 5 seq=9194 packets=646 rssi=-29.0 snr=61.0 source=127.0.0.1:55746 -> 5605
+[2026-05-06 17:23:10] [UDP] Node 1 seq=28832 packets=659 rssi=-53.0 snr=42.0 source=127.0.0.1:55746 -> 5601
+[2026-05-06 17:23:10] [UDP] Node 4 seq=28796 packets=652 rssi=-47.0 snr=48.0 source=127.0.0.1:55746 -> 5604
+[2026-05-06 17:23:10] [UDP] Node 6 seq=9170 packets=643 rssi=-31.0 snr=60.0 source=127.0.0.1:55746 -> 5606
+[2026-05-06 17:23:10] [UDP] Node 8 seq=29442 packets=657 rssi=-22.0 snr=68.0 source=127.0.0.1:55746 -> 5608
+[2026-05-06 17:23:10] [UDP] Node 7 seq=28833 packets=631 rssi=-35.0 snr=56.0 source=127.0.0.1:55746 -> 5607
+[2026-05-06 17:23:10] [UDP] Node 9 seq=29466 packets=660 rssi=-45.0 snr=46.0 source=127.0.0.1:55746 -> 5609
+[2026-05-06 17:23:10] [UDP] Node 3 seq=28811 packets=666 rssi=-52.0 snr=43.0 source=127.0.0.1:55746 -> 5603
+[2026-05-06 17:23:10] [UDP] Node 2 seq=28866 packets=662 rssi=-39.0 snr=53.0 source=127.0.0.1:55746 -> 5602
+[2026-05-06 17:23:11] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:23:11] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:23:11] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:23:11] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:23:11] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:23:11] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:23:11] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:23:11] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:23:11] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:23:11] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:23:12] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:55749 -> 5604
+[2026-05-06 17:23:12] [UDP] Node 4 seq=31349 packets=1 rssi=-47.0 snr=48.0 source=127.0.0.1:55749 -> 5604
+[2026-05-06 17:23:12] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:55749 -> 5609
+[2026-05-06 17:23:12] [UDP] Node 9 seq=32019 packets=1 rssi=-47.0 snr=44.0 source=127.0.0.1:55749 -> 5609
+[2026-05-06 17:23:12] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:55749 -> 5601
+[2026-05-06 17:23:12] [UDP] Node 1 seq=31378 packets=1 rssi=-51.0 snr=44.0 source=127.0.0.1:55749 -> 5601
+[2026-05-06 17:23:12] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:55749 -> 5603
+[2026-05-06 17:23:12] [UDP] Node 3 seq=31355 packets=1 rssi=-53.0 snr=42.0 source=127.0.0.1:55749 -> 5603
+[2026-05-06 17:23:12] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:55749 -> 5605
+[2026-05-06 17:23:12] [UDP] Node 5 seq=11749 packets=1 rssi=-29.0 snr=61.0 source=127.0.0.1:55749 -> 5605
+[2026-05-06 17:23:12] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:55749 -> 5607
+[2026-05-06 17:23:12] [UDP] Node 7 seq=31428 packets=1 rssi=-36.0 snr=55.0 source=127.0.0.1:55749 -> 5607
+[2026-05-06 17:23:12] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:55749 -> 5606
+[2026-05-06 17:23:12] [UDP] Node 6 seq=11739 packets=1 rssi=-31.0 snr=60.0 source=127.0.0.1:55749 -> 5606
+[2026-05-06 17:23:12] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:55749 -> 5608
+[2026-05-06 17:23:12] [UDP] Node 8 seq=32015 packets=1 rssi=-22.0 snr=68.0 source=127.0.0.1:55749 -> 5608
+[2026-05-06 17:23:12] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:55749 -> 5602
+[2026-05-06 17:23:12] [UDP] Node 2 seq=31411 packets=1 rssi=-40.0 snr=53.0 source=127.0.0.1:55749 -> 5602
+[2026-05-06 17:23:14] [UDP] Node 4 seq=31707 packets=329 rssi=-49.0 snr=46.0 source=127.0.0.1:55749 -> 5604
+[2026-05-06 17:23:14] [UDP] Node 1 seq=31739 packets=337 rssi=-53.0 snr=42.0 source=127.0.0.1:55749 -> 5601
+[2026-05-06 17:23:14] [UDP] Node 9 seq=32378 packets=340 rssi=-46.0 snr=45.0 source=127.0.0.1:55749 -> 5609
+[2026-05-06 17:23:14] [UDP] Node 5 seq=12088 packets=320 rssi=-30.0 snr=60.0 source=127.0.0.1:55749 -> 5605
+[2026-05-06 17:23:14] [UDP] Node 6 seq=12104 packets=342 rssi=-31.0 snr=60.0 source=127.0.0.1:55749 -> 5606
+[2026-05-06 17:23:14] [UDP] Node 8 seq=32357 packets=334 rssi=-21.0 snr=69.0 source=127.0.0.1:55749 -> 5608
+[2026-05-06 17:23:14] [UDP] Node 3 seq=31717 packets=343 rssi=-70.0 snr=25.0 source=127.0.0.1:55749 -> 5603
+[2026-05-06 17:23:14] [UDP] Node 2 seq=31772 packets=341 rssi=-39.0 snr=53.0 source=127.0.0.1:55749 -> 5602
+[2026-05-06 17:23:14] [UDP] Node 7 seq=31789 packets=349 rssi=-35.0 snr=56.0 source=127.0.0.1:55749 -> 5607
+[2026-05-06 17:23:14] [PREDICT] Best state changed to Cell (2, 2) probability=29.7%
+[2026-05-06 17:23:14] [PREDICT] Best state changed to Cell (1, 3) probability=27.5%
+[2026-05-06 17:23:15] [PREDICT] Best state changed to Cell (2, 2) probability=35.6%
+[2026-05-06 17:23:16] [UDP] Node 8 seq=32527 packets=501 rssi=-20.0 snr=70.0 source=127.0.0.1:55749 -> 5608
+[2026-05-06 17:23:16] [UDP] Node 3 seq=31897 packets=510 rssi=-52.0 snr=43.0 source=127.0.0.1:55749 -> 5603
+[2026-05-06 17:23:16] [UDP] Node 4 seq=31887 packets=498 rssi=-47.0 snr=48.0 source=127.0.0.1:55749 -> 5604
+[2026-05-06 17:23:16] [UDP] Node 9 seq=32555 packets=508 rssi=-45.0 snr=46.0 source=127.0.0.1:55749 -> 5609
+[2026-05-06 17:23:16] [UDP] Node 1 seq=31920 packets=507 rssi=-50.0 snr=45.0 source=127.0.0.1:55749 -> 5601
+[2026-05-06 17:23:16] [UDP] Node 7 seq=31963 packets=515 rssi=-35.0 snr=56.0 source=127.0.0.1:55749 -> 5607
+[2026-05-06 17:23:16] [UDP] Node 5 seq=12265 packets=488 rssi=-29.0 snr=61.0 source=127.0.0.1:55749 -> 5605
+[2026-05-06 17:23:16] [UDP] Node 6 seq=12282 packets=508 rssi=-31.0 snr=60.0 source=127.0.0.1:55749 -> 5606
+[2026-05-06 17:23:16] [UDP] Node 2 seq=31951 packets=512 rssi=-40.0 snr=52.0 source=127.0.0.1:55749 -> 5602
+[2026-05-06 17:23:17] [PREDICT] Best state changed to Cell (1, 3) probability=26.2%
+[2026-05-06 17:23:17] [PREDICT] Best state changed to Empty Room probability=25.0%
+[2026-05-06 17:23:17] [PREDICT] Best state changed to Cell (2, 2) probability=29.1%
+[2026-05-06 17:23:18] [UDP] Node 8 seq=32687 packets=654 rssi=-21.0 snr=69.0 source=127.0.0.1:55749 -> 5608
+[2026-05-06 17:23:18] [PREDICT] Best state changed to Cell (1, 3) probability=37.2%
+[2026-05-06 17:23:18] [UDP] Node 2 seq=32131 packets=681 rssi=-37.0 snr=55.0 source=127.0.0.1:55749 -> 5602
+[2026-05-06 17:23:18] [UDP] Node 7 seq=32136 packets=683 rssi=-33.0 snr=58.0 source=127.0.0.1:55749 -> 5607
+[2026-05-06 17:23:18] [UDP] Node 1 seq=32099 packets=674 rssi=-51.0 snr=44.0 source=127.0.0.1:55749 -> 5601
+[2026-05-06 17:23:18] [UDP] Node 4 seq=32060 packets=657 rssi=-47.0 snr=48.0 source=127.0.0.1:55749 -> 5604
+[2026-05-06 17:23:18] [UDP] Node 6 seq=12447 packets=664 rssi=-31.0 snr=60.0 source=127.0.0.1:55749 -> 5606
+[2026-05-06 17:23:18] [UDP] Node 5 seq=12442 packets=653 rssi=-29.0 snr=61.0 source=127.0.0.1:55749 -> 5605
+[2026-05-06 17:23:18] [UDP] Node 9 seq=32727 packets=673 rssi=-45.0 snr=46.0 source=127.0.0.1:55749 -> 5609
+[2026-05-06 17:23:18] [UDP] Node 3 seq=32070 packets=675 rssi=-53.0 snr=42.0 source=127.0.0.1:55749 -> 5603
+[2026-05-06 17:23:18] [PREDICT] Best state changed to Cell (2, 2) probability=39.7%
+[2026-05-06 17:23:18] [PREDICT] Best state changed to Cell (1, 3) probability=39.7%
+[2026-05-06 17:23:19] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:23:19] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:23:19] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:23:19] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:23:19] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:23:19] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:23:19] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:23:19] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:23:19] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:23:19] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:23:19] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:58333 -> 5607
+[2026-05-06 17:23:19] [UDP] Node 7 seq=33901 packets=1 rssi=-35.0 snr=56.0 source=127.0.0.1:58333 -> 5607
+[2026-05-06 17:23:19] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:58333 -> 5604
+[2026-05-06 17:23:19] [UDP] Node 4 seq=33821 packets=1 rssi=-48.0 snr=47.0 source=127.0.0.1:58333 -> 5604
+[2026-05-06 17:23:19] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:58333 -> 5602
+[2026-05-06 17:23:19] [UDP] Node 2 seq=33884 packets=1 rssi=-40.0 snr=52.0 source=127.0.0.1:58333 -> 5602
+[2026-05-06 17:23:19] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:58333 -> 5605
+[2026-05-06 17:23:19] [UDP] Node 5 seq=14222 packets=1 rssi=-30.0 snr=60.0 source=127.0.0.1:58333 -> 5605
+[2026-05-06 17:23:19] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:58333 -> 5603
+[2026-05-06 17:23:19] [UDP] Node 3 seq=33828 packets=1 rssi=-56.0 snr=39.0 source=127.0.0.1:58333 -> 5603
+[2026-05-06 17:23:19] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:58333 -> 5606
+[2026-05-06 17:23:19] [UDP] Node 6 seq=14212 packets=1 rssi=-31.0 snr=59.0 source=127.0.0.1:58333 -> 5606
+[2026-05-06 17:23:19] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:58333 -> 5609
+[2026-05-06 17:23:19] [UDP] Node 9 seq=34492 packets=1 rssi=-45.0 snr=46.0 source=127.0.0.1:58333 -> 5609
+[2026-05-06 17:23:19] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:58333 -> 5608
+[2026-05-06 17:23:19] [UDP] Node 8 seq=34488 packets=1 rssi=-21.0 snr=69.0 source=127.0.0.1:58333 -> 5608
+[2026-05-06 17:23:19] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:58333 -> 5601
+[2026-05-06 17:23:19] [UDP] Node 1 seq=33851 packets=1 rssi=-50.0 snr=45.0 source=127.0.0.1:58333 -> 5601
+[2026-05-06 17:23:21] [UDP] Node 3 seq=34179 packets=331 rssi=-55.0 snr=40.0 source=127.0.0.1:58333 -> 5603
+[2026-05-06 17:23:21] [UDP] Node 7 seq=34247 packets=332 rssi=-35.0 snr=56.0 source=127.0.0.1:58333 -> 5607
+[2026-05-06 17:23:21] [UDP] Node 1 seq=34197 packets=328 rssi=-51.0 snr=44.0 source=127.0.0.1:58333 -> 5601
+[2026-05-06 17:23:21] [UDP] Node 2 seq=34234 packets=338 rssi=-41.0 snr=51.0 source=127.0.0.1:58333 -> 5602
+[2026-05-06 17:23:21] [UDP] Node 4 seq=34170 packets=331 rssi=-48.0 snr=47.0 source=127.0.0.1:58333 -> 5604
+[2026-05-06 17:23:21] [UDP] Node 9 seq=34841 packets=321 rssi=-46.0 snr=45.0 source=127.0.0.1:58333 -> 5609
+[2026-05-06 17:23:21] [UDP] Node 5 seq=14569 packets=328 rssi=-30.0 snr=61.0 source=127.0.0.1:58333 -> 5605
+[2026-05-06 17:23:21] [UDP] Node 8 seq=34828 packets=330 rssi=-22.0 snr=68.0 source=127.0.0.1:58333 -> 5608
+[2026-05-06 17:23:21] [UDP] Node 6 seq=14555 packets=321 rssi=-31.0 snr=60.0 source=127.0.0.1:58333 -> 5606
+[2026-05-06 17:23:23] [UDP] Node 3 seq=34360 packets=508 rssi=-64.0 snr=31.0 source=127.0.0.1:58333 -> 5603
+[2026-05-06 17:23:23] [UDP] Node 2 seq=34414 packets=510 rssi=-40.0 snr=52.0 source=127.0.0.1:58333 -> 5602
+[2026-05-06 17:23:23] [UDP] Node 4 seq=34354 packets=505 rssi=-49.0 snr=46.0 source=127.0.0.1:58333 -> 5604
+[2026-05-06 17:23:23] [UDP] Node 8 seq=35000 packets=497 rssi=-22.0 snr=68.0 source=127.0.0.1:58333 -> 5608
+[2026-05-06 17:23:23] [UDP] Node 6 seq=14725 packets=484 rssi=-31.0 snr=60.0 source=127.0.0.1:58333 -> 5606
+[2026-05-06 17:23:23] [UDP] Node 9 seq=35018 packets=492 rssi=-46.0 snr=45.0 source=127.0.0.1:58333 -> 5609
+[2026-05-06 17:23:23] [UDP] Node 7 seq=34420 packets=498 rssi=-63.0 snr=28.0 source=127.0.0.1:58333 -> 5607
+[2026-05-06 17:23:23] [UDP] Node 1 seq=34382 packets=502 rssi=-51.0 snr=44.0 source=127.0.0.1:58333 -> 5601
+[2026-05-06 17:23:23] [UDP] Node 5 seq=14747 packets=497 rssi=-30.0 snr=60.0 source=127.0.0.1:58333 -> 5605
+[2026-05-06 17:23:23] [PREDICT] Best state changed to Cell (1, 3) probability=42.8%
+[2026-05-06 17:23:24] [PREDICT] Best state changed to Cell (2, 2) probability=26.2%
+[2026-05-06 17:23:24] [PREDICT] Best state changed to Cell (2, 3) probability=34.1%
+[2026-05-06 17:23:24] [PREDICT] Best state changed to Cell (1, 3) probability=34.7%
+[2026-05-06 17:23:25] [PREDICT] Best state changed to Cell (2, 3) probability=36.9%
+[2026-05-06 17:23:25] [UDP] Node 4 seq=34506 packets=646 rssi=-49.0 snr=46.0 source=127.0.0.1:58333 -> 5604
+[2026-05-06 17:23:25] [UDP] Node 8 seq=35152 packets=644 rssi=-20.0 snr=70.0 source=127.0.0.1:58333 -> 5608
+[2026-05-06 17:23:25] [UDP] Node 7 seq=34569 packets=643 rssi=-35.0 snr=56.0 source=127.0.0.1:58333 -> 5607
+[2026-05-06 17:23:25] [UDP] Node 9 seq=35167 packets=638 rssi=-46.0 snr=45.0 source=127.0.0.1:58333 -> 5609
+[2026-05-06 17:23:25] [UDP] Node 5 seq=14903 packets=638 rssi=-30.0 snr=60.0 source=127.0.0.1:58333 -> 5605
+[2026-05-06 17:23:25] [UDP] Node 3 seq=34518 packets=651 rssi=-56.0 snr=39.0 source=127.0.0.1:58333 -> 5603
+[2026-05-06 17:23:25] [UDP] Node 6 seq=14879 packets=628 rssi=-31.0 snr=59.0 source=127.0.0.1:58333 -> 5606
+[2026-05-06 17:23:25] [UDP] Node 2 seq=34560 packets=652 rssi=-40.0 snr=52.0 source=127.0.0.1:58333 -> 5602
+[2026-05-06 17:23:25] [UDP] Node 1 seq=34531 packets=640 rssi=-73.0 snr=22.0 source=127.0.0.1:58333 -> 5601
+[2026-05-06 17:23:25] [PREDICT] Best state changed to Empty Room probability=27.8%
+[2026-05-06 17:23:26] [INFO] App started with config D:\2026_IOT\app\data\raw_udp_replay_workspace_20260506_172151\Config\system_config.json and UDP 127.0.0.1:5600
+[2026-05-06 17:23:26] [UDP] Listening on node 1 UDP 127.0.0.1:5601
+[2026-05-06 17:23:26] [UDP] Listening on node 2 UDP 127.0.0.1:5602
+[2026-05-06 17:23:26] [UDP] Listening on node 3 UDP 127.0.0.1:5603
+[2026-05-06 17:23:26] [UDP] Listening on node 4 UDP 127.0.0.1:5604
+[2026-05-06 17:23:26] [UDP] Listening on node 5 UDP 127.0.0.1:5605
+[2026-05-06 17:23:26] [UDP] Listening on node 6 UDP 127.0.0.1:5606
+[2026-05-06 17:23:26] [UDP] Listening on node 7 UDP 127.0.0.1:5607
+[2026-05-06 17:23:26] [UDP] Listening on node 8 UDP 127.0.0.1:5608
+[2026-05-06 17:23:26] [UDP] Listening on node 9 UDP 127.0.0.1:5609
+[2026-05-06 17:23:26] [UDP] First packet from node 5 (ESP 5) source=127.0.0.1:64910 -> 5605
+[2026-05-06 17:23:26] [UDP] Node 5 seq=16693 packets=1 rssi=-50.0 snr=40.0 source=127.0.0.1:64910 -> 5605
+[2026-05-06 17:23:26] [UDP] First packet from node 6 (ESP 6) source=127.0.0.1:64910 -> 5606
+[2026-05-06 17:23:26] [UDP] Node 6 seq=16684 packets=1 rssi=-31.0 snr=59.0 source=127.0.0.1:64910 -> 5606
+[2026-05-06 17:23:26] [UDP] First packet from node 9 (ESP 9) source=127.0.0.1:64910 -> 5609
+[2026-05-06 17:23:26] [UDP] Node 9 seq=36964 packets=1 rssi=-45.0 snr=46.0 source=127.0.0.1:64910 -> 5609
+[2026-05-06 17:23:26] [UDP] First packet from node 1 (ESP 1) source=127.0.0.1:64910 -> 5601
+[2026-05-06 17:23:26] [UDP] Node 1 seq=36323 packets=1 rssi=-52.0 snr=43.0 source=127.0.0.1:64910 -> 5601
+[2026-05-06 17:23:26] [UDP] First packet from node 3 (ESP 3) source=127.0.0.1:64910 -> 5603
+[2026-05-06 17:23:26] [UDP] Node 3 seq=36300 packets=1 rssi=-52.0 snr=43.0 source=127.0.0.1:64910 -> 5603
+[2026-05-06 17:23:26] [UDP] First packet from node 8 (ESP 8) source=127.0.0.1:64910 -> 5608
+[2026-05-06 17:23:26] [UDP] Node 8 seq=36960 packets=1 rssi=-22.0 snr=68.0 source=127.0.0.1:64910 -> 5608
+[2026-05-06 17:23:26] [UDP] First packet from node 7 (ESP 7) source=127.0.0.1:64910 -> 5607
+[2026-05-06 17:23:26] [UDP] Node 7 seq=36373 packets=1 rssi=-34.0 snr=57.0 source=127.0.0.1:64910 -> 5607
+[2026-05-06 17:23:26] [UDP] First packet from node 4 (ESP 4) source=127.0.0.1:64910 -> 5604
+[2026-05-06 17:23:26] [UDP] Node 4 seq=36293 packets=1 rssi=-48.0 snr=47.0 source=127.0.0.1:64910 -> 5604
+[2026-05-06 17:23:26] [UDP] First packet from node 2 (ESP 2) source=127.0.0.1:64910 -> 5602
+[2026-05-06 17:23:26] [UDP] Node 2 seq=36356 packets=1 rssi=-40.0 snr=52.0 source=127.0.0.1:64910 -> 5602
+[2026-05-06 17:23:28] [UDP] Node 5 seq=17047 packets=336 rssi=-30.0 snr=60.0 source=127.0.0.1:64910 -> 5605
+[2026-05-06 17:23:28] [UDP] Node 9 seq=37334 packets=348 rssi=-45.0 snr=46.0 source=127.0.0.1:64910 -> 5609
+[2026-05-06 17:23:28] [UDP] Node 6 seq=17034 packets=333 rssi=-31.0 snr=60.0 source=127.0.0.1:64910 -> 5606
+[2026-05-06 17:23:28] [UDP] Node 8 seq=37321 packets=348 rssi=-22.0 snr=68.0 source=127.0.0.1:64910 -> 5608
+[2026-05-06 17:23:28] [UDP] Node 3 seq=36666 packets=351 rssi=-52.0 snr=43.0 source=127.0.0.1:64910 -> 5603
+[2026-05-06 17:23:28] [UDP] Node 4 seq=36652 packets=342 rssi=-48.0 snr=47.0 source=127.0.0.1:64910 -> 5604
+[2026-05-06 17:23:28] [UDP] Node 7 seq=36725 packets=341 rssi=-36.0 snr=55.0 source=127.0.0.1:64910 -> 5607
+[2026-05-06 17:23:28] [UDP] Node 1 seq=36693 packets=353 rssi=-53.0 snr=42.0 source=127.0.0.1:64910 -> 5601
+[2026-05-06 17:23:28] [UDP] Node 2 seq=36721 packets=352 rssi=-41.0 snr=51.0 source=127.0.0.1:64910 -> 5602
+[2026-05-06 17:23:30] [UDP] Node 9 seq=37513 packets=514 rssi=-61.0 snr=30.0 source=127.0.0.1:64910 -> 5609
+[2026-05-06 17:23:30] [UDP] Node 5 seq=17228 packets=507 rssi=-44.0 snr=46.0 source=127.0.0.1:64910 -> 5605
+[2026-05-06 17:23:30] [UDP] Node 3 seq=36849 packets=520 rssi=-52.0 snr=43.0 source=127.0.0.1:64910 -> 5603
+[2026-05-06 17:23:30] [UDP] Node 6 seq=17211 packets=497 rssi=-31.0 snr=60.0 source=127.0.0.1:64910 -> 5606
+[2026-05-06 17:23:30] [UDP] Node 1 seq=36879 packets=520 rssi=-57.0 snr=38.0 source=127.0.0.1:64910 -> 5601
+[2026-05-06 17:23:30] [UDP] Node 4 seq=36835 packets=510 rssi=-48.0 snr=47.0 source=127.0.0.1:64910 -> 5604
+[2026-05-06 17:23:30] [UDP] Node 8 seq=37500 packets=517 rssi=-56.0 snr=34.0 source=127.0.0.1:64910 -> 5608
+[2026-05-06 17:23:30] [UDP] Node 2 seq=36897 packets=518 rssi=-41.0 snr=51.0 source=127.0.0.1:64910 -> 5602
+[2026-05-06 17:23:30] [UDP] Node 7 seq=36901 packets=507 rssi=-35.0 snr=56.0 source=127.0.0.1:64910 -> 5607
+[2026-05-06 17:23:31] [PREDICT] Best state changed to Cell (2, 2) probability=22.2%
+[2026-05-06 17:23:31] [PREDICT] Best state changed to Cell (1, 3) probability=29.1%
+[2026-05-06 17:23:32] [PREDICT] Best state changed to Empty Room probability=31.2%
+[2026-05-06 17:23:32] [PREDICT] Best state changed to Cell (2, 2) probability=26.6%
+[2026-05-06 17:23:32] [PREDICT] Best state changed to Empty Room probability=25.6%
+[2026-05-06 17:23:32] [UDP] Node 9 seq=37690 packets=681 rssi=-56.0 snr=35.0 source=127.0.0.1:64910 -> 5609
+[2026-05-06 17:23:32] [UDP] Node 3 seq=37024 packets=682 rssi=-53.0 snr=42.0 source=127.0.0.1:64910 -> 5603
+[2026-05-06 17:23:32] [UDP] Node 4 seq=37016 packets=676 rssi=-49.0 snr=46.0 source=127.0.0.1:64910 -> 5604
+[2026-05-06 17:23:32] [UDP] Node 5 seq=17403 packets=672 rssi=-30.0 snr=60.0 source=127.0.0.1:64910 -> 5605
+[2026-05-06 17:23:32] [UDP] Node 8 seq=37664 packets=676 rssi=-22.0 snr=68.0 source=127.0.0.1:64910 -> 5608
+[2026-05-06 17:23:32] [UDP] Node 1 seq=37062 packets=686 rssi=-52.0 snr=43.0 source=127.0.0.1:64910 -> 5601
+[2026-05-06 17:23:32] [UDP] Node 6 seq=17386 packets=655 rssi=-31.0 snr=60.0 source=127.0.0.1:64910 -> 5606
+[2026-05-06 17:23:32] [UDP] Node 2 seq=37072 packets=682 rssi=-35.0 snr=57.0 source=127.0.0.1:64910 -> 5602
+[2026-05-06 17:23:32] [UDP] Node 7 seq=37075 packets=668 rssi=-35.0 snr=56.0 source=127.0.0.1:64910 -> 5607
+[2026-05-06 17:23:33] [PREDICT] Best state changed to Cell (2, 3) probability=21.6%

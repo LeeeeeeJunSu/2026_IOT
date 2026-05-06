@@ -154,8 +154,9 @@ def prepare_workspace(args: argparse.Namespace) -> tuple[Path, Path]:
     config.grid.rows = max(1, int(args.rows))
     config.fingerprinting.capture_seconds = max(1.0, float(args.capture_seconds))
     config.fingerprinting.effective_packets_per_second = 10.0
-    config.fingerprinting.window_sample_count = 5
+    config.fingerprinting.window_sample_count = 9
     config.fingerprinting.window_step_samples = 1
+    config.fingerprinting.smoothing_half_window = 0
     config.fingerprinting.window_seconds = (
         float(config.fingerprinting.window_sample_count)
         / config.fingerprinting.effective_packets_per_second

@@ -1,2 +1,4 @@
-# Standard library only.
+# Core training dependencies used by the app and offline raw-data trainer.
+numpy>=1.24
+scikit-learn>=1.2
 

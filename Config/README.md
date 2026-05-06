@@ -8,7 +8,7 @@ Edit `system_config.json` to change the shared settings for the new workspace.
 - `host.target_ip`: The IP that firmware or the simulator should send CSI frames to.
 - `host.udp_port`: Shared UDP port for app, simulator, and provisioning.
 - `grid.cols`, `grid.rows`: The Tkinter grid size.
-- `fingerprinting.*`: Capture duration, sample-based windowing, baseline delay/capture, preprocessing, and feature extraction defaults.
+- `fingerprinting.*`: Capture duration, sample-based windowing, baseline delay/capture, preprocessing, and the windowed ExtraTrees feature defaults.
 - `simulation.*`: ESP32 traffic simulator behavior.
 - `nodes[]`: Per-node IDs, COM ports, WiFi credentials, and channel values.
 

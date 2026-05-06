@@ -26,17 +26,17 @@ class GridConfig:
 @dataclass
 class FingerprintingConfig:
     capture_seconds: float = 4.0
-    window_seconds: float = 0.5
+    window_seconds: float = 0.9
     window_step_seconds: float = 0.1
     effective_packets_per_second: float = 10.0
-    window_sample_count: int = 5
+    window_sample_count: int = 9
     window_step_samples: int = 1
     minimum_samples_per_node: int = 6
     feature_bin_count: int = 12
     baseline_capture_seconds: float = 5.0
     baseline_start_delay_seconds: float = 8.0
     baseline_required_for_training: bool = True
-    smoothing_half_window: int = 20
+    smoothing_half_window: int = 0
     capture_auto_extend_seconds: float = 6.0
     capture_extend_step_seconds: float = 2.0
     minimum_observed_windows: int = 8

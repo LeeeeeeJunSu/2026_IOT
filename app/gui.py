@@ -28,6 +28,7 @@ class FingerprintAppWindow:
         self.summary_var = tk.StringVar()
         self.capture_status_var = tk.StringVar()
         self.prediction_var = tk.StringVar()
+        self.empty_room_var = tk.StringVar()
         self.udp_var = tk.StringVar()
         self.message_var = tk.StringVar()
         self.cell_widgets: dict[str, dict[str, tk.Widget]] = {}
@@ -174,11 +175,14 @@ class FingerprintAppWindow:
         ttk.Label(controls, textvariable=self.udp_var).grid(
             row=2, column=0, columnspan=20, sticky="w", pady=(8, 0)
         )
+        ttk.Label(controls, textvariable=self.empty_room_var).grid(
+            row=3, column=0, columnspan=20, sticky="w", pady=(8, 0)
+        )
         ttk.Label(
             controls,
             textvariable=self.message_var,
             foreground="#23435f",
-        ).grid(row=3, column=0, columnspan=20, sticky="w", pady=(8, 0))
+        ).grid(row=4, column=0, columnspan=20, sticky="w", pady=(8, 0))
 
         grid_panel = ttk.LabelFrame(outer, text="Grid Heatmap", padding=8)
         grid_panel.grid(row=1, column=0, sticky="nsew", padx=(0, 12))
@@ -448,6 +452,7 @@ class FingerprintAppWindow:
             f"Baseline: {snapshot['baseline']['captured_nodes']} / {snapshot['baseline']['required_nodes']} nodes | "
             f"Window: {snapshot['grid']['window_sample_count']} samp / stride {snapshot['grid']['window_step_samples']} | "
             f"Cells: {snapshot['training']['trained_cells']} / {snapshot['training']['total_cells']} | "
+            f"Classes: {snapshot['training']['trained_classes']} / {snapshot['training']['total_classes']} | "
             f"Samples: {snapshot['training']['dataset_samples']} | "
             f"Models: {snapshot['training']['trained_model_count']} | "
             f"Packets: {snapshot['metrics']['packet_count']}"
@@ -476,12 +481,11 @@ class FingerprintAppWindow:
             self.prediction_var.set(
                 "Capture an empty-room baseline before collecting cell fingerprints."
             )
-        elif prediction["ready"] and prediction["best_cell_key"]:
-            best_x, best_y = [
-                int(value) for value in prediction["best_cell_key"].split(",")
-            ]
+        elif prediction["ready"] and prediction["best_label_key"]:
+            label_text = prediction["best_label_display"] or prediction["best_label_key"]
+            state_prefix = "Best state" if prediction["best_is_empty_room"] else "Best cell"
             self.prediction_var.set(
-                f"{prediction['active_model']} | Best cell: ({best_x + 1}, {best_y + 1}) - "
+                f"{prediction['active_model']} | {state_prefix}: {label_text} - "
                 f"{prediction['best_probability'] * 100.0:.1f}%"
             )
         elif prediction["model_ready"]:
@@ -502,6 +506,18 @@ class FingerprintAppWindow:
             f"config: {snapshot['host']['config_path']} | "
             f"log: {snapshot['comm_log_path']}"
         )
+        empty_room = snapshot["empty_room"]
+        if snapshot["baseline"]["ready"]:
+            probability = float(empty_room["probability"]) * 100.0
+            best_suffix = " | currently best" if empty_room["is_best"] else ""
+            self.empty_room_var.set(
+                f"Empty Room: {empty_room['window_sample_count']} windows | "
+                f"probability {probability:.1f}%{best_suffix}"
+            )
+        else:
+            self.empty_room_var.set(
+                "Empty Room: baseline capture creates both the normalization baseline and the empty-room class."
+            )
         self.message_var.set(snapshot["status_message"])
         self._refresh_model_controls(snapshot)
 

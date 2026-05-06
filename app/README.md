@@ -67,6 +67,30 @@ start timestamp, packet timestamp, source address, raw packet bytes as base64,
 parsed ADR-018 fields, and the derived feature vector. Set `Duration sec` to
 `0` for manual stop, or to a positive value for automatic stop.
 
+## Offline Raw-Data Training
+
+When you want to benchmark the raw JSONL captures directly instead of going
+through the live app dataset store, run:
+
+```powershell
+python -m app.train_raw_model
+```
+
+The offline trainer:
+
+- uses the empty-room capture both as an explicit `Empty Room` class and as the
+  per-node baseline used to center CSI amplitudes
+- resamples each node stream to the configured effective packet rate
+- fills bucket gaps with forward/backward fill plus a baseline fallback
+- builds overlapping time windows and concatenates node-wise summary features
+- uses a chronological train/val split with a purge gap to reduce overlap
+  leakage between adjacent windows
+
+Artifacts are written to `app/data/raw_training/`:
+
+- `raw_training_report.json`
+- `raw_training_model.pkl`
+
 ## Workflow
 
 1. Start the app.
@@ -75,21 +99,23 @@ parsed ADR-018 fields, and the derived feature vector. Set `Duration sec` to
 4. Stand in a cell and press `Learn`.
 5. Repeat `Learn` as many times as needed per cell to accumulate more data.
 6. After every cell has saved data, click `Train Models`.
-7. The app trains `RandomForestDualStage` and `RandomForestUnified`.
+7. The app trains `ExtraTreesWindowed`.
 8. Choose the active inference model from the dropdown and watch the live probability heatmap.
 
 ## Stored Data
 
 Windowed cell datasets are stored in `app/data/fingerprints.json`.
 During `Learn`, the app creates overlapping training samples with the
-configured window size and window step, and repeated Learn captures append more
-samples to the same cell.
+configured window size and window step. Each sample concatenates node-wise CSI
+window statistics: amplitude mean/std, amplitude quantiles, and scalar
+telemetry mean/std. Repeated Learn captures append more samples to the same
+cell.
 
-The empty-room baseline used by the paper-style preprocessing pipeline is saved
+The empty-room baseline used to center each node's CSI amplitudes is saved
 alongside the dataset in `app/data/fingerprints.json`.
 
-The trained model bundle for `RandomForestDualStage` and
-`RandomForestUnified` is stored in `app/data/model_bundle.pkl`.
+The trained `ExtraTreesWindowed` model bundle is stored in
+`app/data/model_bundle.pkl`.
 
 Communication logs are written to `app/data/communication.log` and are also
 shown in the app UI.

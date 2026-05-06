@@ -1,0 +1,519 @@
+{
+  "started_at": "2026-05-06 17:21:51",
+  "raw_dir": "D:\\2026_IOT\\app\\raw_data",
+  "workspace": {
+    "workspace_root": "D:\\2026_IOT\\app\\data\\raw_udp_replay_workspace_20260506_172151",
+    "app_workspace": "D:\\2026_IOT\\app\\data\\raw_udp_replay_workspace_20260506_172151\\app",
+    "config_path": "D:\\2026_IOT\\app\\data\\raw_udp_replay_workspace_20260506_172151\\Config\\system_config.json",
+    "node_ports": {
+      "1": 5601,
+      "2": 5602,
+      "3": 5603,
+      "4": 5604,
+      "5": 5605,
+      "6": 5606,
+      "7": 5607,
+      "8": 5608,
+      "9": 5609
+    },
+    "baseline_replay_seconds": 6.003700828552246,
+    "cell_replay_seconds": 6.00873715877533
+  },
+  "speedup": 10.0,
+  "sessions": [
+    {
+      "session_id": "20260505_201032",
+      "kind": "empty_room",
+      "label": "Empty Room",
+      "expected_label_key": "empty_room",
+      "duration_seconds": 60.03700828552246,
+      "packet_count": 16047,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_201032_empty_room.jsonl"
+    },
+    {
+      "session_id": "20260505_200238",
+      "kind": "cell",
+      "label": "Cell (1, 1)",
+      "expected_label_key": "0,0",
+      "duration_seconds": 60.087371587753296,
+      "packet_count": 16068,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200238_cell_x1_y1.jsonl"
+    },
+    {
+      "session_id": "20260505_200120",
+      "kind": "cell",
+      "label": "Cell (2, 1)",
+      "expected_label_key": "1,0",
+      "duration_seconds": 60.03378105163574,
+      "packet_count": 15634,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200120_cell_x2_y1.jsonl"
+    },
+    {
+      "session_id": "20260505_200355",
+      "kind": "cell",
+      "label": "Cell (1, 2)",
+      "expected_label_key": "0,1",
+      "duration_seconds": 60.05335307121277,
+      "packet_count": 15881,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200355_cell_x1_y2.jsonl"
+    },
+    {
+      "session_id": "20260505_200539",
+      "kind": "cell",
+      "label": "Cell (2, 2)",
+      "expected_label_key": "1,1",
+      "duration_seconds": 60.06333589553833,
+      "packet_count": 15902,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200539_cell_x2_y2.jsonl"
+    },
+    {
+      "session_id": "20260505_200657",
+      "kind": "cell",
+      "label": "Cell (1, 3)",
+      "expected_label_key": "0,2",
+      "duration_seconds": 59.97094178199768,
+      "packet_count": 16054,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200657_cell_x1_y3.jsonl"
+    },
+    {
+      "session_id": "20260505_200816",
+      "kind": "cell",
+      "label": "Cell (2, 3)",
+      "expected_label_key": "1,2",
+      "duration_seconds": 60.02880549430847,
+      "packet_count": 15928,
+      "path": "D:\\2026_IOT\\app\\raw_data\\20260505_200816_cell_x2_y3.jsonl"
+    }
+  ],
+  "training": {
+    "baseline": {
+      "packet_count": 16047,
+      "replay_duration_seconds": 6.458052399997541,
+      "captured_nodes": 9,
+      "required_nodes": 9,
+      "empty_room_windows": 54,
+      "status_message": "Baseline capture completed: 9/9 nodes, 15156 total frames. Empty-room class windows=54. Press Learn on each cell."
+    },
+    "captures": [
+      {
+        "label": "Cell (1, 1)",
+        "cell_key": "0,0",
+        "packet_count": 16068,
+        "replay_duration_seconds": 6.161680299999716,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (1, 1): 54/54 observed windows, 54 generated windows kept, 14691 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      },
+      {
+        "label": "Cell (2, 1)",
+        "cell_key": "1,0",
+        "packet_count": 15634,
+        "replay_duration_seconds": 6.011326100000588,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (2, 1): 54/54 observed windows, 54 generated windows kept, 14416 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      },
+      {
+        "label": "Cell (1, 2)",
+        "cell_key": "0,1",
+        "packet_count": 15881,
+        "replay_duration_seconds": 6.00719890000255,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (1, 2): 54/54 observed windows, 54 generated windows kept, 14365 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      },
+      {
+        "label": "Cell (2, 2)",
+        "cell_key": "1,1",
+        "packet_count": 15902,
+        "replay_duration_seconds": 6.013919100001658,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (2, 2): 54/54 observed windows, 54 generated windows kept, 14577 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      },
+      {
+        "label": "Cell (1, 3)",
+        "cell_key": "0,2",
+        "packet_count": 16054,
+        "replay_duration_seconds": 6.402717000000848,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (1, 3): 54/54 observed windows, 54 generated windows kept, 14697 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      },
+      {
+        "label": "Cell (2, 3)",
+        "cell_key": "1,2",
+        "packet_count": 15928,
+        "replay_duration_seconds": 7.42411809999976,
+        "capture_count": 1,
+        "window_sample_count": 54,
+        "observed_window_ratio": 1.0,
+        "status_message": "Capture completed for cell (2, 3): 54/54 observed windows, 54 generated windows kept, 14664 frames across 9/9 required nodes. Cell now has 54 total windows across 1 captures. Click Train Models when ready."
+      }
+    ],
+    "train_status": "Trained 1 models on 378 samples. Active model: ExtraTreesWindowed.",
+    "training_snapshot": {
+      "trained_cells": 6,
+      "trained_classes": 7,
+      "total_classes": 7,
+      "dataset_samples": 378,
+      "empty_room_samples": 54,
+      "available_models": [
+        "ExtraTreesWindowed"
+      ],
+      "active_model": "ExtraTreesWindowed"
+    }
+  },
+  "inference_checks": [
+    {
+      "session_id": "20260505_201032",
+      "label": "Empty Room",
+      "expected_label_key": "empty_room",
+      "expected_label_display": "Empty Room",
+      "replay_duration_seconds": 6.011646599999949,
+      "packet_count": 16047,
+      "prediction_ready": true,
+      "best_label_key": "empty_room",
+      "best_label_display": "Empty Room",
+      "best_probability": 0.490625,
+      "matched": true,
+      "final_expected_probability": 0.490625,
+      "majority_label_key": "empty_room",
+      "majority_label_display": "Empty Room",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 1.0,
+      "peak_expected_probability": 0.628125,
+      "trace_sample_count": 29,
+      "top_probabilities": [
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.490625,
+          "is_best": true
+        },
+        {
+          "label_key": "0,1",
+          "label_display": "Cell (1, 2)",
+          "probability": 0.153125,
+          "is_best": false
+        },
+        {
+          "label_key": "0,2",
+          "label_display": "Cell (1, 3)",
+          "probability": 0.140625,
+          "is_best": false
+        },
+        {
+          "label_key": "0,0",
+          "label_display": "Cell (1, 1)",
+          "probability": 0.1,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200238",
+      "label": "Cell (1, 1)",
+      "expected_label_key": "0,0",
+      "expected_label_display": "Cell (1, 1)",
+      "replay_duration_seconds": 6.022961500002566,
+      "packet_count": 16068,
+      "prediction_ready": true,
+      "best_label_key": "0,0",
+      "best_label_display": "Cell (1, 1)",
+      "best_probability": 0.31875,
+      "matched": true,
+      "final_expected_probability": 0.31875,
+      "majority_label_key": "0,0",
+      "majority_label_display": "Cell (1, 1)",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 0.9655172413793104,
+      "peak_expected_probability": 0.6375,
+      "trace_sample_count": 29,
+      "top_probabilities": [
+        {
+          "label_key": "0,0",
+          "label_display": "Cell (1, 1)",
+          "probability": 0.31875,
+          "is_best": true
+        },
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.265625,
+          "is_best": false
+        },
+        {
+          "label_key": "1,1",
+          "label_display": "Cell (2, 2)",
+          "probability": 0.159375,
+          "is_best": false
+        },
+        {
+          "label_key": "0,2",
+          "label_display": "Cell (1, 3)",
+          "probability": 0.109375,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200120",
+      "label": "Cell (2, 1)",
+      "expected_label_key": "1,0",
+      "expected_label_display": "Cell (2, 1)",
+      "replay_duration_seconds": 6.016287700000248,
+      "packet_count": 15634,
+      "prediction_ready": true,
+      "best_label_key": "1,0",
+      "best_label_display": "Cell (2, 1)",
+      "best_probability": 0.63125,
+      "matched": true,
+      "final_expected_probability": 0.63125,
+      "majority_label_key": "1,0",
+      "majority_label_display": "Cell (2, 1)",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 1.0,
+      "peak_expected_probability": 0.721875,
+      "trace_sample_count": 28,
+      "top_probabilities": [
+        {
+          "label_key": "1,0",
+          "label_display": "Cell (2, 1)",
+          "probability": 0.63125,
+          "is_best": true
+        },
+        {
+          "label_key": "0,1",
+          "label_display": "Cell (1, 2)",
+          "probability": 0.1875,
+          "is_best": false
+        },
+        {
+          "label_key": "0,0",
+          "label_display": "Cell (1, 1)",
+          "probability": 0.1,
+          "is_best": false
+        },
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.065625,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200355",
+      "label": "Cell (1, 2)",
+      "expected_label_key": "0,1",
+      "expected_label_display": "Cell (1, 2)",
+      "replay_duration_seconds": 6.006359599999996,
+      "packet_count": 15881,
+      "prediction_ready": true,
+      "best_label_key": "0,1",
+      "best_label_display": "Cell (1, 2)",
+      "best_probability": 0.378125,
+      "matched": true,
+      "final_expected_probability": 0.378125,
+      "majority_label_key": "0,1",
+      "majority_label_display": "Cell (1, 2)",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 0.3793103448275862,
+      "peak_expected_probability": 0.415625,
+      "trace_sample_count": 29,
+      "top_probabilities": [
+        {
+          "label_key": "0,1",
+          "label_display": "Cell (1, 2)",
+          "probability": 0.378125,
+          "is_best": true
+        },
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.24375,
+          "is_best": false
+        },
+        {
+          "label_key": "0,0",
+          "label_display": "Cell (1, 1)",
+          "probability": 0.159375,
+          "is_best": false
+        },
+        {
+          "label_key": "1,1",
+          "label_display": "Cell (2, 2)",
+          "probability": 0.096875,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200539",
+      "label": "Cell (2, 2)",
+      "expected_label_key": "1,1",
+      "expected_label_display": "Cell (2, 2)",
+      "replay_duration_seconds": 6.033868200000143,
+      "packet_count": 15902,
+      "prediction_ready": true,
+      "best_label_key": "0,2",
+      "best_label_display": "Cell (1, 3)",
+      "best_probability": 0.396875,
+      "matched": false,
+      "final_expected_probability": 0.325,
+      "majority_label_key": "1,1",
+      "majority_label_display": "Cell (2, 2)",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 0.5517241379310345,
+      "peak_expected_probability": 0.50625,
+      "trace_sample_count": 29,
+      "top_probabilities": [
+        {
+          "label_key": "0,2",
+          "label_display": "Cell (1, 3)",
+          "probability": 0.396875,
+          "is_best": true
+        },
+        {
+          "label_key": "1,1",
+          "label_display": "Cell (2, 2)",
+          "probability": 0.325,
+          "is_best": false
+        },
+        {
+          "label_key": "1,2",
+          "label_display": "Cell (2, 3)",
+          "probability": 0.1125,
+          "is_best": false
+        },
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.096875,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200657",
+      "label": "Cell (1, 3)",
+      "expected_label_key": "0,2",
+      "expected_label_display": "Cell (1, 3)",
+      "replay_duration_seconds": 6.081261399998766,
+      "packet_count": 16054,
+      "prediction_ready": true,
+      "best_label_key": "empty_room",
+      "best_label_display": "Empty Room",
+      "best_probability": 0.409375,
+      "matched": false,
+      "final_expected_probability": 0.184375,
+      "majority_label_key": "1,2",
+      "majority_label_display": "Cell (2, 3)",
+      "matched_majority": false,
+      "matched_any": true,
+      "matched_trace_fraction": 0.10714285714285714,
+      "peak_expected_probability": 0.428125,
+      "trace_sample_count": 28,
+      "top_probabilities": [
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.409375,
+          "is_best": true
+        },
+        {
+          "label_key": "0,1",
+          "label_display": "Cell (1, 2)",
+          "probability": 0.190625,
+          "is_best": false
+        },
+        {
+          "label_key": "0,2",
+          "label_display": "Cell (1, 3)",
+          "probability": 0.184375,
+          "is_best": false
+        },
+        {
+          "label_key": "1,1",
+          "label_display": "Cell (2, 2)",
+          "probability": 0.084375,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    },
+    {
+      "session_id": "20260505_200816",
+      "label": "Cell (2, 3)",
+      "expected_label_key": "1,2",
+      "expected_label_display": "Cell (2, 3)",
+      "replay_duration_seconds": 6.041468600000371,
+      "packet_count": 15928,
+      "prediction_ready": true,
+      "best_label_key": "1,2",
+      "best_label_display": "Cell (2, 3)",
+      "best_probability": 0.30625,
+      "matched": true,
+      "final_expected_probability": 0.30625,
+      "majority_label_key": "1,2",
+      "majority_label_display": "Cell (2, 3)",
+      "matched_majority": true,
+      "matched_any": true,
+      "matched_trace_fraction": 0.75,
+      "peak_expected_probability": 0.825,
+      "trace_sample_count": 28,
+      "top_probabilities": [
+        {
+          "label_key": "1,2",
+          "label_display": "Cell (2, 3)",
+          "probability": 0.30625,
+          "is_best": true
+        },
+        {
+          "label_key": "1,1",
+          "label_display": "Cell (2, 2)",
+          "probability": 0.240625,
+          "is_best": false
+        },
+        {
+          "label_key": "0,2",
+          "label_display": "Cell (1, 3)",
+          "probability": 0.153125,
+          "is_best": false
+        },
+        {
+          "label_key": "empty_room",
+          "label_display": "Empty Room",
+          "probability": 0.146875,
+          "is_best": false
+        }
+      ],
+      "status_message": "Loaded 1 trained models. Active model: ExtraTreesWindowed."
+    }
+  ],
+  "summary": {
+    "matched_final_sessions": 5,
+    "matched_majority_sessions": 6,
+    "total_sessions": 7,
+    "all_final_matched": false,
+    "all_majority_matched": false
+  },
+  "success": false,
+  "finished_at": "2026-05-06 17:23:33"
+}
