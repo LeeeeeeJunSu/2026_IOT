@@ -1,0 +1,23 @@
+# Runtime tested on Raspberry Pi with Python 3.14.4.
+#
+# Install Python packages:
+#   python3 -m pip install --user --break-system-packages -r requirements.txt
+#
+# Recommended system packages for the full app:
+#   sudo apt install python3-pip python3-venv python3-tk python3-gpiozero python3-lgpio
+#
+# Notes:
+# - Tkinter is required for the desktop GUI, but it is not a PyPI package.
+#   Install it with the system package `python3-tk`.
+# - The web dashboard and raw-data fallback can run without Tkinter.
+# - Raspberry Pi 5 GPIO LED control uses gpiozero with the lgpio backend.
+#   Installing python3-gpiozero and python3-lgpio from apt is recommended.
+# - Keep scikit-learn pinned because saved model_bundle.pkl files are
+#   version-sensitive.
+
+numpy==2.4.4
+scipy==1.17.1
+scikit-learn==1.8.0
+joblib==1.5.3
+threadpoolctl==3.6.0
+gpiozero==2.0.1

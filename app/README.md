@@ -36,6 +36,33 @@ cd app
 python main.py
 ```
 
+`python -m app` now starts the integrated Raspberry Pi runtime:
+
+- UDP receivers for the configured ESP32 nodes
+- the model inference runtime
+- the Tkinter GUI when Tkinter is installed
+- the phone-friendly web dashboard
+- raw-data replay fallback when no live ESP32 signal is detected
+
+Open the dashboard from a phone on the same WiFi:
+
+```text
+http://raspberrypi-csi.local:8000
+```
+
+For a web-only/headless run:
+
+```powershell
+python -m app.integrated_main --headless
+```
+
+Raw-data replay fallback starts after 15 seconds without live ESP32 packets by
+default. Override it when needed:
+
+```powershell
+python -m app --fallback-after-seconds 30
+```
+
 To verify the live UDP stream without opening the UI:
 
 ```powershell

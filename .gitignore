@@ -6,6 +6,9 @@ venv/
 .esp-idf/
 
 app/data/communication.log
+app/data/fingerprints.json
 app/data/model_bundle.pkl
+app/data/dashboard_model_report.json
+app/data/dashboard_model_workspace/
 
 firmware/esp32-csi-fingerprint-node/build/

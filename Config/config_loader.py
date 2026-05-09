@@ -65,6 +65,22 @@ class SimulationConfig:
 
 
 @dataclass
+class LedZoneConfig:
+    cell_key: str
+    label: str
+    pin_bcm: int
+    enabled: bool = True
+    active_high: bool = True
+
+
+@dataclass
+class SmartHomeConfig:
+    enabled: bool = True
+    auto_enabled: bool = True
+    zones: list[LedZoneConfig] = field(default_factory=list)
+
+
+@dataclass
 class NodeConfig:
     node_id: int
     label: str
@@ -84,6 +100,7 @@ class SystemConfig:
     grid: GridConfig = field(default_factory=GridConfig)
     fingerprinting: FingerprintingConfig = field(default_factory=FingerprintingConfig)
     simulation: SimulationConfig = field(default_factory=SimulationConfig)
+    smart_home: SmartHomeConfig = field(default_factory=SmartHomeConfig)
     nodes: list[NodeConfig] = field(default_factory=list)
 
     def enabled_nodes(self) -> list[NodeConfig]:
@@ -260,6 +277,37 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
         phase_jitter=max(0.0, float(simulation_raw.get("phase_jitter", 0.05))),
         start_cell=StartCellConfig(**simulation_raw.get("start_cell", {})),
     )
+    smart_home_raw = raw.get("smart_home", {})
+    zone_items = smart_home_raw.get("zones")
+    if not isinstance(zone_items, list) or not zone_items:
+        zone_items = [
+            {
+                "cell_key": f"{grid_x},{grid_y}",
+                "label": f"Cell ({grid_x + 1}, {grid_y + 1})",
+                "pin_bcm": pin_bcm,
+                "enabled": True,
+                "active_high": True,
+            }
+            for grid_x, grid_y, pin_bcm in _default_led_zone_specs(
+                grid.cols,
+                grid.rows,
+            )
+        ]
+    smart_home = SmartHomeConfig(
+        enabled=bool(smart_home_raw.get("enabled", True)),
+        auto_enabled=bool(smart_home_raw.get("auto_enabled", True)),
+        zones=[
+            LedZoneConfig(
+                cell_key=str(item.get("cell_key", "")),
+                label=str(item.get("label", item.get("cell_key", ""))),
+                pin_bcm=max(0, min(27, int(item.get("pin_bcm", 0)))),
+                enabled=bool(item.get("enabled", True)),
+                active_high=bool(item.get("active_high", True)),
+            )
+            for item in zone_items
+            if isinstance(item, dict) and str(item.get("cell_key", ""))
+        ],
+    )
     nodes = [
         NodeConfig(
             node_id=int(item["node_id"]),
@@ -287,6 +335,7 @@ def load_system_config(path: str | Path | None = None) -> SystemConfig:
         grid=grid,
         fingerprinting=fingerprinting,
         simulation=simulation,
+        smart_home=smart_home,
         nodes=nodes,
     )
 
@@ -360,6 +409,20 @@ def dump_system_config(config: SystemConfig) -> dict[str, Any]:
                 "y": config.simulation.start_cell.y,
             },
         },
+        "smart_home": {
+            "enabled": config.smart_home.enabled,
+            "auto_enabled": config.smart_home.auto_enabled,
+            "zones": [
+                {
+                    "cell_key": zone.cell_key,
+                    "label": zone.label,
+                    "pin_bcm": zone.pin_bcm,
+                    "enabled": zone.enabled,
+                    "active_high": zone.active_high,
+                }
+                for zone in config.smart_home.zones
+            ],
+        },
         "nodes": [
             {
                 "node_id": node.node_id,
@@ -385,3 +448,16 @@ def save_system_config(path: str | Path | None, config: SystemConfig) -> None:
         json.dumps(dump_system_config(config), indent=2),
         encoding="utf-8",
     )
+
+
+def _default_led_zone_specs(cols: int, rows: int) -> list[tuple[int, int, int]]:
+    default_pins = [17, 27, 22, 23, 24, 25]
+    cells = [
+        (grid_x, grid_y)
+        for grid_y in range(max(1, rows))
+        for grid_x in range(max(1, cols))
+    ]
+    return [
+        (grid_x, grid_y, default_pins[index])
+        for index, (grid_x, grid_y) in enumerate(cells[: len(default_pins)])
+    ]

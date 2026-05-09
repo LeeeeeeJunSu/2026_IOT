@@ -1,4 +1,21 @@
-# Core training dependencies used by the app and offline raw-data trainer.
-numpy>=1.24
-scikit-learn>=1.2
+# Runtime tested on Raspberry Pi with Python 3.14.4.
+#
+# Install from the repository root:
+#   python3 -m pip install --user --break-system-packages -r requirements.txt
+#
+# Recommended system packages for the full app:
+#   sudo apt install python3-pip python3-venv python3-tk python3-gpiozero python3-lgpio
+#
+# Tkinter is required for the desktop GUI and comes from `python3-tk`.
+# Raspberry Pi 5 GPIO LED control uses gpiozero with the lgpio backend.
+# Installing python3-gpiozero and python3-lgpio from apt is recommended.
+# The web dashboard and raw-data fallback can run without Tkinter.
+# Keep scikit-learn pinned because saved model_bundle.pkl files are
+# version-sensitive.
 
+numpy==2.4.4
+scipy==1.17.1
+scikit-learn==1.8.0
+joblib==1.5.3
+threadpoolctl==3.6.0
+gpiozero==2.0.1
