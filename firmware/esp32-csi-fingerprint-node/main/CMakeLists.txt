@@ -7,5 +7,5 @@ idf_component_register(
         "adr018.c"
         "csi_fingerprint.c"
     INCLUDE_DIRS "."
+    REQUIRES esp_event esp_netif esp_timer esp_wifi mdns nvs_flash
 )
-

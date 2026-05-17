@@ -5,12 +5,12 @@
 
 #define APP_CFG_SSID_MAX   33
 #define APP_CFG_PASS_MAX   65
-#define APP_CFG_IP_MAX     16
+#define APP_CFG_TARGET_MAX 64
 
 typedef struct {
     char wifi_ssid[APP_CFG_SSID_MAX];
     char wifi_password[APP_CFG_PASS_MAX];
-    char target_ip[APP_CFG_IP_MAX];
+    char target_ip[APP_CFG_TARGET_MAX];
     uint16_t target_port;
     uint16_t csi_send_interval_ms;
     uint8_t node_id;
