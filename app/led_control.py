@@ -105,11 +105,7 @@ class ZoneLedControllerThread(threading.Thread):
                 stable = payload.get("stable", {})
                 label_key = stable.get("label_key") if isinstance(stable, dict) else None
                 with self.lock:
-                    self.active_cell_key = (
-                        str(label_key)
-                        if label_key and label_key != EMPTY_ROOM_CLASS_KEY
-                        else None
-                    )
+                    self.active_cell_key = self._label_key_to_cell_key_locked(label_key)
                     self._apply_outputs_locked()
             self.stop_event.wait(self.update_seconds)
 
@@ -166,6 +162,18 @@ class ZoneLedControllerThread(threading.Thread):
             if zone.config.cell_key == cell_key:
                 return zone
         return None
+
+    def _label_key_to_cell_key_locked(self, label_key: object) -> str | None:
+        if label_key is None:
+            return None
+        text = str(label_key)
+        if text == EMPTY_ROOM_CLASS_KEY or text == "0":
+            return None
+        if text.isdigit():
+            index = int(text) - 1
+            if 0 <= index < len(self.zones):
+                return self.zones[index].config.cell_key
+        return text
 
 
 class _LedOutput:

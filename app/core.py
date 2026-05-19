@@ -752,6 +752,7 @@ class FingerprintEngine:
             for grid_y in range(self.grid_rows):
                 for grid_x in range(self.grid_cols):
                     cell_key = self.cell_key(grid_x, grid_y)
+                    model_label_key = self._model_label_for_cell(grid_x, grid_y)
                     dataset = self.cell_datasets.get(cell_key)
                     trained = dataset is not None and dataset.window_sample_count > 0
                     if trained:
@@ -781,8 +782,11 @@ class FingerprintEngine:
                             )
                             if dataset
                             else 0.0,
-                            "probability": self.last_probabilities.get(cell_key, 0.0),
-                            "is_best": self.last_best_cell == cell_key,
+                            "probability": self._probability_for_keys_locked(
+                                cell_key,
+                                model_label_key,
+                            ),
+                            "is_best": self.last_best_cell in {cell_key, model_label_key},
                             "is_capturing": self.capture_session is not None
                             and self.capture_session.cell_key == cell_key,
                         }
@@ -924,8 +928,11 @@ class FingerprintEngine:
                     )
                     if empty_room_dataset
                     else 0.0,
-                    "probability": self.last_probabilities.get(EMPTY_ROOM_CLASS_KEY, 0.0),
-                    "is_best": self.last_best_cell == EMPTY_ROOM_CLASS_KEY,
+                    "probability": self._probability_for_keys_locked(
+                        EMPTY_ROOM_CLASS_KEY,
+                        "0",
+                    ),
+                    "is_best": self.last_best_cell in {EMPTY_ROOM_CLASS_KEY, "0"},
                 },
                 "nodes": nodes,
                 "udp_status": self.udp_status,
@@ -2458,9 +2465,22 @@ class FingerprintEngine:
             return False
         if metadata.input_size != self.expected_input_size:
             return False
-        if metadata.class_labels != self._ordered_class_keys_locked():
+        if (
+            metadata.class_labels != self._ordered_class_keys_locked()
+            and not self._is_numeric_gt_class_labels(metadata.class_labels)
+        ):
             return False
         return True
+
+    @staticmethod
+    def _is_numeric_gt_class_labels(labels: list[str]) -> bool:
+        if not labels:
+            return False
+        try:
+            values = sorted(int(label) for label in labels)
+        except (TypeError, ValueError):
+            return False
+        return len(set(values)) == len(values) and all(0 <= value <= 6 for value in values)
 
     def _reset_training_state_locked(
         self,
@@ -2575,11 +2595,22 @@ class FingerprintEngine:
                 return list(metadata.class_labels)
         return self._ordered_class_keys_locked()
 
+    def _model_label_for_cell(self, grid_x: int, grid_y: int) -> str:
+        return str(grid_y * self.grid_cols + grid_x + 1)
+
+    def _probability_for_keys_locked(self, *label_keys: str) -> float:
+        for label_key in label_keys:
+            if label_key in self.last_probabilities:
+                return self.last_probabilities[label_key]
+        return 0.0
+
     def _display_label_for_key(self, label_key: str | None) -> str:
         if not label_key:
             return ""
         if label_key == EMPTY_ROOM_CLASS_KEY:
             return "Empty Room"
+        if label_key.isdigit() and 0 <= int(label_key) <= 6:
+            return f"GT {label_key}"
         try:
             grid_x_text, grid_y_text = label_key.split(",", 1)
             return f"Cell ({int(grid_x_text) + 1}, {int(grid_y_text) + 1})"

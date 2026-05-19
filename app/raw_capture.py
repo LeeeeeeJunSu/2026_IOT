@@ -46,6 +46,7 @@ class RawCaptureSession:
     invalid_packets: int = 0
     packets_by_node: dict[int, int] = field(default_factory=dict)
     sources: set[str] = field(default_factory=set)
+    metadata: dict[str, object] = field(default_factory=dict)
 
 
 class RawCaptureEngine:
@@ -146,6 +147,27 @@ class RawCaptureEngine:
 
     def start_cell_capture(self, grid_x: int, grid_y: int) -> None:
         self._start_capture(kind="cell", grid_x=grid_x, grid_y=grid_y)
+
+    def start_ground_truth_capture(
+        self,
+        gt_location: int | str,
+        *,
+        duration_seconds: float | None = None,
+        start_delay_seconds: float = 0.0,
+    ) -> None:
+        gt_location = int(gt_location)
+        if gt_location < 0 or gt_location > 6:
+            raise RuntimeError("Ground-truth location must be an integer from 0 to 6.")
+        self._start_capture(
+            kind="ground_truth",
+            grid_x=None,
+            grid_y=None,
+            label=f"GT {gt_location}",
+            file_label=f"gt_{gt_location}",
+            duration_seconds=duration_seconds,
+            start_delay_seconds=start_delay_seconds,
+            metadata={"gt_location": gt_location},
+        )
 
     def stop_capture(self) -> None:
         with self.lock:
@@ -398,6 +420,11 @@ class RawCaptureEngine:
         kind: str,
         grid_x: int | None,
         grid_y: int | None,
+        label: str | None = None,
+        file_label: str | None = None,
+        duration_seconds: float | None = None,
+        start_delay_seconds: float | None = None,
+        metadata: dict[str, object] | None = None,
     ) -> None:
         with self.lock:
             now = time.time()
@@ -407,18 +434,26 @@ class RawCaptureEngine:
             if kind == "cell":
                 if grid_x is None or grid_y is None:
                     raise RuntimeError("Cell raw capture requires grid coordinates.")
-                label = f"Cell ({grid_x + 1}, {grid_y + 1})"
-                file_label = f"cell_x{grid_x + 1}_y{grid_y + 1}"
+                label = label or f"Cell ({grid_x + 1}, {grid_y + 1})"
+                file_label = file_label or f"cell_x{grid_x + 1}_y{grid_y + 1}"
             else:
-                label = "Empty Room"
-                file_label = "empty_room"
+                label = label or ("Empty Room" if kind == "empty_room" else kind)
+                file_label = file_label or ("empty_room" if kind == "empty_room" else kind)
             session_id = time.strftime("%Y%m%d_%H%M%S", time.localtime(now))
             filename = f"{session_id}_{file_label}.jsonl"
             path = self.raw_data_dir / filename
             self.raw_data_dir.mkdir(parents=True, exist_ok=True)
             handle = path.open("w", encoding="utf-8", newline="\n")
-            duration = self.capture_seconds
-            delay = self.empty_room_delay_seconds if kind == "empty_room" else 0.0
+            duration = (
+                self.capture_seconds
+                if duration_seconds is None
+                else max(0.0, float(duration_seconds))
+            )
+            delay = (
+                self.empty_room_delay_seconds
+                if start_delay_seconds is None and kind == "empty_room"
+                else max(0.0, float(start_delay_seconds or 0.0))
+            )
             starts_at = now + delay
             ends_at = None if duration <= 0 else starts_at + duration
             session = RawCaptureSession(
@@ -432,30 +467,17 @@ class RawCaptureEngine:
                 ends_at=ends_at,
                 path=path,
                 handle=handle,
+                metadata=dict(metadata or {}),
             )
             self.capture_session = session
             self._write_jsonl_locked(
                 handle,
-                {
-                    "record_type": "session_armed" if delay > 0.0 else "session_start",
-                    "schema_version": 1,
-                    "session_id": session_id,
-                    "kind": kind,
-                    "label": label,
-                    "grid_x": grid_x,
-                    "grid_y": grid_y,
-                    "armed_at_unix": now,
-                    "armed_at_iso": self._format_iso(now),
-                    "started_at_unix": starts_at,
-                    "started_at_iso": self._format_iso(starts_at),
-                    "start_delay_seconds": delay,
-                    "duration_seconds": duration if duration > 0 else None,
-                    "listen_host": self.system_config.host.listen_host,
-                    "udp_port": self.system_config.host.udp_port,
-                    "enabled_node_ids": [
-                        node.node_id for node in self.system_config.enabled_nodes()
-                    ],
-                },
+                self._session_header_payload(
+                    session,
+                    now,
+                    delay,
+                    record_type="session_armed" if delay > 0.0 else "session_start",
+                ),
             )
             session.start_written = delay <= 0.0
             duration_text = "until Stop" if ends_at is None else f"for {duration:.1f}s"
@@ -505,6 +527,7 @@ class RawCaptureEngine:
             "raw_b64": base64.b64encode(payload).decode("ascii"),
             "valid_adr018": frame is not None,
         }
+        record.update(session.metadata)
         if frame is None:
             session.invalid_packets += 1
         else:
@@ -555,30 +578,15 @@ class RawCaptureEngine:
         self.capture_session = None
 
     def _write_session_start_locked(self, session: RawCaptureSession) -> None:
+        delay = max(0.0, session.started_at - session.armed_at)
         self._write_jsonl_locked(
             session.handle,
-            {
-                "record_type": "session_start",
-                "schema_version": 1,
-                "session_id": session.session_id,
-                "kind": session.kind,
-                "label": session.label,
-                "grid_x": session.grid_x,
-                "grid_y": session.grid_y,
-                "armed_at_unix": session.armed_at,
-                "armed_at_iso": self._format_iso(session.armed_at),
-                "started_at_unix": session.started_at,
-                "started_at_iso": self._format_iso(session.started_at),
-                "start_delay_seconds": max(0.0, session.started_at - session.armed_at),
-                "duration_seconds": None
-                if session.ends_at is None
-                else max(0.0, session.ends_at - session.started_at),
-                "listen_host": self.system_config.host.listen_host,
-                "udp_port": self.system_config.host.udp_port,
-                "enabled_node_ids": [
-                    node.node_id for node in self.system_config.enabled_nodes()
-                ],
-            },
+            self._session_header_payload(
+                session,
+                session.armed_at,
+                delay,
+                record_type="session_start",
+            ),
         )
         session.start_written = True
         self.status_message = f"Started raw capture for {session.label}. Saving to {session.path}."
@@ -618,6 +626,7 @@ class RawCaptureEngine:
             },
             "sources": sorted(session.sources),
         }
+        summary.update(session.metadata)
         self._write_jsonl_locked(session.handle, summary)
         session.handle.close()
         self._append_session_index_locked(summary)
@@ -635,6 +644,42 @@ class RawCaptureEngine:
         self.session_index_path.parent.mkdir(parents=True, exist_ok=True)
         with self.session_index_path.open("a", encoding="utf-8", newline="\n") as handle:
             self._write_jsonl_locked(handle, summary)
+
+    def _session_header_payload(
+        self,
+        session: RawCaptureSession,
+        written_at: float,
+        delay: float,
+        *,
+        record_type: str,
+    ) -> dict[str, object]:
+        payload: dict[str, object] = {
+            "record_type": record_type,
+            "schema_version": 1,
+            "session_id": session.session_id,
+            "kind": session.kind,
+            "label": session.label,
+            "grid_x": session.grid_x,
+            "grid_y": session.grid_y,
+            "armed_at_unix": session.armed_at,
+            "armed_at_iso": self._format_iso(session.armed_at),
+            "started_at_unix": session.started_at,
+            "started_at_iso": self._format_iso(session.started_at),
+            "start_delay_seconds": delay,
+            "duration_seconds": None
+            if session.ends_at is None
+            else max(0.0, session.ends_at - session.started_at),
+            "listen_host": self.system_config.host.listen_host,
+            "udp_port": self.system_config.host.udp_port,
+            "enabled_node_ids": [
+                node.node_id for node in self.system_config.enabled_nodes()
+            ],
+        }
+        if written_at != session.armed_at:
+            payload["written_at_unix"] = written_at
+            payload["written_at_iso"] = self._format_iso(written_at)
+        payload.update(session.metadata)
+        return payload
 
     @staticmethod
     def cell_key(grid_x: int, grid_y: int) -> str:

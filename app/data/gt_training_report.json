@@ -1,0 +1,384 @@
+{
+  "created_at_unix": 1779014747.249531,
+  "raw_dir": "/home/ubuntu-csi/project/2026_IOT/app/raw_data",
+  "model_path": "/home/ubuntu-csi/project/2026_IOT/app/data/model_bundle.pkl",
+  "fingerprint_path": "/home/ubuntu-csi/project/2026_IOT/app/data/fingerprints.json",
+  "labels": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6"
+  ],
+  "node_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "sample_count": 7969,
+  "feature_dim": 2214,
+  "feature_generation": "live_rolling_horizon",
+  "live_preprocess_horizon_windows": 6,
+  "live_preprocess_horizon_samples": 54,
+  "window_sample_count": 9,
+  "window_step_samples": 1,
+  "effective_packets_per_second": 10.0,
+  "baseline_counts": {
+    "1": 3145,
+    "2": 3223,
+    "3": 3107,
+    "4": 3048,
+    "5": 3136,
+    "6": 3167,
+    "7": 3054,
+    "8": 3145,
+    "9": 3186
+  },
+  "baseline_source": "gt_0",
+  "sessions": [
+    {
+      "session_id": "20260517_183713",
+      "gt_location": 0,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_183713_gt_0.jsonl",
+      "windows": 1147,
+      "first_sample_index": 0,
+      "last_sample_index": 1146,
+      "packets_by_node": {
+        "1": 3145,
+        "2": 3223,
+        "3": 3107,
+        "4": 3048,
+        "5": 3136,
+        "6": 3167,
+        "7": 3054,
+        "8": 3145,
+        "9": 3186
+      }
+    },
+    {
+      "session_id": "20260517_184904",
+      "gt_location": 1,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_184904_gt_1.jsonl",
+      "windows": 1095,
+      "first_sample_index": 1147,
+      "last_sample_index": 2241,
+      "packets_by_node": {
+        "1": 2995,
+        "2": 2993,
+        "3": 2984,
+        "4": 2946,
+        "5": 2972,
+        "6": 2969,
+        "7": 2920,
+        "8": 2958,
+        "9": 3041
+      }
+    },
+    {
+      "session_id": "20260517_185128",
+      "gt_location": 2,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_185128_gt_2.jsonl",
+      "windows": 1148,
+      "first_sample_index": 2242,
+      "last_sample_index": 3389,
+      "packets_by_node": {
+        "1": 3156,
+        "2": 3240,
+        "3": 3196,
+        "4": 3068,
+        "5": 3130,
+        "6": 3155,
+        "7": 3014,
+        "8": 3184,
+        "9": 3262
+      }
+    },
+    {
+      "session_id": "20260517_185406",
+      "gt_location": 3,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_185406_gt_3.jsonl",
+      "windows": 1148,
+      "first_sample_index": 3390,
+      "last_sample_index": 4537,
+      "packets_by_node": {
+        "1": 3202,
+        "2": 3175,
+        "3": 3147,
+        "4": 3053,
+        "5": 3092,
+        "6": 3177,
+        "7": 3035,
+        "8": 3088,
+        "9": 3187
+      }
+    },
+    {
+      "session_id": "20260517_185625",
+      "gt_location": 4,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_185625_gt_4.jsonl",
+      "windows": 1138,
+      "first_sample_index": 4538,
+      "last_sample_index": 5675,
+      "packets_by_node": {
+        "1": 3153,
+        "2": 3153,
+        "3": 3182,
+        "4": 3115,
+        "5": 3113,
+        "6": 3181,
+        "7": 3072,
+        "8": 3157,
+        "9": 3221
+      }
+    },
+    {
+      "session_id": "20260517_185845",
+      "gt_location": 5,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_185845_gt_5.jsonl",
+      "windows": 1146,
+      "first_sample_index": 5676,
+      "last_sample_index": 6821,
+      "packets_by_node": {
+        "1": 3205,
+        "2": 3181,
+        "3": 3142,
+        "4": 3107,
+        "5": 3140,
+        "6": 3207,
+        "7": 3122,
+        "8": 3156,
+        "9": 3203
+      }
+    },
+    {
+      "session_id": "20260517_190406",
+      "gt_location": 6,
+      "path": "/home/ubuntu-csi/project/2026_IOT/app/raw_data/20260517_190406_gt_6.jsonl",
+      "windows": 1147,
+      "first_sample_index": 6822,
+      "last_sample_index": 7968,
+      "packets_by_node": {
+        "1": 3265,
+        "2": 3238,
+        "3": 3268,
+        "4": 3228,
+        "5": 3249,
+        "6": 3271,
+        "7": 3242,
+        "8": 3256,
+        "9": 3321
+      }
+    }
+  ],
+  "metrics": {
+    "train_accuracy": 1.0,
+    "train_macro_f1": 1.0,
+    "confusion_matrix": [
+      [
+        1147,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1095,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1148,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1148,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1138,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1146,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1147
+      ]
+    ]
+  },
+  "holdout_metrics": {
+    "split_kind": "chronological_session_tail",
+    "test_ratio": 0.2,
+    "purge_gap_windows": 27,
+    "train_sample_count": 6186,
+    "test_sample_count": 1405,
+    "train_accuracy": 1.0,
+    "train_macro_f1": 1.0,
+    "test_accuracy": 0.5750889679715302,
+    "test_macro_f1": 0.5598568195443915,
+    "test_confusion_matrix": [
+      [
+        202,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        58,
+        80,
+        9,
+        31,
+        8,
+        5
+      ],
+      [
+        2,
+        12,
+        152,
+        10,
+        12,
+        13,
+        2
+      ],
+      [
+        0,
+        8,
+        11,
+        88,
+        36,
+        41,
+        19
+      ],
+      [
+        0,
+        14,
+        33,
+        52,
+        50,
+        14,
+        38
+      ],
+      [
+        0,
+        10,
+        1,
+        17,
+        10,
+        133,
+        31
+      ],
+      [
+        0,
+        4,
+        3,
+        15,
+        9,
+        46,
+        125
+      ]
+    ],
+    "split_summary": [
+      {
+        "session_id": "20260517_183713",
+        "gt_location": 0,
+        "total_windows": 1147,
+        "train_windows": 891,
+        "test_windows": 202,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_184904",
+        "gt_location": 1,
+        "total_windows": 1095,
+        "train_windows": 849,
+        "test_windows": 192,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_185128",
+        "gt_location": 2,
+        "total_windows": 1148,
+        "train_windows": 891,
+        "test_windows": 203,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_185406",
+        "gt_location": 3,
+        "total_windows": 1148,
+        "train_windows": 891,
+        "test_windows": 203,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_185625",
+        "gt_location": 4,
+        "total_windows": 1138,
+        "train_windows": 883,
+        "test_windows": 201,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_185845",
+        "gt_location": 5,
+        "total_windows": 1146,
+        "train_windows": 890,
+        "test_windows": 202,
+        "purge_gap_windows": 27
+      },
+      {
+        "session_id": "20260517_190406",
+        "gt_location": 6,
+        "total_windows": 1147,
+        "train_windows": 891,
+        "test_windows": 202,
+        "purge_gap_windows": 27
+      }
+    ]
+  }
+}

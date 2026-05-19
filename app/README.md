@@ -78,6 +78,68 @@ keeps enough WiFi frames on the channel for the ESP nodes to produce CSI even
 when the room network is otherwise quiet. Tune it with `host.stimulus_*` in the
 shared config.
 
+## GT Data Capture, Retraining, And App Run
+
+Use this workflow for the current ground-truth setup. The `--gt` value must be
+an integer from `0` to `6`; use `0` for the empty/no-person state.
+
+1. Make sure no other app process is already using the ESP32 UDP ports.
+2. Stand at the ground-truth position.
+3. Capture data:
+
+```powershell
+python -m app.capture_gt --gt 1 --seconds 60
+```
+
+The capture command listens to all enabled nodes in `Config/system_config.json`,
+waits for all configured nodes to become active by default, waits 10 seconds
+before recording starts, and saves a JSONL file under `app/raw_data/`. It does
+not retrain the model automatically.
+
+Useful capture options:
+
+```powershell
+python -m app.capture_gt --gt 0 --seconds 60
+python -m app.capture_gt --gt 3 --seconds 30
+python -m app.capture_gt --gt 6 --seconds 0
+python -m app.capture_gt --gt 2 --min-active-nodes 9 --wait-timeout 60
+python -m app.capture_gt --gt 5 --seconds 60 --start-delay 0
+```
+
+`--seconds 0` records until `Ctrl+C`. `--start-delay` changes the wait before
+recording begins.
+
+Retrain from all saved GT captures when you are ready:
+
+```powershell
+python -m app.train_gt_model
+```
+
+Training writes:
+
+- `app/data/model_bundle.pkl` - model loaded by the live web app
+- `app/data/fingerprints.json` - baseline metadata needed by live inference
+- `app/data/gt_training_report.json` - training summary
+
+After retraining, start the live sensor + model + web dashboard:
+
+```powershell
+python -m app --headless
+```
+
+Open the dashboard:
+
+```text
+http://127.0.0.1:8000
+```
+
+On a phone or another computer on the same WiFi, use the LAN URL printed in the
+startup log, such as:
+
+```text
+http://ubuntu-csi.local:8000
+```
+
 ## Raw Capture App
 
 Use this when you want to save the raw ESP32 stream for offline validation
