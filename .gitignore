@@ -11,4 +11,7 @@ app/data/model_bundle.pkl
 app/data/dashboard_model_report.json
 app/data/dashboard_model_workspace/
 
+app/raw_data/*.jsonl
+app/raw_data/*.log
+
 firmware/esp32-csi-fingerprint-node/build/

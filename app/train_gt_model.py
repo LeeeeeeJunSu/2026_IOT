@@ -24,7 +24,7 @@ from app.raw_training import DEFAULT_QUANTILES
 from app.storage import save_fingerprint_store, save_pickle_store
 
 
-MODEL_NAME = "ExtraTreesWindowed"
+MODEL_NAME = "VariableNodeAggregateExtraTrees"
 
 
 @dataclass(frozen=True)
@@ -123,7 +123,7 @@ def train_gt_model(
     session_summaries: list[dict[str, Any]] = []
     with engine.lock:
         for session in sessions:
-            features = build_session_features(engine, session)
+            features = build_session_aggregate_features(engine, session)
             if not features:
                 raise RuntimeError(
                     f"No training windows could be generated from {session.path}. "
@@ -137,7 +137,7 @@ def train_gt_model(
                 {
                     "session_id": session.session_id,
                     "gt_location": session.gt_location,
-                    "window_index": window_index,
+                    "window_index": window_index // max(1, len(required_node_ids)),
                 }
                 for window_index in range(len(features))
             )
@@ -146,7 +146,7 @@ def train_gt_model(
                     "session_id": session.session_id,
                     "gt_location": session.gt_location,
                     "path": str(session.path),
-                    "windows": len(features),
+                    "aggregate_windows": len(features),
                     "first_sample_index": first_index,
                     "last_sample_index": len(X_rows) - 1,
                     "packets_by_node": {
@@ -213,11 +213,11 @@ def train_gt_model(
         window_step_seconds=engine.window_step_seconds,
         feature_signature=engine.feature_signature,
         node_ids=required_node_ids,
-        input_size=engine.expected_input_size,
+        input_size=engine.aggregate_feature_size,
         sample_count=len(X_rows),
         class_labels=labels,
         summary=(
-            "GT numeric classifier, labels 0..6, "
+            "GT numeric variable-node aggregate classifier, labels 0..6, "
             f"n_estimators={trees}, random_state={random_state}"
         ),
     )
@@ -255,7 +255,7 @@ def train_gt_model(
         "node_ids": required_node_ids,
         "sample_count": len(X_rows),
         "feature_dim": int(X.shape[1]),
-        "feature_generation": "live_rolling_horizon",
+        "feature_generation": "variable_node_aggregate_live_rolling_horizon",
         "live_preprocess_horizon_windows": engine.LIVE_PREPROCESS_HORIZON_WINDOWS,
         "live_preprocess_horizon_samples": max(
             engine.window_sample_count + engine.smoothing_half_window * 2,
@@ -435,9 +435,11 @@ def build_baseline(
             for frame in session.frames_by_node.get(node_id, [])
         ]
         if not vectors:
-            raise RuntimeError(f"GT captures are missing node {node_id}.")
+            continue
         baseline_by_node[node_id] = np.asarray(vectors, dtype=np.float32).mean(axis=0).tolist()
         baseline_counts[node_id] = len(vectors)
+    if not baseline_by_node:
+        raise RuntimeError("GT captures do not contain any baseline node data.")
     return baseline_by_node, baseline_counts, baseline_source
 
 
@@ -508,6 +510,94 @@ def build_session_features(
         if len(row) == engine.expected_input_size:
             rows.append(row)
     return rows
+
+
+def build_session_node_features(
+    engine: FingerprintEngine,
+    session: GtSession,
+) -> list[list[float]]:
+    grouped = build_session_node_feature_groups(engine, session)
+    return [row for group in grouped for row in group]
+
+
+def build_session_aggregate_features(
+    engine: FingerprintEngine,
+    session: GtSession,
+) -> list[list[float]]:
+    rows: list[list[float]] = []
+    for node_rows in build_session_node_feature_groups(engine, session):
+        aggregate = engine._aggregate_node_feature_rows(node_rows)
+        if aggregate is not None:
+            rows.append(aggregate)
+    return rows
+
+
+def build_session_node_feature_groups(
+    engine: FingerprintEngine,
+    session: GtSession,
+) -> list[list[list[float]]]:
+    all_frames = [frame for frames in session.frames_by_node.values() for frame in frames]
+    if not all_frames:
+        return []
+    start_time = min(frame.captured_at for frame in all_frames)
+    end_time = max(frame.captured_at for frame in all_frames)
+    horizon_sample_count = max(
+        engine.window_sample_count + engine.smoothing_half_window * 2,
+        engine.window_sample_count * engine.LIVE_PREPROCESS_HORIZON_WINDOWS,
+    )
+    required_recent_samples = engine.window_sample_count + engine.smoothing_half_window * 2
+    (
+        aligned_vectors_by_node,
+        aligned_scalars_by_node,
+        observed_by_node,
+        total_slots,
+    ) = build_session_rows_for_live_horizons(
+        engine,
+        session,
+        start_time=start_time,
+        end_time=end_time,
+    )
+    if total_slots < horizon_sample_count:
+        return []
+
+    features_by_node: dict[int, np.ndarray] = {}
+    valid_counts_by_node: dict[int, np.ndarray] = {}
+    for node_id in engine.required_node_ids:
+        features = build_vectorized_node_live_horizon_features(
+            engine,
+            node_id=node_id,
+            amplitude_rows=aligned_vectors_by_node[node_id][:total_slots],
+            scalar_rows=aligned_scalars_by_node[node_id][:total_slots],
+            horizon_sample_count=horizon_sample_count,
+        )
+        if features.size == 0:
+            continue
+        observed = np.asarray(observed_by_node[node_id][:total_slots], dtype=bool)
+        cumulative_valid = np.concatenate(([0], np.cumsum(observed.astype(np.int32))))
+        valid_counts_by_node[node_id] = (
+            cumulative_valid[horizon_sample_count:] - cumulative_valid[:-horizon_sample_count]
+        )
+        features_by_node[node_id] = features
+
+    groups: list[list[list[float]]] = []
+    max_feature_count = max((features.shape[0] for features in features_by_node.values()), default=0)
+    for feature_index in range(0, max_feature_count, engine.window_step_samples):
+        group: list[list[float]] = []
+        for node_id in engine.required_node_ids:
+            features = features_by_node.get(node_id)
+            horizon_valid_counts = valid_counts_by_node.get(node_id)
+            if features is None or horizon_valid_counts is None:
+                continue
+            if feature_index >= features.shape[0] or feature_index >= len(horizon_valid_counts):
+                continue
+            if horizon_valid_counts[feature_index] < required_recent_samples:
+                continue
+            row = features[feature_index]
+            if row.shape[0] == engine.per_node_feature_size:
+                group.append(row.astype(np.float32, copy=False).tolist())
+        if group:
+            groups.append(group)
+    return groups
 
 
 def build_vectorized_live_horizon_features(

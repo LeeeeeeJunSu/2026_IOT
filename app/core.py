@@ -111,7 +111,7 @@ class ModelMetadata:
 
 class FingerprintEngine:
     STORE_VERSION = 9
-    MODEL_ORDER = ("ExtraTreesWindowed",)
+    MODEL_ORDER = ("VariableNodeAggregateExtraTrees", "VariableNodeExtraTrees", "ExtraTreesWindowed")
     LIVE_PREPROCESS_HORIZON_WINDOWS = 6
     INFERENCE_MIN_INTERVAL_SECONDS = 0.10
     RUNTIME_MAX_TICK_SECONDS = 0.05
@@ -313,6 +313,16 @@ class FingerprintEngine:
     @property
     def expected_input_size(self) -> int:
         return len(self.required_node_ids) * self.per_node_feature_size
+
+    def _is_variable_node_model_name(self, model_name: str | None) -> bool:
+        return model_name == "VariableNodeExtraTrees"
+
+    def _is_variable_node_aggregate_model_name(self, model_name: str | None) -> bool:
+        return model_name == "VariableNodeAggregateExtraTrees"
+
+    @property
+    def aggregate_feature_size(self) -> int:
+        return self.per_node_feature_size * 4
 
     @property
     def feature_signature(self) -> str:
@@ -1773,8 +1783,16 @@ class FingerprintEngine:
             self._clear_prediction_locked()
             return
 
-        sample = self._build_live_sample_locked(now)
-        if sample is None:
+        if self._is_variable_node_aggregate_model_name(self.active_model_name):
+            node_samples = self._build_live_node_samples_locked(now)
+            aggregate_sample = self._aggregate_node_feature_rows(node_samples)
+            samples = [] if aggregate_sample is None else [aggregate_sample]
+        elif self._is_variable_node_model_name(self.active_model_name):
+            samples = self._build_live_node_samples_locked(now)
+        else:
+            sample = self._build_live_sample_locked(now)
+            samples = [] if sample is None else [sample]
+        if not samples:
             stale_after = max(
                 self.prediction_stale_grace_seconds,
                 self.window_seconds * 1.5,
@@ -1792,7 +1810,8 @@ class FingerprintEngine:
         raw_probabilities = {
             label_key: 0.0 for label_key in probability_keys
         }
-        probabilities = active_pipeline.predict_proba([sample])[0]
+        probability_rows = active_pipeline.predict_proba(samples)
+        probabilities = np.asarray(probability_rows, dtype=np.float32).mean(axis=0)
         classes = [str(label) for label in active_pipeline.classes_]
         for label_key, probability in zip(classes, probabilities):
             raw_probabilities[label_key] = float(probability)
@@ -1976,6 +1995,58 @@ class FingerprintEngine:
             return None
         return sample
 
+    def _build_live_node_samples_locked(self, now: float) -> list[list[float]]:
+        candidate_node_ids = sorted(
+            node_id
+            for node_id, node in self.live_nodes.items()
+            if now - node.last_seen_ts <= 3.0
+        )
+        if not candidate_node_ids:
+            candidate_node_ids = sorted(self.node_windows)
+        if not candidate_node_ids:
+            return []
+
+        required_recent_samples = self.window_sample_count + self.smoothing_half_window * 2
+        horizon_sample_count = max(
+            self.window_sample_count + self.smoothing_half_window * 2,
+            self.window_sample_count * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
+        )
+        horizon_seconds = float(horizon_sample_count) / self.effective_packets_per_second
+        start_time = now - horizon_seconds
+        samples: list[list[float]] = []
+        for node_id in candidate_node_ids:
+            frames = list(self.node_windows.get(node_id, []))
+            bucketed_vectors, bucketed_scalars = self._bucketize_feature_frames_locked(
+                frames,
+                start_time=start_time,
+                end_time=now,
+            )
+            total_slots = len(bucketed_vectors)
+            if total_slots < horizon_sample_count:
+                continue
+            observed_recent = sum(
+                1 for value in bucketed_vectors[-horizon_sample_count:] if value is not None
+            )
+            if observed_recent < required_recent_samples:
+                continue
+            amplitude_rows = self._fill_bucket_gaps_locked(
+                node_id,
+                bucketed_vectors,
+                total_slots=total_slots,
+            )
+            scalar_rows = self._fill_scalar_bucket_gaps_locked(
+                bucketed_scalars,
+                total_slots=total_slots,
+            )
+            per_node_features = self._build_window_feature_vectors_from_rows_locked(
+                node_id=node_id,
+                amplitude_rows=amplitude_rows,
+                scalar_rows=scalar_rows,
+            )
+            if per_node_features and len(per_node_features[-1]) == self.per_node_feature_size:
+                samples.append(per_node_features[-1])
+        return samples
+
     def _baseline_ready_locked(self) -> bool:
         required_node_ids = self.required_node_ids
         if not required_node_ids:
@@ -2041,7 +2112,11 @@ class FingerprintEngine:
     def _build_model_pipeline_locked(
         self, model_name: str
     ) -> tuple[Any, str]:
-        if model_name == "ExtraTreesWindowed":
+        if model_name in {
+            "VariableNodeAggregateExtraTrees",
+            "VariableNodeExtraTrees",
+            "ExtraTreesWindowed",
+        }:
             model = ExtraTreesClassifier(
                 n_estimators=320,
                 random_state=42,
@@ -2051,6 +2126,16 @@ class FingerprintEngine:
                 class_weight="balanced_subsample",
                 n_jobs=1,
             )
+            if model_name == "VariableNodeAggregateExtraTrees":
+                return (
+                    model,
+                    "variable-node aggregate ExtraTrees, summarizes all active node features",
+                )
+            if model_name == "VariableNodeExtraTrees":
+                return (
+                    model,
+                    "variable-node ExtraTrees, averages per-node probabilities from every active node",
+                )
             return (
                 model,
                 "windowed ExtraTrees, quantile+scalar features, n_estimators=320, random_state=42",
@@ -2058,7 +2143,7 @@ class FingerprintEngine:
         raise RuntimeError(f"Unsupported model '{model_name}'.")
 
     def _train_models_locked(self) -> str:
-        features, labels = self._build_training_matrix_locked()
+        full_features, full_labels = self._build_training_matrix_locked()
 
         self._clear_prediction_locked()
         self.model_pipelines = {}
@@ -2066,10 +2151,25 @@ class FingerprintEngine:
         remove_store(self.model_path)
 
         trained_models: list[str] = []
-        sample_count = len(features)
         class_labels = self._ordered_class_keys_locked()
         for model_name in self.MODEL_ORDER:
             pipeline, summary = self._build_model_pipeline_locked(model_name)
+            if self._is_variable_node_aggregate_model_name(model_name):
+                features, labels = self._build_variable_node_aggregate_training_matrix_locked(
+                    full_features,
+                    full_labels,
+                )
+                input_size = self.aggregate_feature_size
+            elif self._is_variable_node_model_name(model_name):
+                features, labels = self._build_variable_node_training_matrix_locked(
+                    full_features,
+                    full_labels,
+                )
+                input_size = self.per_node_feature_size
+            else:
+                features, labels = full_features, full_labels
+                input_size = self.expected_input_size
+            sample_count = len(features)
             pipeline.fit(features, labels)
             self.model_pipelines[model_name] = pipeline
             self.model_metadata_by_name[model_name] = ModelMetadata(
@@ -2079,7 +2179,7 @@ class FingerprintEngine:
                 window_step_seconds=self.window_step_seconds,
                 feature_signature=self.feature_signature,
                 node_ids=self.required_node_ids,
-                input_size=self.expected_input_size,
+                input_size=input_size,
                 sample_count=sample_count,
                 class_labels=class_labels,
                 summary=summary,
@@ -2103,6 +2203,67 @@ class FingerprintEngine:
             f"Active model: {self.active_model_name}."
         )
         return self.status_message
+
+    def _build_variable_node_aggregate_training_matrix_locked(
+        self,
+        full_features: list[list[float]],
+        full_labels: list[str],
+    ) -> tuple[list[list[float]], list[str]]:
+        features: list[list[float]] = []
+        labels: list[str] = []
+        for sample, label in zip(full_features, full_labels):
+            node_rows = self._split_node_feature_rows(sample)
+            aggregate = self._aggregate_node_feature_rows(node_rows)
+            if aggregate is None:
+                continue
+            features.append(aggregate)
+            labels.append(label)
+        if not features:
+            raise RuntimeError("No aggregate training samples could be generated.")
+        return features, labels
+
+    def _build_variable_node_training_matrix_locked(
+        self,
+        full_features: list[list[float]],
+        full_labels: list[str],
+    ) -> tuple[list[list[float]], list[str]]:
+        features: list[list[float]] = []
+        labels: list[str] = []
+        for sample, label in zip(full_features, full_labels):
+            for start in range(0, len(sample), self.per_node_feature_size):
+                end = start + self.per_node_feature_size
+                if end <= len(sample):
+                    features.append(sample[start:end])
+                    labels.append(label)
+        if not features:
+            raise RuntimeError("No per-node training samples could be generated.")
+        return features, labels
+
+    def _split_node_feature_rows(self, sample: list[float]) -> list[list[float]]:
+        rows: list[list[float]] = []
+        for start in range(0, len(sample), self.per_node_feature_size):
+            end = start + self.per_node_feature_size
+            if end <= len(sample):
+                rows.append(sample[start:end])
+        return rows
+
+    def _aggregate_node_feature_rows(
+        self,
+        node_rows: list[list[float]],
+    ) -> list[float] | None:
+        usable_rows = [
+            row for row in node_rows if len(row) == self.per_node_feature_size
+        ]
+        if not usable_rows:
+            return None
+        matrix = np.asarray(usable_rows, dtype=np.float32)
+        parts = [
+            matrix.mean(axis=0),
+            matrix.std(axis=0),
+            matrix.min(axis=0),
+            matrix.max(axis=0),
+        ]
+        return np.concatenate(parts).astype(np.float32, copy=False).tolist()
 
     def _load_datasets(self) -> None:
         raw = load_fingerprint_store(self.fingerprint_path)
@@ -2393,12 +2554,15 @@ class FingerprintEngine:
             config_matches = config_matches and feature_matches
             if not feature_matches:
                 mismatch_reasons.append("feature pipeline changed")
-        if self._loaded_store_node_ids is not None:
+        stored_dataset_has_samples = any(
+            bool(dataset.samples) for dataset in self.cell_datasets.values()
+        ) or bool(self.empty_room_dataset and self.empty_room_dataset.samples)
+        if self._loaded_store_node_ids is not None and stored_dataset_has_samples:
             node_matches = self._loaded_store_node_ids == self.required_node_ids
             config_matches = config_matches and node_matches
             if not node_matches:
                 mismatch_reasons.append("enabled node set changed")
-        if self._loaded_store_input_size is not None:
+        if self._loaded_store_input_size is not None and stored_dataset_has_samples:
             input_matches = self._loaded_store_input_size == self.expected_input_size
             config_matches = config_matches and input_matches
             if not input_matches:
@@ -2461,9 +2625,15 @@ class FingerprintEngine:
             return False
         if metadata.feature_signature != self.feature_signature:
             return False
-        if metadata.node_ids != self.required_node_ids:
+        if self._is_variable_node_aggregate_model_name(metadata.model_key):
+            if metadata.input_size != self.aggregate_feature_size:
+                return False
+        elif self._is_variable_node_model_name(metadata.model_key):
+            if metadata.input_size != self.per_node_feature_size:
+                return False
+        elif metadata.node_ids != self.required_node_ids:
             return False
-        if metadata.input_size != self.expected_input_size:
+        elif metadata.input_size != self.expected_input_size:
             return False
         if (
             metadata.class_labels != self._ordered_class_keys_locked()

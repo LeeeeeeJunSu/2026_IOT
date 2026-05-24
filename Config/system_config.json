@@ -202,6 +202,18 @@
       "wifi_password": "00000000",
       "wifi_channel": 4,
       "source_kind": "firmware_or_simulator"
+    },
+    {
+      "node_id": 10,
+      "label": "ESP 10",
+      "enabled": true,
+      "com_port": "",
+      "target_port": 5010,
+      "csi_send_interval_ms": 20,
+      "wifi_ssid": "csi-wifi",
+      "wifi_password": "00000000",
+      "wifi_channel": 4,
+      "source_kind": "firmware_or_simulator"
     }
   ]
 }

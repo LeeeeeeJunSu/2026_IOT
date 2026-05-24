@@ -47,7 +47,19 @@ def build_parser() -> argparse.ArgumentParser:
         "--seconds",
         type=float,
         default=None,
-        help="Capture duration. Defaults to Config/system_config.json capture_seconds. Use 0 for manual Ctrl+C stop.",
+        help="Capture duration per chunk. Defaults to Config/system_config.json capture_seconds. Use 0 for manual Ctrl+C stop.",
+    )
+    parser.add_argument(
+        "--chunks",
+        type=int,
+        default=1,
+        help="How many consecutive capture files to create for the same GT. Defaults to 1.",
+    )
+    parser.add_argument(
+        "--gap-seconds",
+        type=float,
+        default=0.0,
+        help="Seconds to wait between chunks. Defaults to 0 for back-to-back captures.",
     )
     parser.add_argument(
         "--start-delay",
@@ -119,12 +131,14 @@ def main(argv: list[str] | None = None) -> int:
                 fresh_seconds=max(0.1, float(args.node_fresh_seconds)),
             )
 
-        engine.start_ground_truth_capture(
-            int(args.gt),
+        exit_code = _run_capture_chunks(
+            engine,
+            gt_location=int(args.gt),
             duration_seconds=args.seconds,
-            start_delay_seconds=max(0.0, float(args.start_delay)),
+            chunk_count=max(1, int(args.chunks)),
+            first_start_delay_seconds=max(0.0, float(args.start_delay)),
+            gap_seconds=max(0.0, float(args.gap_seconds)),
         )
-        exit_code = _monitor_capture(engine)
     finally:
         engine.stop_capture()
         receiver.stop()
@@ -136,6 +150,36 @@ def main(argv: list[str] | None = None) -> int:
             stimulus.join(timeout=1.5)
         runtime.join(timeout=1.5)
     return exit_code
+
+
+def _run_capture_chunks(
+    engine: RawCaptureEngine,
+    *,
+    gt_location: int,
+    duration_seconds: float | None,
+    chunk_count: int,
+    first_start_delay_seconds: float,
+    gap_seconds: float,
+) -> int:
+    for chunk_index in range(1, chunk_count + 1):
+        if chunk_index > 1 and gap_seconds > 0.0:
+            print(f"Waiting {gap_seconds:.1f}s before chunk {chunk_index}/{chunk_count}.", flush=True)
+            time.sleep(gap_seconds)
+        start_delay_seconds = first_start_delay_seconds if chunk_index == 1 else 0.0
+        print(f"Starting GT {gt_location} chunk {chunk_index}/{chunk_count}.", flush=True)
+        engine.start_ground_truth_capture(
+            gt_location,
+            duration_seconds=duration_seconds,
+            start_delay_seconds=start_delay_seconds,
+            metadata={
+                "chunk_index": chunk_index,
+                "chunk_count": chunk_count,
+            },
+        )
+        exit_code = _monitor_capture(engine)
+        if exit_code != 0:
+            return exit_code
+    return 0
 
 
 def _wait_for_nodes(

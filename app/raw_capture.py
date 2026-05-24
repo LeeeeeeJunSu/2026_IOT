@@ -154,10 +154,14 @@ class RawCaptureEngine:
         *,
         duration_seconds: float | None = None,
         start_delay_seconds: float = 0.0,
+        metadata: dict[str, object] | None = None,
     ) -> None:
         gt_location = int(gt_location)
         if gt_location < 0 or gt_location > 6:
             raise RuntimeError("Ground-truth location must be an integer from 0 to 6.")
+        capture_metadata = {"gt_location": gt_location}
+        if metadata:
+            capture_metadata.update(metadata)
         self._start_capture(
             kind="ground_truth",
             grid_x=None,
@@ -166,7 +170,7 @@ class RawCaptureEngine:
             file_label=f"gt_{gt_location}",
             duration_seconds=duration_seconds,
             start_delay_seconds=start_delay_seconds,
-            metadata={"gt_location": gt_location},
+            metadata=capture_metadata,
         )
 
     def stop_capture(self) -> None:
