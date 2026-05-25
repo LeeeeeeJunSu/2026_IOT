@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="386" viewBox="0 0 703 386">
+<style>text{font-family:Arial,Malgun Gothic,sans-serif;font-size:12px;fill:#202124}.title{font-size:18px;font-weight:700}.small{font-size:10px}</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<text class="title" x="24" y="30">GT? ESP? valid packet count</text>
+<text x="68" y="52">node id</text>
+<text x="95.0" y="64" text-anchor="middle">1</text>
+<text x="149.0" y="64" text-anchor="middle">2</text>
+<text x="203.0" y="64" text-anchor="middle">3</text>
+<text x="257.0" y="64" text-anchor="middle">4</text>
+<text x="311.0" y="64" text-anchor="middle">5</text>
+<text x="365.0" y="64" text-anchor="middle">6</text>
+<text x="419.0" y="64" text-anchor="middle">7</text>
+<text x="473.0" y="64" text-anchor="middle">8</text>
+<text x="527.0" y="64" text-anchor="middle">9</text>
+<text x="581.0" y="64" text-anchor="middle">10</text>
+<text x="44" y="92" text-anchor="middle">GT 0</text>
+<rect x="68" y="70" width="53" height="33" fill="#39aa88"/>
+<text class="small" x="95.0" y="91" text-anchor="middle">8540</text>
+<rect x="122" y="70" width="53" height="33" fill="#3bab8a"/>
+<text class="small" x="149.0" y="91" text-anchor="middle">8529</text>
+<rect x="176" y="70" width="53" height="33" fill="#32a784"/>
+<text class="small" x="203.0" y="91" text-anchor="middle">8569</text>
+<rect x="230" y="70" width="53" height="33" fill="#48b092"/>
+<text class="small" x="257.0" y="91" text-anchor="middle">8477</text>
+<rect x="284" y="70" width="53" height="33" fill="#5cb89e"/>
+<text class="small" x="311.0" y="91" text-anchor="middle">8391</text>
+<rect x="338" y="70" width="53" height="33" fill="#edf2f7"/>
+<text class="small" x="365.0" y="91" text-anchor="middle">7789</text>
+<rect x="392" y="70" width="53" height="33" fill="#b8ddd6"/>
+<text class="small" x="419.0" y="91" text-anchor="middle">8010</text>
+<rect x="446" y="70" width="53" height="33" fill="#5fb9a0"/>
+<text class="small" x="473.0" y="91" text-anchor="middle">8382</text>
+<rect x="500" y="70" width="53" height="33" fill="#3cab8a"/>
+<text class="small" x="527.0" y="91" text-anchor="middle">8528</text>
+<rect x="554" y="70" width="53" height="33" fill="#3dac8b"/>
+<text class="small" x="581.0" y="91" text-anchor="middle">8521</text>
+<text x="44" y="126" text-anchor="middle">GT 1</text>
+<rect x="68" y="104" width="53" height="33" fill="#c3e1dd"/>
+<text class="small" x="95.0" y="125" text-anchor="middle">7964</text>
+<rect x="122" y="104" width="53" height="33" fill="#3bab8a"/>
+<text class="small" x="149.0" y="125" text-anchor="middle">8530</text>
+<rect x="176" y="104" width="53" height="33" fill="#45af90"/>
+<text class="small" x="203.0" y="125" text-anchor="middle">8488</text>
+<rect x="230" y="104" width="53" height="33" fill="#4cb294"/>
+<text class="small" x="257.0" y="125" text-anchor="middle">8460</text>
+<rect x="284" y="104" width="53" height="33" fill="#65bca4"/>
+<text class="small" x="311.0" y="125" text-anchor="middle">8353</text>
+<rect x="338" y="104" width="53" height="33" fill="#cde5e3"/>
+<text class="small" x="365.0" y="125" text-anchor="middle">7920</text>
+<rect x="392" y="104" width="53" height="33" fill="#9cd2c5"/>
+<text class="small" x="419.0" y="125" text-anchor="middle">8125</text>
+<rect x="446" y="104" width="53" height="33" fill="#57b69b"/>
+<text class="small" x="473.0" y="125" text-anchor="middle">8414</text>
+<rect x="500" y="104" width="53" height="33" fill="#4db295"/>
+<text class="small" x="527.0" y="125" text-anchor="middle">8456</text>
+<rect x="554" y="104" width="53" height="33" fill="#40ad8d"/>
+<text class="small" x="581.0" y="125" text-anchor="middle">8508</text>
+<text x="44" y="160" text-anchor="middle">GT 2</text>
+<rect x="68" y="138" width="53" height="33" fill="#76c3ae"/>
+<text class="small" x="95.0" y="159" text-anchor="middle">8282</text>
+<rect x="122" y="138" width="53" height="33" fill="#58b69b"/>
+<text class="small" x="149.0" y="159" text-anchor="middle">8411</text>
+<rect x="176" y="138" width="53" height="33" fill="#4db295"/>
+<text class="small" x="203.0" y="159" text-anchor="middle">8455</text>
+<rect x="230" y="138" width="53" height="33" fill="#5db99f"/>
+<text class="small" x="257.0" y="159" text-anchor="middle">8387</text>
+<rect x="284" y="138" width="53" height="33" fill="#86c9b8"/>
+<text class="small" x="311.0" y="159" text-anchor="middle">8218</text>
+<rect x="338" y="138" width="53" height="33" fill="#a0d3c8"/>
+<text class="small" x="365.0" y="159" text-anchor="middle">8107</text>
+<rect x="392" y="138" width="53" height="33" fill="#9ed2c6"/>
+<text class="small" x="419.0" y="159" text-anchor="middle">8117</text>
+<rect x="446" y="138" width="53" height="33" fill="#99d0c4"/>
+<text class="small" x="473.0" y="159" text-anchor="middle">8137</text>
+<rect x="500" y="138" width="53" height="33" fill="#50b497"/>
+<text class="small" x="527.0" y="159" text-anchor="middle">8442</text>
+<rect x="554" y="138" width="53" height="33" fill="#57b69b"/>
+<text class="small" x="581.0" y="159" text-anchor="middle">8413</text>
+<text x="44" y="194" text-anchor="middle">GT 3</text>
+<rect x="68" y="172" width="53" height="33" fill="#4fb396"/>
+<text class="small" x="95.0" y="193" text-anchor="middle">8448</text>
+<rect x="122" y="172" width="53" height="33" fill="#34a885"/>
+<text class="small" x="149.0" y="193" text-anchor="middle">8561</text>
+<rect x="176" y="172" width="53" height="33" fill="#3dac8b"/>
+<text class="small" x="203.0" y="193" text-anchor="middle">8523</text>
+<rect x="230" y="172" width="53" height="33" fill="#43ae8e"/>
+<text class="small" x="257.0" y="193" text-anchor="middle">8499</text>
+<rect x="284" y="172" width="53" height="33" fill="#8bcbbb"/>
+<text class="small" x="311.0" y="193" text-anchor="middle">8196</text>
+<rect x="338" y="172" width="53" height="33" fill="#72c1ab"/>
+<text class="small" x="365.0" y="193" text-anchor="middle">8302</text>
+<rect x="392" y="172" width="53" height="33" fill="#78c3af"/>
+<text class="small" x="419.0" y="193" text-anchor="middle">8277</text>
+<rect x="446" y="172" width="53" height="33" fill="#55b59a"/>
+<text class="small" x="473.0" y="193" text-anchor="middle">8421</text>
+<rect x="500" y="172" width="53" height="33" fill="#4ab193"/>
+<text class="small" x="527.0" y="193" text-anchor="middle">8468</text>
+<rect x="554" y="172" width="53" height="33" fill="#3dac8b"/>
+<text class="small" x="581.0" y="193" text-anchor="middle">8524</text>
+<text x="44" y="228" text-anchor="middle">GT 4</text>
+<rect x="68" y="206" width="53" height="33" fill="#54b599"/>
+<text class="small" x="95.0" y="227" text-anchor="middle">8427</text>
+<rect x="122" y="206" width="53" height="33" fill="#40ad8d"/>
+<text class="small" x="149.0" y="227" text-anchor="middle">8508</text>
+<rect x="176" y="206" width="53" height="33" fill="#37aa88"/>
+<text class="small" x="203.0" y="227" text-anchor="middle">8545</text>
+<rect x="230" y="206" width="53" height="33" fill="#5fb9a0"/>
+<text class="small" x="257.0" y="227" text-anchor="middle">8382</text>
+<rect x="284" y="206" width="53" height="33" fill="#aed9d0"/>
+<text class="small" x="311.0" y="227" text-anchor="middle">8050</text>
+<rect x="338" y="206" width="53" height="33" fill="#8fccbd"/>
+<text class="small" x="365.0" y="227" text-anchor="middle">8179</text>
+<rect x="392" y="206" width="53" height="33" fill="#57b69b"/>
+<text class="small" x="419.0" y="227" text-anchor="middle">8412</text>
+<rect x="446" y="206" width="53" height="33" fill="#63bba3"/>
+<text class="small" x="473.0" y="227" text-anchor="middle">8362</text>
+<rect x="500" y="206" width="53" height="33" fill="#4ab193"/>
+<text class="small" x="527.0" y="227" text-anchor="middle">8469</text>
+<rect x="554" y="206" width="53" height="33" fill="#55b59a"/>
+<text class="small" x="581.0" y="227" text-anchor="middle">8421</text>
+<text x="44" y="262" text-anchor="middle">GT 5</text>
+<rect x="68" y="240" width="53" height="33" fill="#40ad8d"/>
+<text class="small" x="95.0" y="261" text-anchor="middle">8509</text>
+<rect x="122" y="240" width="53" height="33" fill="#1c9f77"/>
+<text class="small" x="149.0" y="261" text-anchor="middle">8658</text>
+<rect x="176" y="240" width="53" height="33" fill="#0e996f"/>
+<text class="small" x="203.0" y="261" text-anchor="middle">8717</text>
+<rect x="230" y="240" width="53" height="33" fill="#27a37d"/>
+<text class="small" x="257.0" y="261" text-anchor="middle">8615</text>
+<rect x="284" y="240" width="53" height="33" fill="#72c1ab"/>
+<text class="small" x="311.0" y="261" text-anchor="middle">8302</text>
+<rect x="338" y="240" width="53" height="33" fill="#76c2ae"/>
+<text class="small" x="365.0" y="261" text-anchor="middle">8286</text>
+<rect x="392" y="240" width="53" height="33" fill="#80c6b4"/>
+<text class="small" x="419.0" y="261" text-anchor="middle">8242</text>
+<rect x="446" y="240" width="53" height="33" fill="#6fc0aa"/>
+<text class="small" x="473.0" y="261" text-anchor="middle">8312</text>
+<rect x="500" y="240" width="53" height="33" fill="#22a17b"/>
+<text class="small" x="527.0" y="261" text-anchor="middle">8633</text>
+<rect x="554" y="240" width="53" height="33" fill="#23a27b"/>
+<text class="small" x="581.0" y="261" text-anchor="middle">8631</text>
+<text x="44" y="296" text-anchor="middle">GT 6</text>
+<rect x="68" y="274" width="53" height="33" fill="#72c1ab"/>
+<text class="small" x="95.0" y="295" text-anchor="middle">8302</text>
+<rect x="122" y="274" width="53" height="33" fill="#059669"/>
+<text class="small" x="149.0" y="295" text-anchor="middle">8758</text>
+<rect x="176" y="274" width="53" height="33" fill="#06966a"/>
+<text class="small" x="203.0" y="295" text-anchor="middle">8751</text>
+<rect x="230" y="274" width="53" height="33" fill="#1b9f76"/>
+<text class="small" x="257.0" y="295" text-anchor="middle">8663</text>
+<rect x="284" y="274" width="53" height="33" fill="#b1dad2"/>
+<text class="small" x="311.0" y="295" text-anchor="middle">8036</text>
+<rect x="338" y="274" width="53" height="33" fill="#5ab79d"/>
+<text class="small" x="365.0" y="295" text-anchor="middle">8402</text>
+<rect x="392" y="274" width="53" height="33" fill="#b2dad3"/>
+<text class="small" x="419.0" y="295" text-anchor="middle">8033</text>
+<rect x="446" y="274" width="53" height="33" fill="#73c1ac"/>
+<text class="small" x="473.0" y="295" text-anchor="middle">8297</text>
+<rect x="500" y="274" width="53" height="33" fill="#119a70"/>
+<text class="small" x="527.0" y="295" text-anchor="middle">8707</text>
+<rect x="554" y="274" width="53" height="33" fill="#179d74"/>
+<text class="small" x="581.0" y="295" text-anchor="middle">8679</text>
+<text class="small" x="68" y="362">min 7789 / max 8758</text></svg>

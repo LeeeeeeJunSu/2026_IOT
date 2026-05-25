@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="703" height="386" viewBox="0 0 703 386">
+<style>text{font-family:Arial,Malgun Gothic,sans-serif;font-size:12px;fill:#202124}.title{font-size:18px;font-weight:700}.small{font-size:10px}.axis{stroke:#60656f;stroke-width:1}.grid{stroke:#e5e7eb;stroke-width:1}.line{fill:none;stroke-width:1.7}.band{fill-opacity:.12}</style>
+<rect width="100%" height="100%" fill="#ffffff"/><text class="title" x="24" y="30">GT? ESP? ?? subcarrier ? (n_subcarriers)</text>
+<text x="68" y="52">node id</text>
+<text x="95.0" y="64" text-anchor="middle">1</text>
+<text x="149.0" y="64" text-anchor="middle">2</text>
+<text x="203.0" y="64" text-anchor="middle">3</text>
+<text x="257.0" y="64" text-anchor="middle">4</text>
+<text x="311.0" y="64" text-anchor="middle">5</text>
+<text x="365.0" y="64" text-anchor="middle">6</text>
+<text x="419.0" y="64" text-anchor="middle">7</text>
+<text x="473.0" y="64" text-anchor="middle">8</text>
+<text x="527.0" y="64" text-anchor="middle">9</text>
+<text x="581.0" y="64" text-anchor="middle">10</text>
+<text x="44" y="92" text-anchor="middle">GT 0</text>
+<rect x="68" y="70" width="53" height="33" fill="#d9e3f1"/>
+<text class="small" x="95.0" y="91" text-anchor="middle">118.2</text>
+<rect x="122" y="70" width="53" height="33" fill="#afc5e1"/>
+<text class="small" x="149.0" y="91" text-anchor="middle">117.1</text>
+<rect x="176" y="70" width="53" height="33" fill="#fbf2f2"/>
+<text class="small" x="203.0" y="91" text-anchor="middle">119.5</text>
+<rect x="230" y="70" width="53" height="33" fill="#c5d5e9"/>
+<text class="small" x="257.0" y="91" text-anchor="middle">117.7</text>
+<rect x="284" y="70" width="53" height="33" fill="#e6a1a1"/>
+<text class="small" x="311.0" y="91" text-anchor="middle">121.5</text>
+<rect x="338" y="70" width="53" height="33" fill="#c93535"/>
+<text class="small" x="365.0" y="91" text-anchor="middle">124.2</text>
+<rect x="392" y="70" width="53" height="33" fill="#e49b9b"/>
+<text class="small" x="419.0" y="91" text-anchor="middle">121.6</text>
+<rect x="446" y="70" width="53" height="33" fill="#ebb6b6"/>
+<text class="small" x="473.0" y="91" text-anchor="middle">121.0</text>
+<rect x="500" y="70" width="53" height="33" fill="#f7e1e1"/>
+<text class="small" x="527.0" y="91" text-anchor="middle">119.9</text>
+<rect x="554" y="70" width="53" height="33" fill="#ccd9ec"/>
+<text class="small" x="581.0" y="91" text-anchor="middle">117.9</text>
+<text x="44" y="126" text-anchor="middle">GT 1</text>
+<rect x="68" y="104" width="53" height="33" fill="#de8383"/>
+<text class="small" x="95.0" y="125" text-anchor="middle">122.2</text>
+<rect x="122" y="104" width="53" height="33" fill="#fdfafa"/>
+<text class="small" x="149.0" y="125" text-anchor="middle">119.3</text>
+<rect x="176" y="104" width="53" height="33" fill="#e6a2a2"/>
+<text class="small" x="203.0" y="125" text-anchor="middle">121.5</text>
+<rect x="230" y="104" width="53" height="33" fill="#faeded"/>
+<text class="small" x="257.0" y="125" text-anchor="middle">119.6</text>
+<rect x="284" y="104" width="53" height="33" fill="#e49c9c"/>
+<text class="small" x="311.0" y="125" text-anchor="middle">121.6</text>
+<rect x="338" y="104" width="53" height="33" fill="#d15151"/>
+<text class="small" x="365.0" y="125" text-anchor="middle">123.5</text>
+<rect x="392" y="104" width="53" height="33" fill="#d66767"/>
+<text class="small" x="419.0" y="125" text-anchor="middle">122.9</text>
+<rect x="446" y="104" width="53" height="33" fill="#e08c8c"/>
+<text class="small" x="473.0" y="125" text-anchor="middle">122.0</text>
+<rect x="500" y="104" width="53" height="33" fill="#e39595"/>
+<text class="small" x="527.0" y="125" text-anchor="middle">121.8</text>
+<rect x="554" y="104" width="53" height="33" fill="#f6dddd"/>
+<text class="small" x="581.0" y="125" text-anchor="middle">120.0</text>
+<text x="44" y="160" text-anchor="middle">GT 2</text>
+<rect x="68" y="138" width="53" height="33" fill="#e8aaaa"/>
+<text class="small" x="95.0" y="159" text-anchor="middle">121.3</text>
+<rect x="122" y="138" width="53" height="33" fill="#fafbfd"/>
+<text class="small" x="149.0" y="159" text-anchor="middle">119.1</text>
+<rect x="176" y="138" width="53" height="33" fill="#df8888"/>
+<text class="small" x="203.0" y="159" text-anchor="middle">122.1</text>
+<rect x="230" y="138" width="53" height="33" fill="#fefdfd"/>
+<text class="small" x="257.0" y="159" text-anchor="middle">119.2</text>
+<rect x="284" y="138" width="53" height="33" fill="#da7373"/>
+<text class="small" x="311.0" y="159" text-anchor="middle">122.6</text>
+<rect x="338" y="138" width="53" height="33" fill="#cc4141"/>
+<text class="small" x="365.0" y="159" text-anchor="middle">123.9</text>
+<rect x="392" y="138" width="53" height="33" fill="#dc7e7e"/>
+<text class="small" x="419.0" y="159" text-anchor="middle">122.4</text>
+<rect x="446" y="138" width="53" height="33" fill="#d05151"/>
+<text class="small" x="473.0" y="159" text-anchor="middle">123.5</text>
+<rect x="500" y="138" width="53" height="33" fill="#eab1b1"/>
+<text class="small" x="527.0" y="159" text-anchor="middle">121.1</text>
+<rect x="554" y="138" width="53" height="33" fill="#f8e5e5"/>
+<text class="small" x="581.0" y="159" text-anchor="middle">119.8</text>
+<text x="44" y="194" text-anchor="middle">GT 3</text>
+<rect x="68" y="172" width="53" height="33" fill="#f6dfdf"/>
+<text class="small" x="95.0" y="193" text-anchor="middle">119.9</text>
+<rect x="122" y="172" width="53" height="33" fill="#f0f4f9"/>
+<text class="small" x="149.0" y="193" text-anchor="middle">118.8</text>
+<rect x="176" y="172" width="53" height="33" fill="#ebb3b3"/>
+<text class="small" x="203.0" y="193" text-anchor="middle">121.0</text>
+<rect x="230" y="172" width="53" height="33" fill="#f9fbfd"/>
+<text class="small" x="257.0" y="193" text-anchor="middle">119.0</text>
+<rect x="284" y="172" width="53" height="33" fill="#c72d2d"/>
+<text class="small" x="311.0" y="193" text-anchor="middle">124.4</text>
+<rect x="338" y="172" width="53" height="33" fill="#dc7b7b"/>
+<text class="small" x="365.0" y="193" text-anchor="middle">122.4</text>
+<rect x="392" y="172" width="53" height="33" fill="#dd8181"/>
+<text class="small" x="419.0" y="193" text-anchor="middle">122.3</text>
+<rect x="446" y="172" width="53" height="33" fill="#db7979"/>
+<text class="small" x="473.0" y="193" text-anchor="middle">122.5</text>
+<rect x="500" y="172" width="53" height="33" fill="#edbcbc"/>
+<text class="small" x="527.0" y="193" text-anchor="middle">120.8</text>
+<rect x="554" y="172" width="53" height="33" fill="#faefef"/>
+<text class="small" x="581.0" y="193" text-anchor="middle">119.6</text>
+<text x="44" y="228" text-anchor="middle">GT 4</text>
+<rect x="68" y="206" width="53" height="33" fill="#fbf1f1"/>
+<text class="small" x="95.0" y="227" text-anchor="middle">119.5</text>
+<rect x="122" y="206" width="53" height="33" fill="#eef2f8"/>
+<text class="small" x="149.0" y="227" text-anchor="middle">118.7</text>
+<rect x="176" y="206" width="53" height="33" fill="#ebb3b3"/>
+<text class="small" x="203.0" y="227" text-anchor="middle">121.0</text>
+<rect x="230" y="206" width="53" height="33" fill="#f6f8fb"/>
+<text class="small" x="257.0" y="227" text-anchor="middle">118.9</text>
+<rect x="284" y="206" width="53" height="33" fill="#c62828"/>
+<text class="small" x="311.0" y="227" text-anchor="middle">124.5</text>
+<rect x="338" y="206" width="53" height="33" fill="#d97171"/>
+<text class="small" x="365.0" y="227" text-anchor="middle">122.7</text>
+<rect x="392" y="206" width="53" height="33" fill="#e6a3a3"/>
+<text class="small" x="419.0" y="227" text-anchor="middle">121.4</text>
+<rect x="446" y="206" width="53" height="33" fill="#d46060"/>
+<text class="small" x="473.0" y="227" text-anchor="middle">123.1</text>
+<rect x="500" y="206" width="53" height="33" fill="#f3d1d1"/>
+<text class="small" x="527.0" y="227" text-anchor="middle">120.3</text>
+<rect x="554" y="206" width="53" height="33" fill="#f5dada"/>
+<text class="small" x="581.0" y="227" text-anchor="middle">120.1</text>
+<text x="44" y="262" text-anchor="middle">GT 5</text>
+<rect x="68" y="240" width="53" height="33" fill="#e08a8a"/>
+<text class="small" x="95.0" y="261" text-anchor="middle">122.1</text>
+<rect x="122" y="240" width="53" height="33" fill="#dde6f2"/>
+<text class="small" x="149.0" y="261" text-anchor="middle">118.3</text>
+<rect x="176" y="240" width="53" height="33" fill="#e5a0a0"/>
+<text class="small" x="203.0" y="261" text-anchor="middle">121.5</text>
+<rect x="230" y="240" width="53" height="33" fill="#d7e1f0"/>
+<text class="small" x="257.0" y="261" text-anchor="middle">118.1</text>
+<rect x="284" y="240" width="53" height="33" fill="#d86d6d"/>
+<text class="small" x="311.0" y="261" text-anchor="middle">122.8</text>
+<rect x="338" y="240" width="53" height="33" fill="#da7373"/>
+<text class="small" x="365.0" y="261" text-anchor="middle">122.6</text>
+<rect x="392" y="240" width="53" height="33" fill="#e49a9a"/>
+<text class="small" x="419.0" y="261" text-anchor="middle">121.7</text>
+<rect x="446" y="240" width="53" height="33" fill="#d35a5a"/>
+<text class="small" x="473.0" y="261" text-anchor="middle">123.2</text>
+<rect x="500" y="240" width="53" height="33" fill="#f9eaea"/>
+<text class="small" x="527.0" y="261" text-anchor="middle">119.7</text>
+<rect x="554" y="240" width="53" height="33" fill="#fcf6f6"/>
+<text class="small" x="581.0" y="261" text-anchor="middle">119.4</text>
+<text x="44" y="296" text-anchor="middle">GT 6</text>
+<rect x="68" y="274" width="53" height="33" fill="#d4e0ef"/>
+<text class="small" x="95.0" y="295" text-anchor="middle">118.1</text>
+<rect x="122" y="274" width="53" height="33" fill="#3168b2"/>
+<text class="small" x="149.0" y="295" text-anchor="middle">113.8</text>
+<rect x="176" y="274" width="53" height="33" fill="#b7cae4"/>
+<text class="small" x="203.0" y="295" text-anchor="middle">117.3</text>
+<rect x="230" y="274" width="53" height="33" fill="#4c7cbc"/>
+<text class="small" x="257.0" y="295" text-anchor="middle">114.5</text>
+<rect x="284" y="274" width="53" height="33" fill="#f3d3d3"/>
+<text class="small" x="311.0" y="295" text-anchor="middle">120.3</text>
+<rect x="338" y="274" width="53" height="33" fill="#efc5c5"/>
+<text class="small" x="365.0" y="295" text-anchor="middle">120.6</text>
+<rect x="392" y="274" width="53" height="33" fill="#fafcfd"/>
+<text class="small" x="419.0" y="295" text-anchor="middle">119.1</text>
+<rect x="446" y="274" width="53" height="33" fill="#fcf5f5"/>
+<text class="small" x="473.0" y="295" text-anchor="middle">119.4</text>
+<rect x="500" y="274" width="53" height="33" fill="#658ec5"/>
+<text class="small" x="527.0" y="295" text-anchor="middle">115.2</text>
+<rect x="554" y="274" width="53" height="33" fill="#386db4"/>
+<text class="small" x="581.0" y="295" text-anchor="middle">114.0</text>
+<text class="small" x="68" y="362">min 113.82 / max 124.52</text>
+</svg>

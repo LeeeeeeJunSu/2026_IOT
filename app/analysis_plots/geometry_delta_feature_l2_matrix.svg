@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="990" height="430" viewBox="0 0 990 430">
+<style>text{font-family:Arial,Malgun Gothic,sans-serif;fill:#202124;font-size:12px}.title{font-size:20px;font-weight:700}.small{font-size:10px}</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<text class="title" x="28" y="32">GT0 ?? ESP? feature L2 ???</text>
+<text x="28" y="54">?? ??: ? / ??? ? / ?? ? / ?</text>
+<text x="139.0" y="64" text-anchor="middle">front 9</text>
+<text x="217.0" y="64" text-anchor="middle">R1</text>
+<text x="295.0" y="64" text-anchor="middle">R2</text>
+<text x="373.0" y="64" text-anchor="middle">R3</text>
+<text x="451.0" y="64" text-anchor="middle">R4</text>
+<text x="529.0" y="64" text-anchor="middle">L5</text>
+<text x="607.0" y="64" text-anchor="middle">L6</text>
+<text x="685.0" y="64" text-anchor="middle">L7</text>
+<text x="763.0" y="64" text-anchor="middle">L8</text>
+<text x="841.0" y="64" text-anchor="middle">back 10</text>
+<text x="84" y="105" text-anchor="end">GT1</text>
+<rect x="100" y="80" width="77" height="39" fill="#fad171"/>
+<text x="139.0" y="105" text-anchor="middle">1.40</text>
+<rect x="178" y="80" width="77" height="39" fill="#fef3b5"/>
+<text x="217.0" y="105" text-anchor="middle">0.43</text>
+<rect x="256" y="80" width="77" height="39" fill="#fbd980"/>
+<text x="295.0" y="105" text-anchor="middle">1.19</text>
+<rect x="334" y="80" width="77" height="39" fill="#fff7bc"/>
+<text x="373.0" y="105" text-anchor="middle">0.34</text>
+<rect x="412" y="80" width="77" height="39" fill="#f8c151"/>
+<text x="451.0" y="105" text-anchor="middle">1.87</text>
+<rect x="490" y="80" width="77" height="39" fill="#f7b437"/>
+<text x="529.0" y="105" text-anchor="middle">2.24</text>
+<rect x="568" y="80" width="77" height="39" fill="#f9c961"/>
+<text x="607.0" y="105" text-anchor="middle">1.64</text>
+<rect x="646" y="80" width="77" height="39" fill="#f7b73d"/>
+<text x="685.0" y="105" text-anchor="middle">2.15</text>
+<rect x="724" y="80" width="77" height="39" fill="#f5a316"/>
+<text x="763.0" y="105" text-anchor="middle">2.72</text>
+<rect x="802" y="80" width="77" height="39" fill="#fce08f"/>
+<text x="841.0" y="105" text-anchor="middle">0.99</text>
+<text x="84" y="145" text-anchor="end">GT2</text>
+<rect x="100" y="120" width="77" height="39" fill="#f8be4b"/>
+<text x="139.0" y="145" text-anchor="middle">1.95</text>
+<rect x="178" y="120" width="77" height="39" fill="#facc67"/>
+<text x="217.0" y="145" text-anchor="middle">1.55</text>
+<rect x="256" y="120" width="77" height="39" fill="#fce496"/>
+<text x="295.0" y="145" text-anchor="middle">0.88</text>
+<rect x="334" y="120" width="77" height="39" fill="#fad171"/>
+<text x="373.0" y="145" text-anchor="middle">1.41</text>
+<rect x="412" y="120" width="77" height="39" fill="#fbd67a"/>
+<text x="451.0" y="145" text-anchor="middle">1.27</text>
+<rect x="490" y="120" width="77" height="39" fill="#face6b"/>
+<text x="529.0" y="145" text-anchor="middle">1.50</text>
+<rect x="568" y="120" width="77" height="39" fill="#fcdf8d"/>
+<text x="607.0" y="145" text-anchor="middle">1.01</text>
+<rect x="646" y="120" width="77" height="39" fill="#fbd981"/>
+<text x="685.0" y="145" text-anchor="middle">1.19</text>
+<rect x="724" y="120" width="77" height="39" fill="#c2685e"/>
+<text x="763.0" y="145" text-anchor="middle">3.96</text>
+<rect x="802" y="120" width="77" height="39" fill="#fbd77d"/>
+<text x="841.0" y="145" text-anchor="middle">1.23</text>
+<text x="84" y="185" text-anchor="end">GT3</text>
+<rect x="100" y="160" width="77" height="39" fill="#f7b73d"/>
+<text x="139.0" y="185" text-anchor="middle">2.16</text>
+<rect x="178" y="160" width="77" height="39" fill="#fef0ae"/>
+<text x="217.0" y="185" text-anchor="middle">0.54</text>
+<rect x="256" y="160" width="77" height="39" fill="#7e22ce"/>
+<text x="295.0" y="185" text-anchor="middle">5.41</text>
+<rect x="334" y="160" width="77" height="39" fill="#fce08f"/>
+<text x="373.0" y="185" text-anchor="middle">0.98</text>
+<rect x="412" y="160" width="77" height="39" fill="#f7b233"/>
+<text x="451.0" y="185" text-anchor="middle">2.29</text>
+<rect x="490" y="160" width="77" height="39" fill="#c56d58"/>
+<text x="529.0" y="185" text-anchor="middle">3.88</text>
+<rect x="568" y="160" width="77" height="39" fill="#f8bc47"/>
+<text x="607.0" y="185" text-anchor="middle">2.01</text>
+<rect x="646" y="160" width="77" height="39" fill="#fbd477"/>
+<text x="685.0" y="185" text-anchor="middle">1.33</text>
+<rect x="724" y="160" width="77" height="39" fill="#db8334"/>
+<text x="763.0" y="185" text-anchor="middle">3.42</text>
+<rect x="802" y="160" width="77" height="39" fill="#fce08e"/>
+<text x="841.0" y="185" text-anchor="middle">1.00</text>
+<text x="84" y="225" text-anchor="end">GT4</text>
+<rect x="100" y="200" width="77" height="39" fill="#f5a519"/>
+<text x="139.0" y="225" text-anchor="middle">2.67</text>
+<rect x="178" y="200" width="77" height="39" fill="#fce292"/>
+<text x="217.0" y="225" text-anchor="middle">0.93</text>
+<rect x="256" y="200" width="77" height="39" fill="#de8630"/>
+<text x="295.0" y="225" text-anchor="middle">3.37</text>
+<rect x="334" y="200" width="77" height="39" fill="#fbd87f"/>
+<text x="373.0" y="225" text-anchor="middle">1.21</text>
+<rect x="412" y="200" width="77" height="39" fill="#f6a71d"/>
+<text x="451.0" y="225" text-anchor="middle">2.62</text>
+<rect x="490" y="200" width="77" height="39" fill="#f5a112"/>
+<text x="529.0" y="225" text-anchor="middle">2.78</text>
+<rect x="568" y="200" width="77" height="39" fill="#f9c960"/>
+<text x="607.0" y="225" text-anchor="middle">1.65</text>
+<rect x="646" y="200" width="77" height="39" fill="#fde89f"/>
+<text x="685.0" y="225" text-anchor="middle">0.75</text>
+<rect x="724" y="200" width="77" height="39" fill="#f9c85f"/>
+<text x="763.0" y="225" text-anchor="middle">1.67</text>
+<rect x="802" y="200" width="77" height="39" fill="#facd69"/>
+<text x="841.0" y="225" text-anchor="middle">1.53</text>
+<text x="84" y="265" text-anchor="end">GT5</text>
+<rect x="100" y="240" width="77" height="39" fill="#d17845"/>
+<text x="139.0" y="265" text-anchor="middle">3.64</text>
+<rect x="178" y="240" width="77" height="39" fill="#f8bf4d"/>
+<text x="217.0" y="265" text-anchor="middle">1.93</text>
+<rect x="256" y="240" width="77" height="39" fill="#b0567b"/>
+<text x="295.0" y="265" text-anchor="middle">4.34</text>
+<rect x="334" y="240" width="77" height="39" fill="#facc67"/>
+<text x="373.0" y="265" text-anchor="middle">1.55</text>
+<rect x="412" y="240" width="77" height="39" fill="#f8ba44"/>
+<text x="451.0" y="265" text-anchor="middle">2.06</text>
+<rect x="490" y="240" width="77" height="39" fill="#fbd478"/>
+<text x="529.0" y="265" text-anchor="middle">1.31</text>
+<rect x="568" y="240" width="77" height="39" fill="#f6a71e"/>
+<text x="607.0" y="265" text-anchor="middle">2.60</text>
+<rect x="646" y="240" width="77" height="39" fill="#f8ba44"/>
+<text x="685.0" y="265" text-anchor="middle">2.06</text>
+<rect x="724" y="240" width="77" height="39" fill="#d37b41"/>
+<text x="763.0" y="265" text-anchor="middle">3.59</text>
+<rect x="802" y="240" width="77" height="39" fill="#fbd980"/>
+<text x="841.0" y="265" text-anchor="middle">1.19</text>
+<text x="84" y="305" text-anchor="end">GT6</text>
+<rect x="100" y="280" width="77" height="39" fill="#f19a10"/>
+<text x="139.0" y="305" text-anchor="middle">2.96</text>
+<rect x="178" y="280" width="77" height="39" fill="#fcde8b"/>
+<text x="217.0" y="305" text-anchor="middle">1.04</text>
+<rect x="256" y="280" width="77" height="39" fill="#f5a00e"/>
+<text x="295.0" y="305" text-anchor="middle">2.82</text>
+<rect x="334" y="280" width="77" height="39" fill="#fde69b"/>
+<text x="373.0" y="305" text-anchor="middle">0.80</text>
+<rect x="412" y="280" width="77" height="39" fill="#f7b539"/>
+<text x="451.0" y="305" text-anchor="middle">2.22</text>
+<rect x="490" y="280" width="77" height="39" fill="#f5a518"/>
+<text x="529.0" y="305" text-anchor="middle">2.68</text>
+<rect x="568" y="280" width="77" height="39" fill="#f9c75d"/>
+<text x="607.0" y="305" text-anchor="middle">1.70</text>
+<rect x="646" y="280" width="77" height="39" fill="#fcde8b"/>
+<text x="685.0" y="305" text-anchor="middle">1.04</text>
+<rect x="724" y="280" width="77" height="39" fill="#d87f3a"/>
+<text x="763.0" y="305" text-anchor="middle">3.49</text>
+<rect x="802" y="280" width="77" height="39" fill="#fbd57a"/>
+<text x="841.0" y="305" text-anchor="middle">1.28</text>
+<text class="small" x="100" y="396">min 0.34 / max 5.41</text>
+</svg>
