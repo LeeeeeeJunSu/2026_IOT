@@ -1,7 +1,12 @@
-# Runtime tested on Raspberry Pi with Python 3.14.4.
+# Runtime dependencies shared by Windows/Linux/Raspberry Pi.
 #
-# Install Python packages:
-#   python3 -m pip install --user --break-system-packages -r requirements.txt
+# Raspberry Pi 5 / Ubuntu 24.04 uses Python 3.12 by default. Install in a
+# virtual environment instead of using --break-system-packages:
+#   python3 -m venv .venv-pi
+#   source .venv-pi/bin/activate
+#   python -m pip install --upgrade pip
+#   python -m pip install -r requirements.txt
+#   python -m pip install -r requirements-pi-cpu.txt
 #
 # Recommended system packages for the full app:
 #   sudo apt install python3-pip python3-venv python3-tk python3-gpiozero python3-lgpio
@@ -14,6 +19,9 @@
 #   Installing python3-gpiozero and python3-lgpio from apt is recommended.
 # - Keep scikit-learn pinned because saved model_bundle.pkl files are
 #   version-sensitive.
+# - PyTorch is intentionally kept in a separate requirements file so Raspberry
+#   Pi can install the CPU-only wheel and CUDA workstations can install the
+#   matching CUDA wheel.
 
 numpy==2.4.4
 scipy==1.17.1

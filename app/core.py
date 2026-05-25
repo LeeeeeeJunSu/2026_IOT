@@ -109,6 +109,28 @@ class ModelMetadata:
     class_labels: list[str]
     summary: str
 
+
+class DeepTorchPipeline:
+    def __init__(self, *, model: Any, classes: list[str], device: Any) -> None:
+        self.model = model
+        self.classes_ = np.asarray(classes)
+        self.device = device
+
+    def predict_proba(self, samples: list[object]) -> np.ndarray:
+        if not samples:
+            return np.empty((0, len(self.classes_)), dtype=np.float32)
+        import torch
+
+        array = np.asarray(samples, dtype=np.float32)
+        if array.ndim == 2:
+            array = array[np.newaxis, :, :]
+        with torch.no_grad():
+            tensor = torch.from_numpy(array).to(self.device)
+            logits = self.model(tensor)
+            probabilities = torch.softmax(logits, dim=1).detach().cpu().numpy()
+        return probabilities.astype(np.float32, copy=False)
+
+
 class FingerprintEngine:
     STORE_VERSION = 9
     MODEL_ORDER = ("VariableNodeAggregateExtraTrees", "VariableNodeExtraTrees", "ExtraTreesWindowed")
@@ -123,6 +145,7 @@ class FingerprintEngine:
         self.config_path = self.workspace_root.parent / "Config" / "system_config.json"
         self.fingerprint_path = self.workspace_root / "data" / "fingerprints.json"
         self.model_path = self.workspace_root / "data" / "model_bundle.pkl"
+        self.deep_model_dir = self.workspace_root / "data" / "deep_gt_training"
         self.comm_log_path = self.workspace_root / "data" / "communication.log"
         self.lock = threading.RLock()
         self.system_config = load_system_config(self.config_path)
@@ -320,6 +343,10 @@ class FingerprintEngine:
     def _is_variable_node_aggregate_model_name(self, model_name: str | None) -> bool:
         return model_name == "VariableNodeAggregateExtraTrees"
 
+    @staticmethod
+    def _is_deep_model_name(model_name: str | None) -> bool:
+        return bool(model_name and model_name.startswith("Deep"))
+
     @property
     def aggregate_feature_size(self) -> int:
         return self.per_node_feature_size * 4
@@ -367,6 +394,7 @@ class FingerprintEngine:
 
     def set_active_model(self, model_name: str) -> None:
         with self.lock:
+            model_name = self._resolve_model_name_locked(model_name)
             if model_name not in self.model_pipelines:
                 raise RuntimeError(f"Model '{model_name}' is not trained yet.")
             if self.active_model_name == model_name:
@@ -375,7 +403,8 @@ class FingerprintEngine:
             self._clear_prediction_locked()
             self._schedule_inference_now_locked()
             self.status_message = f"Active inference model set to {model_name}."
-            self._save_models()
+            if not self._is_deep_model_name(model_name):
+                self._save_models()
             self._log_event_locked("TRAIN", f"Active inference model set to {model_name}")
 
     def start_baseline_capture(self, *, reset_training: bool = False) -> None:
@@ -1783,7 +1812,10 @@ class FingerprintEngine:
             self._clear_prediction_locked()
             return
 
-        if self._is_variable_node_aggregate_model_name(self.active_model_name):
+        if self._is_deep_model_name(self.active_model_name):
+            sample = self._build_live_deep_sample_locked(now)
+            samples = [] if sample is None else [sample]
+        elif self._is_variable_node_aggregate_model_name(self.active_model_name):
             node_samples = self._build_live_node_samples_locked(now)
             aggregate_sample = self._aggregate_node_feature_rows(node_samples)
             samples = [] if aggregate_sample is None else [aggregate_sample]
@@ -1835,6 +1867,76 @@ class FingerprintEngine:
         if self.active_model_name is None:
             return None
         return self.model_pipelines.get(self.active_model_name)
+
+    def _build_live_deep_sample_locked(self, now: float) -> np.ndarray | None:
+        required_node_ids = self.required_node_ids
+        if not required_node_ids:
+            return None
+        if self.baseline_required_for_training and not self._baseline_ready_locked():
+            return None
+
+        horizon_sample_count = max(
+            self.window_sample_count + self.smoothing_half_window * 2,
+            self.window_sample_count * self.LIVE_PREPROCESS_HORIZON_WINDOWS,
+        )
+        required_recent_samples = self.window_sample_count + self.smoothing_half_window * 2
+        horizon_seconds = float(horizon_sample_count) / self.effective_packets_per_second
+        start_time = now - horizon_seconds
+        frames_by_node = {
+            node_id: list(self.node_windows.get(node_id, []))
+            for node_id in required_node_ids
+        }
+        (
+            aligned_vectors_by_node,
+            aligned_scalars_by_node,
+            total_slots,
+            valid_slots,
+        ) = self._build_aligned_node_feature_rows_locked(
+            frames_by_node,
+            start_time=start_time,
+            end_time=now,
+        )
+        if total_slots < horizon_sample_count or valid_slots < required_recent_samples:
+            return None
+
+        node_parts: list[np.ndarray] = []
+        for node_id in required_node_ids:
+            amplitude_rows = np.asarray(
+                aligned_vectors_by_node.get(node_id, [])[-horizon_sample_count:],
+                dtype=np.float32,
+            )
+            scalar_rows = np.asarray(
+                aligned_scalars_by_node.get(node_id, [])[-horizon_sample_count:],
+                dtype=np.float32,
+            )
+            if amplitude_rows.shape != (horizon_sample_count, ACTIVE_SUBCARRIER_COUNT):
+                return None
+            if scalar_rows.shape != (horizon_sample_count, len(SCALAR_KEYS)):
+                return None
+
+            baseline = np.asarray(
+                self._baseline_vector_for_node_locked(node_id, amplitude_rows.tolist()),
+                dtype=np.float32,
+            )
+            centered = amplitude_rows - baseline.reshape(1, -1)
+            scales = np.percentile(np.abs(centered), 95.0, axis=0)
+            normalized_amplitudes = centered / np.maximum(scales.reshape(1, -1), 1e-6)
+
+            scalar_mean = scalar_rows.mean(axis=0)
+            scalar_std = scalar_rows.std(axis=0)
+            normalized_scalars = (scalar_rows - scalar_mean.reshape(1, -1)) / np.maximum(
+                scalar_std.reshape(1, -1),
+                1e-6,
+            )
+            node_parts.append(
+                np.concatenate([normalized_amplitudes, normalized_scalars], axis=1)
+            )
+
+        sample = np.concatenate(node_parts, axis=1).astype(np.float32, copy=False)
+        expected_width = len(required_node_ids) * (ACTIVE_SUBCARRIER_COUNT + len(SCALAR_KEYS))
+        if sample.shape != (horizon_sample_count, expected_width):
+            return None
+        return sample
 
     def _smooth_probabilities_locked(
         self,
@@ -2074,9 +2176,53 @@ class FingerprintEngine:
         return self.has_empty_room_training
 
     def _available_model_names_locked(self) -> list[str]:
-        return [
+        ordered = [
             model_name for model_name in self.MODEL_ORDER if model_name in self.model_pipelines
         ]
+        ordered.extend(
+            sorted(
+                model_name
+                for model_name in self.model_pipelines
+                if model_name not in set(ordered)
+            )
+        )
+        return ordered
+
+    def available_model_names(self) -> list[str]:
+        with self.lock:
+            return self._available_model_names_locked()
+
+    def _resolve_model_name_locked(self, requested: str) -> str:
+        requested = str(requested).strip()
+        if requested in self.model_pipelines:
+            return requested
+        lower = requested.lower()
+        aliases = {
+            "extra": "VariableNodeAggregateExtraTrees",
+            "extratrees": "VariableNodeAggregateExtraTrees",
+            "aggregate": "VariableNodeAggregateExtraTrees",
+            "deep": "DeepCNNV1",
+            "cnn": "DeepCNNV1",
+            "cnn_v1": "DeepCNNV1",
+            "deepcnn": "DeepCNNV1",
+            "deep_cnn": "DeepCNNV1",
+            "cnn_v2": "DeepCNNV2",
+            "tcn": "DeepCNNV2",
+            "gru": "DeepGRUV1",
+            "gru_v1": "DeepGRUV1",
+            "rnn": "DeepGRUV1",
+            "lstm": "DeepLSTMV1",
+            "lstm_v1": "DeepLSTMV1",
+            "transformer": "DeepTransformerV1",
+            "transformer_v1": "DeepTransformerV1",
+        }
+        alias = aliases.get(lower)
+        if alias in self.model_pipelines:
+            return alias
+        for model_name in self.model_pipelines:
+            if model_name.lower() == lower:
+                return model_name
+        return requested
 
     def _build_training_matrix_locked(self) -> tuple[list[list[float]], list[str]]:
         if not self._can_train_locked():
@@ -2415,16 +2561,18 @@ class FingerprintEngine:
 
     def _load_models(self) -> None:
         payload = load_pickle_store(self.model_path)
-        if not isinstance(payload, dict):
-            return
         loaded_models: dict[str, Any] = {}
         loaded_metadata: dict[str, ModelMetadata] = {}
+        active_model_name: str | None = None
+
+        if not isinstance(payload, dict):
+            payload = {}
 
         if "models" in payload:
             models_raw = payload.get("models")
             if not isinstance(models_raw, dict):
                 remove_store(self.model_path)
-                return
+                models_raw = {}
             for model_name, model_payload in models_raw.items():
                 if not isinstance(model_payload, dict):
                     continue
@@ -2440,26 +2588,26 @@ class FingerprintEngine:
                 loaded_models[model_name] = pipeline
                 loaded_metadata[model_name] = metadata
             active_model_name = str(payload.get("active_model", "")) or None
-        else:
+        elif payload:
             pipeline = payload.get("pipeline")
             metadata_raw = payload.get("metadata")
             if pipeline is None or not isinstance(metadata_raw, dict):
                 remove_store(self.model_path)
-                return
-            fallback_model_name = str(
-                metadata_raw.get("model_key", "ExtraTreesWindowed")
-            )
-            if fallback_model_name not in self.MODEL_ORDER:
-                remove_store(self.model_path)
-                return
-            metadata = self._metadata_from_payload(fallback_model_name, metadata_raw)
-            if self._model_metadata_matches_config(metadata):
-                loaded_models[fallback_model_name] = pipeline
-                loaded_metadata[fallback_model_name] = metadata
-            active_model_name = fallback_model_name
+            else:
+                fallback_model_name = str(
+                    metadata_raw.get("model_key", "ExtraTreesWindowed")
+                )
+                if fallback_model_name not in self.MODEL_ORDER:
+                    remove_store(self.model_path)
+                else:
+                    metadata = self._metadata_from_payload(fallback_model_name, metadata_raw)
+                    if self._model_metadata_matches_config(metadata):
+                        loaded_models[fallback_model_name] = pipeline
+                        loaded_metadata[fallback_model_name] = metadata
+                    active_model_name = fallback_model_name
 
+        self._load_deep_models_locked(loaded_models, loaded_metadata)
         if not loaded_models:
-            remove_store(self.model_path)
             return
 
         self.model_pipelines = loaded_models
@@ -2469,6 +2617,62 @@ class FingerprintEngine:
             if active_model_name in self.model_pipelines
             else self._available_model_names_locked()[0]
         )
+
+    def _load_deep_models_locked(
+        self,
+        loaded_models: dict[str, Any],
+        loaded_metadata: dict[str, ModelMetadata],
+    ) -> None:
+        if not self.deep_model_dir.exists():
+            return
+        try:
+            import torch
+            from app.train_deep_gt_model import MODEL_ALIASES, make_model
+        except Exception as exc:
+            self._log_event_locked("WARN", f"Deep model loading skipped: {exc}")
+            return
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        name_map = {
+            "cnn_v1": "DeepCNNV1",
+            "cnn_v2": "DeepCNNV2",
+            "gru_v1": "DeepGRUV1",
+            "lstm_v1": "DeepLSTMV1",
+            "transformer_v1": "DeepTransformerV1",
+        }
+        for path in sorted(self.deep_model_dir.glob("*_gt_model.pt")):
+            try:
+                checkpoint = torch.load(path, map_location=device, weights_only=False)
+                raw_model_name = str(checkpoint.get("model_name", path.stem))
+                canonical = MODEL_ALIASES.get(raw_model_name, raw_model_name)
+                labels = [str(label) for label in checkpoint.get("labels", [])]
+                input_size = int(checkpoint.get("input_size", 0))
+                horizon_samples = int(checkpoint.get("horizon_samples", 0))
+                if not labels or input_size <= 0 or horizon_samples <= 0:
+                    continue
+                model = make_model(canonical, input_size, len(labels)).to(device)
+                model.load_state_dict(checkpoint["state_dict"])
+                model.eval()
+                model_key = name_map.get(canonical, f"Deep{canonical}")
+                loaded_models[model_key] = DeepTorchPipeline(
+                    model=model,
+                    classes=labels,
+                    device=device,
+                )
+                loaded_metadata[model_key] = ModelMetadata(
+                    model_key=model_key,
+                    trained_at=float(path.stat().st_mtime),
+                    window_seconds=float(horizon_samples) / self.effective_packets_per_second,
+                    window_step_seconds=self.window_step_seconds,
+                    feature_signature=f"deep_live_horizon_{horizon_samples}x{input_size}",
+                    node_ids=self.required_node_ids,
+                    input_size=input_size,
+                    sample_count=0,
+                    class_labels=labels,
+                    summary=f"PyTorch {canonical} loaded from {path.name} on {device}",
+                )
+            except Exception as exc:
+                self._log_event_locked("WARN", f"Failed to load deep model {path.name}: {exc}")
 
     def _metadata_from_payload(
         self, model_name: str, metadata_raw: dict[str, object]

@@ -67,6 +67,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Disable Raspberry Pi GPIO LED zone control.",
     )
+    parser.add_argument(
+        "--model",
+        default="",
+        help="Active model to use, e.g. DeepCNNV1, DeepGRUV1, cnn, gru, or ExtraTrees.",
+    )
+    parser.add_argument(
+        "--list-models",
+        action="store_true",
+        help="Print loadable models and exit.",
+    )
     return parser
 
 
@@ -74,6 +84,18 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     workspace = Path(__file__).resolve().parent
     engine = FingerprintEngine(workspace)
+    if args.list_models:
+        models = engine.available_model_names()
+        if not models:
+            print("No trained models found.", flush=True)
+            return 1
+        print("Available models:", flush=True)
+        for model_name in models:
+            marker = "*" if model_name == engine.active_model_name else " "
+            print(f"{marker} {model_name}", flush=True)
+        return 0
+    if args.model:
+        engine.set_active_model(args.model)
     receiver = build_receivers_for_config(engine, engine.system_config)
     stimulus = build_stimulus_for_config(engine.system_config)
     runtime = EngineRuntimeThread(engine)
@@ -202,6 +224,7 @@ def _print_startup(
     print(
         "Integrated CSI app started: "
         f"model_ready={model_ready}, "
+        f"active_model={engine.active_model_name}, "
         f"raw_fallback={'on' if replay is not None else 'off'}, "
         f"leds={'off' if leds is None else leds.snapshot().get('backend')}",
         flush=True,

@@ -29,6 +29,21 @@ From the repository root:
 python -m app
 ```
 
+On Raspberry Pi 5 with Ubuntu 24.04, install CPU-only runtime dependencies:
+
+```bash
+sudo apt update
+sudo apt install -y python3-pip python3-venv python3-tk python3-gpiozero python3-lgpio
+python3 -m venv .venv-pi
+source .venv-pi/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -r requirements-pi-cpu.txt
+```
+
+The Pi does not use CUDA. Verify that `torch.cuda.is_available()` prints
+`False`.
+
 Or:
 
 ```powershell
@@ -54,6 +69,53 @@ For a web-only/headless run:
 
 ```powershell
 python -m app.integrated_main --headless
+```
+
+## Environment Run Commands
+
+### Windows / RTX CUDA Workstation
+
+Use this environment for CUDA training, replay checks, and local dashboard
+testing:
+
+```powershell
+cd "C:\Users\rltjr\Desktop\아주대학교\4학년\융합시스템공학종합설계\2026_IOT"
+.\.venv5070\Scripts\Activate.ps1
+python -m app --list-models
+python -m app --headless --model DeepCNNV1
+```
+
+Train all supported deep model versions:
+
+```powershell
+python -m app.train_deep_gt_model --models cnn_v1,cnn_v2,gru_v1,lstm_v1,transformer_v1 --epochs 20 --batch-size 256
+```
+
+### Raspberry Pi 5 / Ubuntu 24.04
+
+Use this environment for the live deployment. The Pi runs deep models on CPU.
+
+```bash
+cd ~/2026_IOT
+source .venv-pi/bin/activate
+python -m app --list-models
+python -m app --headless --model DeepCNNV1
+```
+
+Use a lighter fallback model when PyTorch is unavailable or CPU inference is
+too slow:
+
+```bash
+python -m app --headless --model VariableNodeAggregateExtraTrees
+```
+
+### Raw Replay Demo
+
+Run the dashboard and replay existing `app/raw_data` if no live ESP32 packets
+arrive:
+
+```bash
+python -m app --headless --model DeepCNNV1 --fallback-after-seconds 5 --replay-speedup 20
 ```
 
 Raw-data replay fallback starts after 15 seconds without live ESP32 packets by
@@ -121,11 +183,38 @@ Training writes:
 - `app/data/fingerprints.json` - baseline metadata needed by live inference
 - `app/data/gt_training_report.json` - training summary
 
+Train PyTorch deep GT models on a CUDA workstation:
+
+```powershell
+python -m app.train_deep_gt_model --models cnn_v1,cnn_v2,gru_v1,lstm_v1,transformer_v1 --epochs 20 --batch-size 256
+```
+
+Supported deep model versions are `cnn_v1`, `cnn_v2`, `gru_v1`, `lstm_v1`,
+and `transformer_v1`. Aliases such as `cnn`, `tcn`, `gru`, `lstm`, and
+`transformer` are accepted. Deep model artifacts are saved under
+`app/data/deep_gt_training/`.
+
 After retraining, start the live sensor + model + web dashboard:
 
 ```powershell
 python -m app --headless
 ```
+
+List loadable live models:
+
+```powershell
+python -m app --list-models
+```
+
+Start with a selected model:
+
+```powershell
+python -m app --headless --model DeepCNNV1
+```
+
+Raspberry Pi does not provide CUDA for these models. Deep models can still run
+with CPU PyTorch, but ONNX Runtime CPU deployment is recommended if latency is
+too high.
 
 Open the dashboard:
 

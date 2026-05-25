@@ -1,7 +1,11 @@
-# Runtime tested on Raspberry Pi with Python 3.14.4.
+# Runtime dependencies shared by Windows/Linux/Raspberry Pi.
 #
 # Install from the repository root:
-#   python3 -m pip install --user --break-system-packages -r requirements.txt
+#   python3 -m venv .venv-pi
+#   source .venv-pi/bin/activate
+#   python -m pip install --upgrade pip
+#   python -m pip install -r requirements.txt
+#   python -m pip install -r requirements-pi-cpu.txt
 #
 # Recommended system packages for the full app:
 #   sudo apt install python3-pip python3-venv python3-tk python3-gpiozero python3-lgpio
@@ -12,6 +16,8 @@
 # The web dashboard and raw-data fallback can run without Tkinter.
 # Keep scikit-learn pinned because saved model_bundle.pkl files are
 # version-sensitive.
+# PyTorch is kept in a separate requirements file so Raspberry Pi can install
+# CPU-only wheels and CUDA workstations can use the matching CUDA wheel.
 
 numpy==2.4.4
 scipy==1.17.1

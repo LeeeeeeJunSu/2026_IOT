@@ -214,6 +214,21 @@ GPU stack confirmed:
 - CUDA runtime: `12.8`
 - GPU: `NVIDIA GeForce RTX 5070 Ti`
 
+For Raspberry Pi 5 / Ubuntu 24.04 deployment, use the CPU-only PyTorch
+requirements instead:
+
+```bash
+python3 -m venv .venv-pi
+source .venv-pi/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -r requirements-pi-cpu.txt
+```
+
+CUDA is not available on Raspberry Pi. The app loads deep models onto CPU when
+`torch.cuda.is_available()` is false. For CUDA workstation training, install
+`requirements-cuda-cu128.txt` after the common runtime requirements.
+
 New training script:
 
 - `app/train_deep_gt_model.py`
@@ -261,6 +276,69 @@ Saved outputs:
 - `app/data/deep_gt_training/deep_gt_training_report.json`
 - `app/data/deep_gt_training/cnn_gt_model.pt`
 - `app/data/deep_gt_training/gru_gt_model.pt`
+
+The live app now scans `app/data/deep_gt_training/` and exposes saved `.pt`
+models alongside any existing ExtraTrees model bundle. On the current local
+workspace, the loadable models are:
+
+- `DeepCNNV1`
+- `DeepGRUV1`
+
+List them with:
+
+```powershell
+.venv5070\Scripts\python.exe -m app --list-models
+```
+
+Run the dashboard with a selected model:
+
+```powershell
+.venv5070\Scripts\python.exe -m app --headless --model DeepCNNV1
+```
+
+For the dashboard-only entrypoint:
+
+```powershell
+.venv5070\Scripts\python.exe -m app.dashboard_main --model DeepCNNV1
+```
+
+## Environment Runbook
+
+### Windows RTX 5070 Ti
+
+Purpose: CUDA model training, local validation, dashboard smoke tests.
+
+```powershell
+cd "C:\Users\rltjr\Desktop\아주대학교\4학년\융합시스템공학종합설계\2026_IOT"
+.\.venv5070\Scripts\Activate.ps1
+python -m app --list-models
+python -m app.train_deep_gt_model --models cnn_v1,cnn_v2,gru_v1,lstm_v1,transformer_v1 --epochs 20 --batch-size 256
+python -m app --headless --model DeepCNNV1
+```
+
+### Raspberry Pi 5 / Ubuntu 24.04
+
+Purpose: live ESP32 UDP receiver, model inference, web dashboard, optional GPIO
+LED control. CUDA is not available; deep models run on CPU.
+
+```bash
+cd ~/2026_IOT
+source .venv-pi/bin/activate
+python -m app --list-models
+python -m app --headless --model DeepCNNV1
+```
+
+If PyTorch CPU inference is too slow or unavailable:
+
+```bash
+python -m app --headless --model VariableNodeAggregateExtraTrees
+```
+
+### Existing Raw Data Demo
+
+```bash
+python -m app --headless --model DeepCNNV1 --fallback-after-seconds 5 --replay-speedup 20
+```
 
 Example command for a broader model sweep:
 
