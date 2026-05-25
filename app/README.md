@@ -118,6 +118,19 @@ arrive:
 python -m app --headless --model DeepCNNV1 --fallback-after-seconds 5 --replay-speedup 20
 ```
 
+Troubleshooting no prediction output:
+
+- If packets and nodes are visible but probabilities remain at 0%, confirm the
+  selected model appears in `python -m app --list-models`.
+- Deep models require an empty-room baseline. When `app/data/fingerprints.json`
+  is absent, the app rebuilds the baseline from GT0 raw captures in
+  `app/raw_data/*gt_0.jsonl`.
+- Raw replay now injects packets with the current wall-clock time; this is
+  required because live inference prunes old packet timestamps from its rolling
+  window.
+- Early replay may show `GT 0` first because GT0 empty-room sessions are sorted
+  before GT1-GT6 sessions.
+
 Raw-data replay fallback starts after 15 seconds without live ESP32 packets by
 default. Override it when needed:
 

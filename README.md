@@ -122,6 +122,16 @@ arriving:
 python -m app --headless --model DeepCNNV1 --fallback-after-seconds 5 --replay-speedup 20
 ```
 
+If the dashboard shows packets and nodes but no location probabilities, check:
+
+- `python -m app --list-models` shows the selected model.
+- GT0 empty-room raw captures exist under `app/raw_data/*gt_0.jsonl`.
+- The app log contains a baseline message. If `app/data/fingerprints.json` is
+  missing, the app automatically rebuilds the empty-room baseline from GT0 raw
+  JSONL files.
+- For raw replay demos, replay packets are timestamped with current time so the
+  live inference window can form correctly.
+
 Capture a new ground-truth sample. `--gt` must be `0` through `6`; use `0` for
 the empty/no-person state. The command saves raw CSI under `app/raw_data/`.
 After the configured nodes are active, recording starts after a 10 second

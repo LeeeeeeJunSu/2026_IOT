@@ -340,6 +340,25 @@ python -m app --headless --model VariableNodeAggregateExtraTrees
 python -m app --headless --model DeepCNNV1 --fallback-after-seconds 5 --replay-speedup 20
 ```
 
+### Deep Model Replay Fix
+
+The dashboard originally showed packets and all 10 nodes but no location
+probabilities with `DeepCNNV1`. Two issues were found and fixed:
+
+1. `app/data/fingerprints.json` was missing, so no empty-room baseline was
+   loaded. Deep live inference now rebuilds the baseline from
+   `app/raw_data/*gt_0.jsonl` when saved baseline metadata is absent.
+2. Raw replay was feeding packets with their original capture timestamps. Live
+   inference prunes old timestamps from rolling windows, so replay now injects
+   packets with current wall-clock time.
+
+Smoke validation after the fix:
+
+- `DeepCNNV1` loaded successfully.
+- GT0 baseline rebuilt from raw JSONL.
+- A live deep sample with shape `(54, 540)` was generated.
+- GT0 replay produced `GT 0` with high confidence.
+
 Example command for a broader model sweep:
 
 ```powershell
