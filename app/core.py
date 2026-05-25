@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import json
 import threading
 import time
 from collections import deque
@@ -191,6 +192,8 @@ class FingerprintEngine:
         self._load_datasets()
         self._normalize_training_state_for_config()
         self._load_models()
+        if self.model_pipelines and not self._baseline_ready_locked():
+            self._load_raw_gt0_baseline_locked()
         if self.model_pipelines:
             self.status_message = (
                 f"Loaded {len(self.model_pipelines)} trained models. "
@@ -614,7 +617,13 @@ class FingerprintEngine:
             )
             self._log_event_locked("CAPTURE", "Cleared all saved training data and models")
 
-    def process_packet(self, payload: bytes, source: str) -> bool:
+    def process_packet(
+        self,
+        payload: bytes,
+        source: str,
+        received_at: float | None = None,
+    ) -> bool:
+        now = time.time() if received_at is None else float(received_at)
         frame = parse_adr018_frame(payload)
         if frame is None:
             return self.process_receiver_event(
@@ -622,10 +631,9 @@ class FingerprintEngine:
                     "type": "packet",
                     "valid": False,
                     "source": source,
-                    "received_at": time.time(),
+                    "received_at": now,
                 }
             )
-        now = time.time()
         feature = build_feature_frame(frame, source, now, self.feature_bin_count)
         return self.process_receiver_event(
             {
@@ -2157,6 +2165,51 @@ class FingerprintEngine:
             node_id in self.empty_room_baseline_by_node
             and len(self.empty_room_baseline_by_node[node_id]) == ACTIVE_SUBCARRIER_COUNT
             for node_id in required_node_ids
+        )
+
+    def _load_raw_gt0_baseline_locked(self) -> None:
+        raw_dir = self.workspace_root / "raw_data"
+        if not raw_dir.exists():
+            return
+        sums = {
+            node_id: np.zeros(ACTIVE_SUBCARRIER_COUNT, dtype=np.float64)
+            for node_id in self.required_node_ids
+        }
+        counts = {node_id: 0 for node_id in self.required_node_ids}
+        for path in sorted(raw_dir.glob("*gt_0.jsonl")):
+            with path.open("r", encoding="utf-8") as handle:
+                for line in handle:
+                    if '"record_type":"packet"' not in line or '"valid_adr018":true' not in line:
+                        continue
+                    try:
+                        record = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    node_id = int(record.get("node_id", 0))
+                    if node_id not in sums:
+                        continue
+                    vector = record.get("feature_vector")
+                    if not isinstance(vector, list) or len(vector) < ACTIVE_SUBCARRIER_COUNT:
+                        continue
+                    sums[node_id] += np.asarray(
+                        vector[:ACTIVE_SUBCARRIER_COUNT],
+                        dtype=np.float64,
+                    )
+                    counts[node_id] += 1
+
+        baseline: dict[int, list[float]] = {}
+        for node_id, count in counts.items():
+            if count <= 0:
+                continue
+            baseline[node_id] = (sums[node_id] / float(count)).astype(np.float32).tolist()
+        if len(baseline) != len(self.required_node_ids):
+            return
+        self.empty_room_baseline_by_node = baseline
+        self.empty_room_baseline_counts = counts
+        self._save_datasets()
+        self._log_event_locked(
+            "BASELINE",
+            "Loaded empty-room baseline from raw GT0 JSONL captures.",
         )
 
     def _can_train_locked(self) -> bool:

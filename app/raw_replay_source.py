@@ -111,7 +111,7 @@ class RawDataReplayThread(threading.Thread):
                     continue
                 node_id = int(_float(record.get("node_id")))
                 source = f"{REPLAY_SOURCE_PREFIX}{path.name}:node{node_id}"
-                self.engine.process_packet(payload, source)
+                self.engine.process_packet(payload, source, received_at=time.time())
                 packet_count += 1
         self._set_udp_status(f"Raw replay completed {path.name}: {packet_count} packets.")
 
